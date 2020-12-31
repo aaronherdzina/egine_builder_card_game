@@ -1,5 +1,17 @@
 extends Node2D
 
+var test_lvl = {
+	"cols": 6,
+	"rows": 8,
+	
+	"tile_list": ["move", "move", "move", "move", "move", "move", "move", "move",
+				"move", "wall", "wall", "wall", "wall", "wall", "wall", "wall",
+				"move", "move", "move", "move", "move", "move", "move", "move",
+				"move", "move", "move", "move", "move", "move", "move", "move",
+				"wall", "wall", "wall", "wall", "wall", "wall", "wall", "move",
+				"move", "move", "move", "move", "move", "move", "move", "move"]
+	}
+
 # debug for pathfinding tests
 
 var path_end_tile = null
@@ -12,14 +24,97 @@ var bottom_tiles = []
 var left_tiles = []
 var right_tiles = []
 var round_turns = []
-var tile_gap = 160
+var tile_gap = 145
 
 var enms = 5
 var level_astar = null
 var current_enm_count = 0
+var processing_turns = false
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass
+
+
+
+"""
+set a list of moveable tiles (and non player or anything else we wouldn't want as spawnable tiles) so we can use this to randpmly spawn level_tiles[rand_range(0, len(level_tiles) - 1)]
+"""
+
+
+func spawn_premade_tiles(lvl_obj):
+	""" lvl_obj example:
+	lvl_obj = {
+		tile_list = [],
+		cols = 7,
+		rows = 6
+		
+	}
+	"""
+	var col = lvl_obj["cols"]
+	var row = lvl_obj["rows"]
+	var tiles = lvl_obj["tile_list"]
+	#if not starting_tile:
+	#	starting_tile = get_node("starting_tile")
+
+	var tile_index = -1
+
+	level_astar = AStar2D.new()
+	#var res = astar.get_id_path(1, 3) # Returns [1, 2, 3]
+	
+	for c in range(0, col):
+		for r in range(0, row):
+			tile_index += 1
+			var t = main.TILE.instance()
+			var tile_map = $tile_container
+			var tile_info = ""
+			get_node("tile_container").add_child(t)
+			t.row = r
+			t.col = c
+			level_tiles.append(t)
+			t.index = tile_index
+
+			if main.debug: tile_info += " |index " + str(tile_index)
+
+			if not starting_tile:
+				starting_tile = t
+				t.position = Vector2(tile_gap * 2.2, tile_gap * .75)
+			else:
+				t.position = Vector2(starting_tile.global_position.x +\
+									(r * tile_gap),\
+									starting_tile.global_position.y +\
+									(c * tile_gap))
+			if main.debug: tile_info += " |row/col " + str(r) + '/' + str(c) + "\ntile_gap: " + str(tile_gap * r)
+			if main.debug: 
+				t.get_node("debug_info").visible = true
+				t.get_node("debug_info").set_text(tile_info)
+
+	print('level_astar ' + str(level_astar))
+	set_tile_neighbors(row, col)
+	var i = 0
+	for t in level_tiles:
+		if i < len(lvl_obj["tile_list"]):
+			var tile_type = lvl_obj["tile_list"][i]
+			t.map_tile_type(tile_type)
+		else:
+			break
+		i += 1
+	spawn_player()
+	for _i in range(0, enms):
+		var timer = Timer.new()
+		timer.set_wait_time(1)
+		timer.set_one_shot(true)
+		get_node("/root").add_child(timer)
+		timer.start()
+		yield(timer, "timeout")
+		timer.queue_free()
+		var count = -1
+		for t in level_tiles:
+			count += 1
+			randomize()
+			if t.can_move:
+				if rand_range(0, 10) >= 9.4 or count >= len(level_tiles) * .99:
+					spawn_enemies(level_astar,  t, level_tiles[col+1])
+					break
 
 
 func spawn_tiles():
@@ -38,30 +133,35 @@ func spawn_tiles():
 		for r in range(0, row):
 			tile_index += 1
 			var t = main.TILE.instance()
-			var tile_map = $nav/tile_map
+			var tile_map = $tile_container
 			var tile_info = ""
-			get_node("nav/tile_map").add_child(t)
+			get_node("tile_container").add_child(t)
 			t.row = r
 			t.col = c
 			level_tiles.append(t)
 			t.index = tile_index
 
-			if main.debug: tile_info += " |row/col " + str(r) + '/' + str(c)
 
 			if not starting_tile:
 				starting_tile = t
-				t.position = Vector2(tile_gap * 1.65, tile_gap * .65)
+				t.position = Vector2(tile_gap * 2.2, tile_gap * .75)
 			else:
 				t.position = Vector2(starting_tile.global_position.x +\
-									(c * tile_gap),\
+									(r * tile_gap),\
 									starting_tile.global_position.y +\
-									(r * tile_gap))
+									(c * tile_gap))
+			if main.debug: tile_info += " |row/col " + str(r) + '/' + str(c) + "tile_gap: " + str(tile_gap * c)
 			if main.debug: 
 				t.get_node("debug_info").visible = true
 				t.get_node("debug_info").set_text(tile_info)
 
 	print('level_astar ' + str(level_astar))
 	set_tile_neighbors(row, col)
+	for t in level_tiles:
+		if rand_range(0, 10) >= 8.5:
+			t.map_tile_type("wall")
+		else:
+			t.map_tile_type("")
 	spawn_player()
 	for _i in range(0, enms):
 		var timer = Timer.new()
@@ -106,6 +206,7 @@ func spawn_player():
 					spawn_tile = t
 
 	p.set_spawn_tile(spawn_tile)
+	change_turn_display_name("Player")
 
 
 func spawn_enemies(astar_path_obj, starting_tile, target_tile):
@@ -115,6 +216,8 @@ func spawn_enemies(astar_path_obj, starting_tile, target_tile):
 	e.set_tile_target(target_tile)
 	e.set_navigation()
 	e.add_to_group("enemies")
+	e.char_name = meta.char_names[rand_range(0, len(meta.char_names) - 1)]
+	print('spawned: ' + e.char_name)
 	e.id = current_enm_count
 	if main.debug:
 		e.get_node("Sprite/debug_info").visible = true
@@ -124,16 +227,8 @@ func spawn_enemies(astar_path_obj, starting_tile, target_tile):
 
 func set_tile_neighbors(row, col):
 	for t in level_tiles:
-		if rand_range(0, 10) >= 8:
-			t.can_move = false
-			#connect_astart_path_neightbors(level_astar, t.index, t, row, col, meta.wall_tile_weight)
-			t.get_node("Sprite").set_texture(main.WALL_TILE)
-		elif rand_range(0, 10) >= 9:
-			connect_astart_path_neightbors(level_astar, t.index, t, row, col, meta.unccupied_tile_weight)
-			t.get_node("Sprite").set_texture(main.MOUNTAIN_TILE)
-		else:
-			connect_astart_path_neightbors(level_astar, t.index, t, row, col, meta.unccupied_tile_weight)
-			t.get_node("Sprite").set_texture(main.BASIC_TILE)
+		connect_astart_path_neightbors(level_astar, t.index, t, row, col, meta.unccupied_tile_weight)
+		t.get_tile_neighbors()
 
 
 func connect_astart_path_neightbors(astar_path_obj, tile_index, tile, row, col, tile_weight):
@@ -166,40 +261,64 @@ func connect_astart_path_neightbors(astar_path_obj, tile_index, tile, row, col, 
 #	pass
 
 func process_enemy_turns():
-	while len(round_turns) > 0:
-		print('starting turn for ' + str(round_turns[0].id))
-		var turn_time_limit = 20
-		round_turns[0].processing_turn = true
-		round_turns[0].start_turn()
-		while round_turns[0].processing_turn:
-			var timer = Timer.new()
-			timer.set_wait_time(1)
-			timer.set_one_shot(true)
-			get_node("/root").add_child(timer)
-			timer.start()
-			yield(timer, "timeout")
-			timer.queue_free()
-			turn_time_limit -= 1
-			if turn_time_limit <= 0:
-				print("turn didn't end before limit moving on")
-				round_turns[0].processing_turn = false
-				break
-		print('turn over')
-		round_turns.remove(0)
+	if not processing_turns:
+		processing_turns = true
+		while len(round_turns) > 0:
+			print('starting turn for ' + str(round_turns[0].id))
+			var turn_time_limit = 20
+			round_turns[0].processing_turn = true
+			round_turns[0].start_turn()
+			while round_turns[0].processing_turn:
+				change_turn_display_name(round_turns[0].char_name)
+				var timer = Timer.new()
+				timer.set_wait_time(1)
+				timer.set_one_shot(true)
+				get_node("/root").add_child(timer)
+				timer.start()
+				yield(timer, "timeout")
+				timer.queue_free()
+				turn_time_limit -= 1
+				if turn_time_limit <= 0:
+					print("turn didn't end before limit moving on")
+					if len(round_turns) > 0: round_turns[0].processing_turn = false
+					break
+			print('turn over')
+			round_turns.remove(0)
+		change_turn_display_name("Player")
+		processing_turns = false
+		end_turn()
 
 
-func _on_end_turn_button_pressed():
+func end_turn():
+	if processing_turns:
+		return
 	var p = get_node("/root/player")
 	if meta.player_turn: 
-		p.stop_turn()
 		meta.player_turn = false
+		p.stop_turn()
 		round_turns = []
 		for enm in get_tree().get_nodes_in_group("enemies"):
 			round_turns.append(enm)
 		process_enemy_turns()
 	else:
+		meta.player_turn = true
 		p.start_turn()
 		print('player turn')
+
+
+func change_static_battle_ui(action):
+	if action == "change_turns":
+		pass
+
+
+func change_turn_display_name(char_name):
+	var turn_text = "Player Turn" if meta.player_turn else char_name + "'s Turn"
+	$text_overlay/turn_text.set_text(turn_text)
+
+
+func _on_end_turn_button_pressed():
+	if meta.player_turn:
+		end_turn()
 
 func _on_end_turn_button_mouse_entered():
 	pass # Replace with function body.
