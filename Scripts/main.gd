@@ -1,24 +1,20 @@
 extends Node
 
-const debug = false # for dev
+const debug = true # for dev
+
+# CARDS
+const CARD = preload("res://Scenes/card.tscn")
+
+const CARD_LIGHT_BACKGROUND_1 = preload("res://Sprites/cards/rel-aligned bright card.png")
+const CARD_DARK_BACKGROUND_1 = preload("res://Sprites/cards/dark card.png")
+###
+
 
 
 # TILES
-const BASIC_TILE = preload("res://Sprites/tiles/basic/new border grey tile.png")
-const WALL_TILE = preload("res://Sprites/tiles/basic/dark tile.png")
-
-const ENEMY_SPAWN_TILE = preload("res://Sprites/tiles/basic/new border grey tile.png")
-const PLAYER_SPAWN_TILE = preload("res://Sprites/tiles/basic/new border grey tile.png")
-
-const FOREST_PATH_TILE_1 = preload("res://Sprites/tiles/environment/forest path til.png")
-const FOREST_TILE_1 = preload("res://Sprites/tiles/environment/forest tile 1.png")
-const FOREST_TILE_2 = preload("res://Sprites/tiles/environment/forest tile 2.png")
-
-
-var basic_forest_tiles = [FOREST_TILE_1, FOREST_TILE_2]
-var special_forest_tiles = [FOREST_PATH_TILE_1]
-
-const MOUNTAIN_TILE = preload("res://Sprites/tiles/basic/new border grey tile.png")
+const BASIC_TILE = preload("res://Sprites/tiles/basic/gridrpgBasic.png")
+const WALL_TILE = preload("res://Sprites/tiles/basic/gridrpgWall.png")
+const MOUNTAIN_TILE = preload("res://Sprites/tiles/basic/gridrpgBasic.png")
 #######
 
 
@@ -139,50 +135,71 @@ func _input(event):
 	if Input.is_action_pressed("back"):
 		if current_screen == "battle":
 			handle_in_battle_input("back")
-	elif Input.is_action_pressed("spacebar"):
+	if Input.is_action_pressed("up"):
+		if current_screen == "battle":
+			handle_in_battle_input("up")
+	if Input.is_action_pressed("down"):
+		if current_screen == "battle":
+			handle_in_battle_input("down")
+	if Input.is_action_pressed("left"):
+		if current_screen == "battle":
+			handle_in_battle_input("left")
+	if Input.is_action_pressed("right"):
+		if current_screen == "battle":
+			handle_in_battle_input("right")
+	if Input.is_action_pressed("spacebar"):
 		if current_screen == "battle":
 			handle_in_battle_input("spacebar")
 
 
 func handle_in_battle_input(action):
-	if action == "start":
-		var level = get_node("/root/level")
-		level.end_turn()
+	# var level = get_node("/root/level")
+	if action == "spacebar":
+		if not get_node("/root").has_node("level"):
+			var level = main.LEVEL.instance()
+			get_node("/root").add_child(level)
+
+		Cards.remove_all_cards_in_hand()
+		if meta.player_hand_limit > meta.player_hand_limit_max:
+			meta.player_hand_limit = meta.player_hand_limit_max
+		Cards.spawn_cards({meta.player_hand_limit: 4})
+		if meta.player_hand_limit > meta.player_hand_limit_default:
+			meta.player_hand_limit = meta.player_hand_limit_default
+		Cards.play_all_display_card_actions()
+		if get_node("/root").has_node("level"):
+			get_node("/root/level").get_node("enemy_health").set_text(str(meta.enm_total_health))
+
+	elif action == "start":
+		if Cards.current_card_menu != "hand":
+			Cards.expand_card_details()
+		else:
+			Cards.play_card(Cards.hand, Cards.hand_idx)
+			Cards.handle_cards_in_display()
 	elif action == "back": 
 		if meta.player_turn:
-			if not get_node("/root").has_node("player"):
-				return
 			var player = get_node("/root/player")
 			player.reset_turn()
-	elif action == "spacebar":
-		for enm in get_tree().get_nodes_in_group("enemies"):
-			enm.queue_free()
-		if get_node("/root").has_node("player"):
-			var p = get_node("/root/player")
-			p.queue_free()
-		for lvl in get_tree().get_nodes_in_group("levels"):
-			lvl.remove_tiles()
-			lvl.queue_free()
-		var timer1 = Timer.new()
-		timer1.set_wait_time(1.5)
-		timer1.set_one_shot(true)
-		get_node("/root").add_child(timer1)
-		timer1.start()
-		yield(timer1, "timeout")
-		timer1.queue_free()
-		var l = LEVEL.instance()
-		get_node("/root").add_child(l)
-		l.set_random_level(l.random_lvl)
-		l.spawn_premade_tiles(l.random_lvl)
-		current_screen = 'battle'
+	elif action == "up": 
+		Cards.card_container_navigation_controller(0)
+		Cards.card_container_navigation_controller(1, "current")
+	elif action == "down": 
+		Cards.card_container_navigation_controller(0)
+		Cards.card_container_navigation_controller(-1, "current")
+	elif action == "right": 
+		Cards.card_container_navigation_controller(-1, "current")
+	elif action == "left": 
+		Cards.card_container_navigation_controller(1, "current")
 
 
 func handle_main_menu_input(action):
 	if action == "start":
-		var l = LEVEL.instance()
-		get_node("/root").add_child(l)
-		l.set_random_level(l.random_lvl)
-		l.spawn_premade_tiles(l.random_lvl)
+		#Cards.spawn_cards({"hand_limit": 5})
+		#Cards.handle_cards_in_display()
+		
+		#var l = LEVEL.instance()
+		#get_node("/root").add_child(l)
+		#l.spawn_premade_tiles(l.test_lvl)
+		
 		current_screen = 'battle'
 	elif action == "ui_quit":
 		if not waitToProcessMenuClick:
