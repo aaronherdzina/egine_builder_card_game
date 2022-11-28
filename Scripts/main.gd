@@ -9,7 +9,7 @@ const CARD_LIGHT_BACKGROUND_1 = preload("res://Sprites/cards/rel-aligned bright 
 const CARD_DARK_BACKGROUND_1 = preload("res://Sprites/cards/dark card.png")
 ###
 
-
+const TEXT_EFECT = preload("res://Scenes/text_effect.tscn")
 
 # TILES
 const BASIC_TILE = preload("res://Sprites/tiles/basic/gridrpgBasic.png")
@@ -162,13 +162,21 @@ func handle_in_battle_input(action):
 		Cards.remove_all_cards_in_hand()
 		if meta.player_hand_limit > meta.player_hand_limit_max:
 			meta.player_hand_limit = meta.player_hand_limit_max
-		Cards.spawn_cards({meta.player_hand_limit: 4})
+		Cards.spawn_cards(meta.player_hand_limit)
 		if meta.player_hand_limit > meta.player_hand_limit_default:
 			meta.player_hand_limit = meta.player_hand_limit_default
 		Cards.play_all_display_card_actions()
-		if get_node("/root").has_node("level"):
-			get_node("/root/level").get_node("enemy_health").set_text(str(meta.enm_total_health))
-
+		"""
+		var timer = Timer.new()
+		var time = 0.1
+		print("time " + str(time))
+		get_node("/root").add_child(timer)
+		timer.set_wait_time(time)
+		timer.set_one_shot(true)
+		timer.start()
+		yield(timer, "timeout")
+		timer.queue_free()
+		"""
 	elif action == "start":
 		if Cards.current_card_menu != "hand":
 			Cards.expand_card_details()

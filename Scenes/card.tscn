@@ -132,7 +132,6 @@ rect_clip_content = false
 custom_fonts/normal_font = SubResource( 2 )
 custom_colors/default_color = Color( 1, 1, 1, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "Card info Goes Here!"
 scroll_active = false
 scroll_following = true
 __meta__ = {
@@ -147,7 +146,6 @@ rect_clip_content = false
 custom_fonts/normal_font = SubResource( 4 )
 custom_colors/default_color = Color( 1, 0.686275, 0.686275, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "10"
 scroll_active = false
 __meta__ = {
 "_edit_use_anchors_": false
@@ -161,7 +159,6 @@ rect_clip_content = false
 custom_fonts/normal_font = SubResource( 4 )
 custom_colors/default_color = Color( 0.686275, 1, 0.686275, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "30"
 scroll_active = false
 __meta__ = {
 "_edit_use_anchors_": false
@@ -175,7 +172,6 @@ rect_clip_content = false
 custom_fonts/normal_font = SubResource( 4 )
 custom_colors/default_color = Color( 0.686275, 0.686275, 1, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "90"
 scroll_active = false
 __meta__ = {
 "_edit_use_anchors_": false
@@ -190,7 +186,6 @@ rect_clip_content = false
 custom_fonts/normal_font = SubResource( 4 )
 custom_colors/default_color = Color( 0.784314, 0.882353, 1, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "224"
 scroll_active = false
 __meta__ = {
 "_edit_use_anchors_": false
@@ -205,7 +200,6 @@ rect_clip_content = false
 custom_fonts/normal_font = SubResource( 4 )
 custom_colors/default_color = Color( 0.784314, 0.882353, 1, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "207"
 scroll_active = false
 __meta__ = {
 "_edit_use_anchors_": false
@@ -220,7 +214,6 @@ rect_clip_content = false
 custom_fonts/normal_font = SubResource( 5 )
 custom_colors/default_color = Color( 0.784314, 0.882353, 1, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "*"
 scroll_active = false
 __meta__ = {
 "_edit_use_anchors_": false
@@ -235,7 +228,6 @@ rect_clip_content = false
 custom_fonts/normal_font = SubResource( 4 )
 custom_colors/default_color = Color( 0.784314, 0.882353, 1, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "22222"
 scroll_active = false
 __meta__ = {
 "_edit_use_anchors_": false

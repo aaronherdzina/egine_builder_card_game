@@ -44,6 +44,17 @@ func cycle_active_menu_lists(val):
 		player_chassis_list[list_navigation_idx]
 	list_navigation_idx = 1
 
+
+func update_text_overlays():
+	get_node("/root/level").get_node("text_cont/enemy_health").set_text(str(meta.enm_total_health))
+	get_node("/root/level").get_node("text_cont/enemy_heat").set_text(str(meta.current_enm_heat))
+	get_node("/root/level").get_node("text_cont/enemy_heat_max").set_text(str(meta.max_enm_heat))
+	get_node("/root/level").get_node("text_cont/player_health").set_text(str(meta.player_health))
+	get_node("/root/level").get_node("text_cont/player_heat").set_text(str(meta.current_player_heat))
+	get_node("/root/level").get_node("text_cont/player_heat_max").set_text(str(meta.max_player_heat))
+	
+
+
 func cycle_current_card_menu(val):
 	""" Deck card navigation logic in Cards.gd Think about moving here """
 	list_navigation_idx += val

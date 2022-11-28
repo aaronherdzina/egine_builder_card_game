@@ -13,10 +13,10 @@ var unccupied_tile_weight = 1
 var wall_tile_weight = 2000
 var enm_total_health = 1000
 var current_enm_heat = 0
-var max_enm_heat = 200
+var max_enm_heat = 300
 
 var current_player_heat = 0
-var max_player_heat = 200
+var max_player_heat = 700
 
 var player_toughness_bonus = 0
 var player_health_bonus = 0
@@ -25,7 +25,7 @@ var player_heat_production_bonus = 0
 var player_attacks_bonus = 0
 var player_damage_bonus = 0
 
-var player_health = 1000
+var player_health = 2000
 var player_defense = 10
 var player_toughnes = 0
 var player_hand_limit = 3
