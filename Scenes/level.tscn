@@ -1,9 +1,8 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Scripts/card_level.gd" type="Script" id=1]
 [ext_resource path="res://Sprites/General/blueDot.png" type="Texture" id=2]
 [ext_resource path="res://fonts/font3 copy.ttf" type="DynamicFontData" id=3]
-[ext_resource path="res://Sprites/General/wall.png" type="Texture" id=4]
 [ext_resource path="res://Sprites/General/basic tile.png" type="Texture" id=5]
 [ext_resource path="res://Sprites/UI/Untitled_Artwork 2.png" type="Texture" id=6]
 [ext_resource path="res://Sprites/tiles/basic/gridrpgWall.png" type="Texture" id=7]
@@ -21,11 +20,13 @@ script = ExtResource( 1 )
 z_index = -100
 
 [node name="Sprite2" type="Sprite" parent="background_imgs"]
-position = Vector2( 994.899, 497.803 )
-scale = Vector2( 1.28933, 0.837034 )
-texture = ExtResource( 4 )
+modulate = Color( 0.862745, 1, 0.807843, 1 )
+position = Vector2( 960, 568 )
+scale = Vector2( 3.49333, 4 )
+texture = ExtResource( 6 )
 
 [node name="Sprite" type="Sprite" parent="background_imgs"]
+visible = false
 position = Vector2( 960, 532 )
 scale = Vector2( 0.976562, 0.589844 )
 texture = ExtResource( 9 )
@@ -122,6 +123,7 @@ scale = Vector2( 0.250345, 0.362113 )
 texture = ExtResource( 6 )
 
 [node name="hud" type="Sprite" parent="."]
+visible = false
 position = Vector2( 960, 557.435 )
 rotation = 1.5708
 scale = Vector2( 0.514501, 0.937289 )
@@ -130,17 +132,17 @@ texture = ExtResource( 8 )
 
 [node name="line" type="Sprite" parent="."]
 self_modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 961.816, 1012.63 )
+position = Vector2( 1020.81, 1263.27 )
 rotation = 1.5708
-scale = Vector2( 0.0663453, 0.937289 )
+scale = Vector2( 0.297675, 1.52838 )
 z_index = 105
 texture = ExtResource( 5 )
 
 [node name="line2" type="Sprite" parent="."]
 self_modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 960, -32.0002 )
+position = Vector2( 1024, -180.728 )
 rotation = 1.5708
-scale = Vector2( 0.0663453, 0.937289 )
+scale = Vector2( 0.281102, 1.36887 )
 z_index = 105
 texture = ExtResource( 5 )
 
@@ -267,6 +269,10 @@ valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="cam" type="Camera2D" parent="."]
+anchor_mode = 0
+current = true
 [connection signal="mouse_entered" from="Button" to="." method="_on_end_turn_button_mouse_entered"]
 [connection signal="mouse_exited" from="Button" to="." method="_on_end_turn_button_mouse_exited"]
 [connection signal="pressed" from="Button" to="." method="_on_end_turn_button_pressed"]

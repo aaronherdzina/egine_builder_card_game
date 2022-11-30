@@ -61,22 +61,22 @@ func cycle_current_card_menu(val):
 	current_menu = Cards.current_card_menu
 	
 	for card in player_chassis_list:
-		card.modulate = Color(.75, .75, .75, .85)
+		card.modulate = Color(.75, .75, .75, 1)
 		card.set_scale(Vector2(.5, .5))
 		card.get_node("text").visible = false
 		card.z_index = 1
 	for card in player_right_arm_list:
-		card.modulate = Color(.75, .75, .75, .85)
+		card.modulate = Color(.75, .75, .75, 1)
 		card.set_scale(Vector2(.5, .5))
 		card.get_node("text").visible = false
 		card.z_index = 1
 	for card in player_left_arm_list:
-		card.modulate = Color(.75, .75, .75, .85)
+		card.modulate = Color(.75, .75, .75, 1)
 		card.set_scale(Vector2(.5, .5))
 		card.get_node("text").visible = false
 		card.z_index = 1
 	for card in player_leg_list:
-		card.modulate = Color(.75, .75, .75, .85)
+		card.modulate = Color(.75, .75, .75, 1)
 		card.set_scale(Vector2(.5, .5))
 		card.get_node("text").visible = false
 		card.z_index = 1

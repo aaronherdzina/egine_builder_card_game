@@ -5,8 +5,9 @@ const debug = true # for dev
 # CARDS
 const CARD = preload("res://Scenes/card.tscn")
 
-const CARD_LIGHT_BACKGROUND_1 = preload("res://Sprites/cards/rel-aligned bright card.png")
-const CARD_DARK_BACKGROUND_1 = preload("res://Sprites/cards/dark card.png")
+const CARD_BLUE_BACKGROUND_1 = preload("res://Sprites/cards/blue card.png")
+const CARD_RED_BACKGROUND_1 = preload("res://Sprites/cards/red card.png")
+const CARD_YELLOW_BACKGROUND_1 = preload("res://Sprites/cards/yellow card.png")
 ###
 
 const TEXT_EFECT = preload("res://Scenes/text_effect.tscn")
@@ -251,31 +252,27 @@ func saveAndQuit(shouldSave=true):
 
 func cameraShake(mag, length):
 	randomize()
-	if not get_node("/root").has_node("cam"):
+	if not get_node("/root").has_node("level") or not get_node("/root/level").has_node("cam"):
+		print("leaving cam shake early??")
 		return
-	var cam = get_node("/root/cam")
-	var magnitude = mag if mag <= 10 else 10
-	var timeToShake = length if length <= 4 else 4
-	if shaking:
-		return
+	var cam = get_node("/root/level/cam")
+	var timeToShake = length
 	while timeToShake > 0:
 		shaking = true
 		var pos = Vector2()
-		pos.x = rand_range(-magnitude, magnitude)
-		pos.y = rand_range(-magnitude, magnitude)
+		pos.x = rand_range(-mag, mag)
+		pos.y = rand_range(-mag, mag)
 		cam.position = pos
 		timeToShake -= get_process_delta_time()
 
 		var timer = Timer.new()
+		get_node("/root").add_child(timer)
 		timer.set_wait_time(.015)
 		timer.set_one_shot(true)
-		addToParent(timer, null, true)
 		timer.start()
 		yield(timer, "timeout")
 		timer.queue_free()
 
-	magnitude = 0
-	shaking = false
 
 
 func instancer(objToInstance=null, parent=null, addDeferred=false, addToThisGroup=null, returnObj=true):

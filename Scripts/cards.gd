@@ -146,7 +146,7 @@ var card_plasma_rifle = {
 	DAMAGE: 2,
 	HEAT_PRODUCTION: 8,
 	IMG_PATH: " ",
-	CARD_WAIT_TIME: .25,
+	CARD_WAIT_TIME: 1,
 	CARD_ACTION: "plasma_rifle_display_ability_1",
 	RECYCLE_ACTION: "",
 	DESCRIPTION: "Deals 1 additional damage for every Fire card attached and raises opponent Heat Production 1 for every 2 Fire cards attached.",
@@ -163,7 +163,7 @@ var card_missle_flak = {
 	DAMAGE: 2,
 	HEAT_PRODUCTION: 3,
 	IMG_PATH: " ",
-	CARD_WAIT_TIME: .25,
+	CARD_WAIT_TIME: .5,
 	CARD_ACTION: "missile_flak_display_ability_1",
 	RECYCLE_ACTION: "",
 	DESCRIPTION: "Deals 1 additional damage to oppopnent Arm, Leg, and total health for each Missile card attached",
@@ -313,7 +313,7 @@ const COOL_DOWN_1 = "cool_down_1"
 var card_cooling_membrane_1 = {
 	TITLE: COOLING_MEMBRANE,
 	CARD_TYPE: CHASSIS_CARD,
-	HEAT_PRODUCTION: -2,
+	HEAT_PRODUCTION: 2,
 	HEALTH: 5,
 	CARD_WAIT_TIME: .5,
 	CARD_ACTION: COOL_DOWN_1, # str name of func called elsewher
@@ -328,7 +328,7 @@ const COOL_OFF_1 = "cool_off_1"
 var card_cooling_exhuasts = {
 	TITLE: COOLING_EXHUASTS,
 	CARD_TYPE: CHASSIS_CARD,
-	HEAT_PRODUCTION: -1,
+	HEAT_PRODUCTION: 1,
 	CARD_WAIT_TIME: .5,
 	CARD_ACTION: COOL_OFF_1, # str name of func called elsewher
 	RECYCLE_ACTION: "",
@@ -362,13 +362,15 @@ var enm_hand = []
 var enm_hand_idx = 0
 var enm_tableau_idx = 0
 var enm_card_detail_list = []
+var player_display_turn = true
 
 func play_all_display_card_actions(is_player=true):
 	if get_node("/root").has_node("level"):
 		var level = get_node("/root/level")
-		if is_player:
+		if is_player and player_display_turn:
 			for card in level.player_chassis_list:
 				card.modulate = Color(.4, .4, 1, 1)
+				expand_card_details(card)
 
 				var timer = Timer.new()
 				var time = float(card.get_node("timer").get_text())
@@ -385,6 +387,7 @@ func play_all_display_card_actions(is_player=true):
 
 			for card in level.player_right_arm_list:
 				card.modulate = Color(.4, .4, 1, 1)
+				expand_card_details(card)
 
 				var timer = Timer.new()
 				get_node("/root").add_child(timer)
@@ -399,6 +402,7 @@ func play_all_display_card_actions(is_player=true):
 
 			for card in level.player_left_arm_list:
 				card.modulate = Color(.4, .4, 1, 1)
+				expand_card_details(card)
 				
 				var timer = Timer.new()
 				get_node("/root").add_child(timer)
@@ -413,6 +417,42 @@ func play_all_display_card_actions(is_player=true):
 
 			for card in level.player_leg_list:
 				card.modulate = Color(.4, .4, 1, 1)
+				expand_card_details(card)
+
+				var timer = Timer.new()
+				get_node("/root").add_child(timer)
+				timer.set_wait_time(float(card.get_node("timer").get_text()))
+				timer.set_one_shot(true)
+				timer.start()
+				yield(timer, "timeout")
+				timer.queue_free()
+				card_action(card.get_node("action").get_text(), is_player, "", card)
+				level.update_text_overlays()
+				card.modulate = Color(1, 1, 1, 1)
+			player_display_turn = false
+		# end of player logic
+		else:
+			# Enemy:
+			for card in level.enemy_chassis_list:
+				card.modulate = Color(.4, .4, 1, 1)
+				expand_card_details(card)
+
+				var timer = Timer.new()
+				var time = float(card.get_node("timer").get_text())
+				print("time " + str(time))
+				get_node("/root").add_child(timer)
+				timer.set_wait_time(time)
+				timer.set_one_shot(true)
+				timer.start()
+				yield(timer, "timeout")
+				timer.queue_free()
+				card_action(card.get_node("action").get_text(), is_player, "", card)
+				level.update_text_overlays()
+				card.modulate = Color(1, 1, 1, 1)
+
+			for card in level.enemy_right_arm_list:
+				card.modulate = Color(.4, .4, 1, 1)
+				expand_card_details(card)
 
 				var timer = Timer.new()
 				get_node("/root").add_child(timer)
@@ -425,8 +465,40 @@ func play_all_display_card_actions(is_player=true):
 				level.update_text_overlays()
 				card.modulate = Color(1, 1, 1, 1)
 
+			for card in level.enemy_left_arm_list:
+				card.modulate = Color(.4, .4, 1, 1)
+				expand_card_details(card)
+				
+				var timer = Timer.new()
+				get_node("/root").add_child(timer)
+				timer.set_wait_time(float(card.get_node("timer").get_text()))
+				timer.set_one_shot(true)
+				timer.start()
+				yield(timer, "timeout")
+				timer.queue_free()
+				card_action(card.get_node("action").get_text(), is_player, "", card)
+				level.update_text_overlays()
+				card.modulate = Color(1, 1, 1, 1)
 
-func apply_text_effect(text_type, text, is_player=true):
+			for card in level.enemy_leg_list:
+				card.modulate = Color(.4, .4, 1, 1)
+				expand_card_details(card)
+
+				var timer = Timer.new()
+				get_node("/root").add_child(timer)
+				timer.set_wait_time(float(card.get_node("timer").get_text()))
+				timer.set_one_shot(true)
+				timer.start()
+				yield(timer, "timeout")
+				timer.queue_free()
+				card_action(card.get_node("action").get_text(), is_player, "", card)
+				level.update_text_overlays()
+				card.modulate = Color(1, 1, 1, 1)
+			player_display_turn = true
+		
+
+
+func apply_text_effect(text_type, text, is_player=true, card=null):
 	# sTEXT_EFECT 
 	if get_node("/root").has_node("level"):
 		var level = get_node("/root/level")
@@ -440,9 +512,15 @@ func apply_text_effect(text_type, text, is_player=true):
 			get_node("/root").call_deferred("add_child", effect)
 			effect.get_node("anim_controller/text").set_text(str(text))
 			if is_player:
-				effect.position = Vector2(450, 150)
+				if card:
+					effect.position = card.global_position
+				else:
+					effect.position = Vector2(450, 150)
 			else:
-				effect.position = Vector2(450, 700)
+				if card:
+					effect.position = card.global_position
+				else:
+					effect.position = Vector2(450, 700)
 			effect.get_node("anim").play(hurt)
 		elif text_type == heat:
 			var effect = main.TEXT_EFECT.instance()
@@ -458,9 +536,7 @@ func apply_text_effect(text_type, text, is_player=true):
 func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 	# try first person over parralax paper baclgrounds?
 	###
-	
-	
-	
+
 	act_str = act_str.to_lower()
 	avoid_recursion_str = avoid_recursion_str.to_lower()
 	if avoid_recursion_str == act_str:
@@ -468,12 +544,18 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 		return
 	
 	if get_node("/root").has_node("level"):
+		var action_time = .5
+		if card:
+			expand_card_details(card)
+			card.modulate = Color(.4, .4, 1, 1)
 		var level = get_node("/root/level")
 		print(str(card.get_node("tags").get_text().split(",")) + " act_str " + act_str + " avoid_recursion_str " + avoid_recursion_str)
 		if is_player:
 			if meta.current_player_heat > meta.max_player_heat:
 				meta.current_player_heat = 0
 				print("OVERHEATING")
+				if card:
+					card.modulate = Color(1, 1, 1, 1)
 				return
 
 			# ACTIVATING cards applies basic stats if present on card like when player, 
@@ -498,25 +580,27 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 			########
 			var heat = int(card.get_node("detail_6").get_text()) + meta.player_heat_production_bonus
 			if atks > 0:
-				heat = 0
 				for atk in range(0, atks):
-					heat += int(card.get_node("detail_6").get_text()) + meta.player_heat_production_bonus
-					print("heat: " +str(heat) + " atks: " + str(atks) + " atk: " + str(atk))
+					# print("heat: " +str(heat) + " atks: " + str(atks) + " atk: " + str(atk))
 					if dmg > 0:
 						var timer = Timer.new()
 						get_node("/root").add_child(timer)
-						timer.set_wait_time(.15)
+						timer.set_wait_time(action_time)
 						timer.set_one_shot(true)
 						timer.start()
 						yield(timer, "timeout")
 						timer.queue_free()
+						main.cameraShake(2, (action_time*.4))
 						apply_text_effect("hurt", "- " + str(dmg)) #TEXT_EFECT
 						meta.enm_total_health -= int(dmg)
-					apply_text_effect("heat", "- " + str(heat)) #TEXT_EFECT
-					meta.current_player_heat += int(heat)
+					apply_text_effect("heat", "+ " + str(heat)) #TEXT_EFECT
+					meta.current_player_heat += heat
 					level.update_text_overlays()
 			else:
-				meta.current_player_heat += heat
+				if heat > 0:
+					meta.current_player_heat -= heat
+					main.cameraShake(.6, (action_time*.4))
+					apply_text_effect("heat", "- " + str(heat)) #TEXT_EFECT
 				level.update_text_overlays()
 
 			if act_str == GAIN_START_DRAW_1 and not "stop_" in avoid_recursion_str:
@@ -524,32 +608,75 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 				meta.current_salvage += 10
 			elif act_str == COOL_OFF_1 and not "stop_" in avoid_recursion_str:
 				var total_heat_count = 0
+				print("COOL_OFF_1 " + str(COOL_OFF_1))
 				for weapon_card in level.player_right_arm_list:
 					for tag in weapon_card.get_node("tags").get_text().split(","):
 						if tag == HEAT:
+							main.cameraShake(.6, (action_time*.4))
+							expand_card_details(weapon_card)
 							total_heat_count += 1
+							var timer = Timer.new()
+							get_node("/root").add_child(timer)
+							timer.set_wait_time(action_time)
+							timer.set_one_shot(true)
+							timer.start()
+							yield(timer, "timeout")
+							timer.queue_free()
+							apply_text_effect("skill", "- " + str(heat)) #TEXT_EFECT
 							break
 				
 				for weapon_card in level.player_left_arm_list:
 					for tag in weapon_card.get_node("tags").get_text().split(","):
 						if tag == HEAT:
+							main.cameraShake(.6, (action_time*.4))
+							expand_card_details(weapon_card)
 							total_heat_count += 1
+							var timer = Timer.new()
+							get_node("/root").add_child(timer)
+							timer.set_wait_time(action_time)
+							timer.set_one_shot(true)
+							timer.start()
+							yield(timer, "timeout")
+							timer.queue_free()
+							apply_text_effect("skill", "+ 1") #TEXT_EFECT
 							break
 				
 				for weapon_card in level.player_chassis_list:
 					for tag in weapon_card.get_node("tags").get_text().split(","):
 						if tag == HEAT:
+							main.cameraShake(.6, (action_time*.4))
+							expand_card_details(weapon_card)
 							total_heat_count += 1
+							var timer = Timer.new()
+							get_node("/root").add_child(timer)
+							timer.set_wait_time(action_time)
+							timer.set_one_shot(true)
+							timer.start()
+							yield(timer, "timeout")
+							timer.queue_free()
+							apply_text_effect("heat", "+ 1") #TEXT_EFECT
 							break
 				
 				for weapon_card in level.player_leg_list:
 					for tag in weapon_card.get_node("tags").get_text().split(","):
 						if tag == HEAT:
+							main.cameraShake(.6, (action_time*.4))
+							expand_card_details(weapon_card)
 							total_heat_count += 1
+							var timer = Timer.new()
+							get_node("/root").add_child(timer)
+							timer.set_wait_time(action_time)
+							timer.set_one_shot(true)
+							timer.start()
+							yield(timer, "timeout")
+							timer.queue_free()
+							apply_text_effect("heat", "+ 1") #TEXT_EFECT
 							break
 				print("total_heat_count: " + str(total_heat_count))
 				meta.current_player_heat -= total_heat_count
 				level.update_text_overlays()
+				if card:
+					card.modulate = Color(1, 1, 1, 1)
 				return
 
 			elif act_str == IMPACT_LAUNCHER_ABILITY_1 and not "stop_" in avoid_recursion_str:
@@ -558,18 +685,47 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 					var skill_impact_count = 0
 					for tag in card.get_node("tags").get_text().split(","):
 						if IMPACT == tag:
-							print(card.get_node("action").get_text().to_lower())
-							card_action(card.get_node("action").get_text(), is_player, "stop_"+act_str, card)
+							main.cameraShake(.6, (action_time*.4))
+							expand_card_details(weapon_card)
+							#card_action(card.get_node("action").get_text(), is_player, "stop_"+act_str, card)
 							skill_impact_count += 1
-							# need delay
+							meta.enm_total_health -= int(dmg)
+							var timer = Timer.new()
+							get_node("/root").add_child(timer)
+							timer.set_wait_time(action_time)
+							timer.set_one_shot(true)
+							timer.start()
+							yield(timer, "timeout")
+							timer.queue_free()
+							apply_text_effect("heat", "+ 1") #TEXT_EFECT
+							break
+					meta.enm_total_health -= int(skill_impact_count)
+					apply_text_effect("hurt", "- " + str(skill_impact_count)) #TEXT_EFECT
+
 				for weapon_card in level.player_left_arm_list:
 					var skill_impact_count = 0
 					for tag in card.get_node("tags").get_text().split(","):
 						if IMPACT == tag:
-							card_action(card.get_node("action").get_text(), is_player, "stop_"+act_str, card)
+							main.cameraShake(.6, (action_time*.4))
+							expand_card_details(weapon_card)
+							#card_action(card.get_node("action").get_text(), is_player, "stop_"+act_str, card)
 							skill_impact_count += 1
-							# need delay
+							var timer = Timer.new()
+							get_node("/root").add_child(timer)
+							timer.set_wait_time(action_time)
+							timer.set_one_shot(true)
+							timer.start()
+							yield(timer, "timeout")
+							timer.queue_free()
+							apply_text_effect("heat", "+ 1") #TEXT_EFECT
+							break
+					meta.enm_total_health -= int(skill_impact_count)
+					main.cameraShake(skill_impact_count*.5, (action_time*.4))
+					apply_text_effect("hurt", "- " + str(skill_impact_count)) #TEXT_EFECT
+		if card:
+			card.modulate = Color(1, 1, 1, 1)
 		level.update_text_overlays()
+		reset_display_card_sizes()
 
 func play_card(player_card_list, player_card_idx, is_player=true):
 	# card_action(player_card_list[player_card_idx][CARD_ACTION], is_player, "")
@@ -626,7 +782,7 @@ func place_card_in_display(player_card_list, player_card_idx, tableau_list=null)
 	print("***player_tableau_list: " + str(len(level.player_tableau_list)))
 	for card in level.player_tableau_list:
 		print(card.get_node("title").get_text())
-
+	reset_display_card_sizes()
 
 func reset_display_card_sizes():
 	if get_node("/root").has_node("level"):
@@ -651,35 +807,42 @@ func reset_hand_card_sizes():
 	
 
 
-func expand_card_details():
+func expand_card_details(chosen_card=false):
 	if get_node("/root").has_node("level") and not card_expanded:
 		card_expanded = true
 		var level = get_node("/root/level")
 		var current_location = Vector2(0, 0)
-		var zoom_size = Vector2(2, 2)
-		var card_zoomed_location = Vector2(400, 400)
+		var zoom_size = Vector2(1.7, 1.7)
+		var smaller_zoom_size = Vector2(1.2, 1.2)
+		var card_zoomed_location = Vector2(400, 900)
+		var zoomed_idx = 200
 		reset_display_card_sizes()
 		handle_cards_in_display()
-		if level.list_navigation_idx >= 0:
+		if chosen_card:
+			chosen_card.z_index = zoomed_idx
+			chosen_card.set_scale(smaller_zoom_size)
+		elif level.list_navigation_idx >= 0:
 			print("here? " + current_card_menu + " list_navigation_idx: " + str(level.list_navigation_idx))
 			if current_card_menu == level.CHASSIS_MENU\
 			   and len(level.player_chassis_list) > 0 and level.list_navigation_idx < len(level.player_chassis_list):
 				level.player_chassis_list[level.list_navigation_idx].set_scale(zoom_size)
 				level.player_chassis_list[level.list_navigation_idx].position = card_zoomed_location
+				level.player_chassis_list[level.list_navigation_idx].z_index = zoomed_idx
 			elif current_card_menu == level.LEFT_ARM_MENU\
 			   and len(level.player_left_arm_list) > 0 and level.list_navigation_idx < len(level.player_left_arm_list):
 				level.player_left_arm_list[level.list_navigation_idx].set_scale(zoom_size)
 				level.player_left_arm_list[level.list_navigation_idx].position = card_zoomed_location
+				level.player_left_arm_list[level.list_navigation_idx].z_index = zoomed_idx
 			elif current_card_menu == level.RIGHT_ARM_MENU\
 			   and len(level.player_right_arm_list) > 0 and level.list_navigation_idx < len(level.player_right_arm_list):
 				level.player_right_arm_list[level.list_navigation_idx].set_scale(zoom_size)
 				level.player_right_arm_list[level.list_navigation_idx].position = card_zoomed_location
-	
+				level.player_right_arm_list[level.list_navigation_idx].z_index = zoomed_idx
 			elif current_card_menu == level.LEGS_MENU\
 			   and len(level.player_leg_list) > 0 and level.list_navigation_idx < len(level.player_leg_list):
 				level.player_leg_list[level.list_navigation_idx].set_scale(zoom_size)
 				level.player_leg_list[level.list_navigation_idx].position = card_zoomed_location
-
+				level.player_leg_list[level.list_navigation_idx].z_index = zoomed_idx
 			else:
 				current_card_menu = "hand"
 	elif card_expanded:
@@ -750,14 +913,16 @@ func change_hand_idx(val=0):
 	if len(hand) > 0 and hand[hand_idx] and main.checkIfNodeDeleted(hand[hand_idx]) == false:
 		hand[hand_idx].modulate = Color(1, 1, 1, 1)
 		hand[hand_idx].z_index = idx + 122
+		expand_card_details(hand[hand_idx])
 
 
 func set_card_img(new_card, card_payload):
-		if card_payload[CARD_TYPE] == WEAPON_CARD\
-		   or card_payload[CARD_TYPE] == LEG_CARD:
-			new_card.get_node("inner_art_container/background").set_texture(main.CARD_DARK_BACKGROUND_1)
+		if card_payload[CARD_TYPE] == WEAPON_CARD:
+			new_card.get_node("inner_art_container/background").set_texture(main.CARD_RED_BACKGROUND_1)
+		elif card_payload[CARD_TYPE] == LEG_CARD:
+			new_card.get_node("inner_art_container/background").set_texture(main.CARD_YELLOW_BACKGROUND_1)
 		else:
-			new_card.get_node("inner_art_container/background").set_texture(main.CARD_LIGHT_BACKGROUND_1)
+			new_card.get_node("inner_art_container/background").set_texture(main.CARD_BLUE_BACKGROUND_1)
 		if card_payload[IMG_PATH] and false == true:
 			new_card.get_node("inner_art_container/sprite").set_texture(card_payload[IMG_PATH])
 
@@ -780,12 +945,12 @@ func spawn_cards(hand_limit, is_player=true, deck=starting_deck):
 			card_detail_list.append(rand_card)
 			hand.append(new_card)
 			if card == 0:
-				new_card.position = Vector2((400) + 250 / (meta.player_hand_limit), 800)
+				new_card.position = Vector2((400) + 250 / (meta.player_hand_limit), 725)
 				og_card_pos = new_card.position
 			else:
 				new_card.position = og_card_pos
 				new_card.position.x += (card * 250)
-				new_card.position.y = 800
+				new_card.position.y = 725
 				#Vector2((card * 175) + 400 / (hand_limit), 800)
 	else:
 		enm_hand = []
@@ -952,9 +1117,9 @@ func update_display_card(card_node, card_payload):
 		if CARD_ACTION in card_payload:
 			card_node.get_node("action").set_text(card_payload[CARD_ACTION])
 		if WEAPON_DAMAGE_TYPE in card_payload:
-			card_node.get_node("detail_6").set_text(str(card_payload[WEAPON_DAMAGE_TYPE]))
+			card_node.get_node("detail_1").set_text(str(card_payload[WEAPON_DAMAGE_TYPE]))
 		else:
-			card_node.get_node("detail_6").set_text("")
+			card_node.get_node("detail_1").set_text("")
 		if DAMAGE in card_payload:
 			card_node.get_node("detail_5").set_text(str(card_payload[DAMAGE]))
 		else:
@@ -985,7 +1150,7 @@ func update_display_card(card_node, card_payload):
 			card_node.get_node("detail_6").set_text("")
 		#####
 		var bottom_section_text = ""
-		var title_text = "-- " + card_payload[TITLE].to_upper() + " --"
+		var title_text = card_payload[TITLE].to_upper()
 		card_node.get_node("title").set_text(title_text)
 		if DESCRIPTION in card_payload:
 			bottom_section_text += card_payload[DESCRIPTION]+"\n"
