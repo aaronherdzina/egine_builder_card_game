@@ -46,20 +46,15 @@ func cycle_active_menu_lists(val):
 
 
 func update_text_overlays():
-	get_node("/root/level").get_node("text_cont/enemy_health").set_text(str(meta.enm_total_health))
-	get_node("/root/level").get_node("text_cont/enemy_heat").set_text(str(meta.current_enm_heat))
-	get_node("/root/level").get_node("text_cont/enemy_heat_max").set_text(str(meta.max_enm_heat))
+	get_node("/root/level").get_node("text_cont/enemy_health").set_text(str(meta.enemy_health))
+	get_node("/root/level").get_node("text_cont/enemy_hunger").set_text(str(meta.current_enemy_hunger))
+	get_node("/root/level").get_node("text_cont/enemy_hunger_max").set_text(str(meta.max_enemy_hunger))
 	get_node("/root/level").get_node("text_cont/player_health").set_text(str(meta.player_health))
-	get_node("/root/level").get_node("text_cont/player_heat").set_text(str(meta.current_player_heat))
-	get_node("/root/level").get_node("text_cont/player_heat_max").set_text(str(meta.max_player_heat))
-	
+	get_node("/root/level").get_node("text_cont/player_hunger").set_text(str(meta.current_player_hunger))
+	get_node("/root/level").get_node("text_cont/player_hunger_max").set_text(str(meta.max_player_hunger))
 
 
-func cycle_current_card_menu(val):
-	""" Deck card navigation logic in Cards.gd Think about moving here """
-	list_navigation_idx += val
-	current_menu = Cards.current_card_menu
-	
+func reset_card_z_indexes():
 	for card in player_chassis_list:
 		card.modulate = Color(.75, .75, .75, 1)
 		card.set_scale(Vector2(.5, .5))
@@ -80,6 +75,36 @@ func cycle_current_card_menu(val):
 		card.set_scale(Vector2(.5, .5))
 		card.get_node("text").visible = false
 		card.z_index = 1
+
+
+	for card in enemy_chassis_list:
+		card.modulate = Color(.75, .75, .75, 1)
+		card.set_scale(Vector2(.5, .5))
+		card.get_node("text").visible = false
+		card.z_index = 1
+	for card in enemy_right_arm_list:
+		card.modulate = Color(.75, .75, .75, 1)
+		card.set_scale(Vector2(.5, .5))
+		card.get_node("text").visible = false
+		card.z_index = 1
+	for card in enemy_left_arm_list:
+		card.modulate = Color(.75, .75, .75, 1)
+		card.set_scale(Vector2(.5, .5))
+		card.get_node("text").visible = false
+		card.z_index = 1
+	for card in enemy_leg_list:
+		card.modulate = Color(.75, .75, .75, 1)
+		card.set_scale(Vector2(.5, .5))
+		card.get_node("text").visible = false
+		card.z_index = 1
+
+
+func cycle_current_card_menu(val):
+	""" Deck card navigation logic in Cards.gd Think about moving here """
+	list_navigation_idx += val
+	current_menu = Cards.current_card_menu
+	
+	reset_card_z_indexes()
 
 	if current_menu == CHASSIS_MENU and len(player_chassis_list) > 0:
 		if list_navigation_idx < 0:

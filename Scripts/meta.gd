@@ -11,21 +11,42 @@ var player_turn = true
 var occupied_tile_weight = 1000
 var unccupied_tile_weight = 1
 var wall_tile_weight = 2000
-var enm_total_health = 1000
-var current_enm_heat = 0
-var max_enm_heat = 300
-
-var current_player_heat = 0
-var max_player_heat = 700
+var current_player_hunger = 0
+var max_player_hunger = 400
 
 var player_toughness_bonus = 0
 var player_health_bonus = 0
 var player_defense_bonus = 0
-var player_heat_production_bonus = 0
+var player_hunger_production_bonus = 0
+var player_water_bonus = 0
 var player_attacks_bonus = 0
 var player_damage_bonus = 0
+var player_hunger_damage = 250
 
-var player_health = 2000
+var enm_total_health = 300
+var enemy_health = 300
+var enemy_water = 50
+var enemy_food = 20
+var current_enemy_hunger = 0
+var max_enemy_hunger = 300
+var enemy_hunger_damage = 150
+
+var enemy_toughness_bonus = 0
+var enemy_health_bonus = 0
+var enemy_defense_bonus = 0
+var enemy_hunger_production_bonus = 0
+var enemy_water_bonus = 0
+var enemy_attacks_bonus = 0
+var enemy_damage_bonus = 0
+var enemy_defense = 10
+var enemy_toughnes = 0
+var enemy_hand_limit = 3
+var enemy_hand_limit_default = 3
+var enemy_hand_limit_max = 6
+
+var player_health = 500
+var player_water = 50
+var player_food = 20
 var player_defense = 10
 var player_toughnes = 0
 var player_hand_limit = 3
@@ -53,7 +74,7 @@ func _ready():
 ### Cards
 
 
-func action_phase(player_turn=true):
+func action_phase():
 	# when cards in tableau are played
 	if get_node("/root").has_node("level"):
 		var l = get_node("/root/level")

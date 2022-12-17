@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Scripts/card_level.gd" type="Script" id=1]
 [ext_resource path="res://Sprites/General/blueDot.png" type="Texture" id=2]
-[ext_resource path="res://fonts/font3 copy.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://fonts/newfont2 copy.ttf" type="DynamicFontData" id=3]
 [ext_resource path="res://Sprites/General/basic tile.png" type="Texture" id=5]
 [ext_resource path="res://Sprites/UI/Untitled_Artwork 2.png" type="Texture" id=6]
 [ext_resource path="res://Sprites/tiles/basic/gridrpgWall.png" type="Texture" id=7]
@@ -10,7 +10,7 @@
 [ext_resource path="res://Sprites/example back.png" type="Texture" id=9]
 
 [sub_resource type="DynamicFont" id=1]
-size = 55
+size = 25
 font_data = ExtResource( 3 )
 
 [node name="level" type="Node2D"]
@@ -20,7 +20,7 @@ script = ExtResource( 1 )
 z_index = -100
 
 [node name="Sprite2" type="Sprite" parent="background_imgs"]
-modulate = Color( 0.862745, 1, 0.807843, 1 )
+modulate = Color( 0.27451, 0.352941, 0.27451, 1 )
 position = Vector2( 960, 568 )
 scale = Vector2( 3.49333, 4 )
 texture = ExtResource( 6 )
@@ -32,50 +32,48 @@ scale = Vector2( 0.976562, 0.589844 )
 texture = ExtResource( 9 )
 
 [node name="tableau_container" type="Node2D" parent="."]
-position = Vector2( -150, 0 )
+position = Vector2( -968, -64 )
 
 [node name="player_tableau" type="Sprite" parent="tableau_container"]
-visible = false
-modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 1536, 672 )
-scale = Vector2( 0.3125, 0.34375 )
+modulate = Color( 0.784314, 1, 0.784314, 1 )
+position = Vector2( 1552, 672 )
+scale = Vector2( 1.1, 2.2 )
 z_index = -1
-texture = ExtResource( 5 )
+texture = ExtResource( 6 )
 
 [node name="chassis" type="Node2D" parent="tableau_container"]
-position = Vector2( 1376, 480 )
+position = Vector2( 1360, 528 )
 
 [node name="right_arm" type="Node2D" parent="tableau_container"]
-position = Vector2( 1672, 384 )
+position = Vector2( 1248, 832 )
 
 [node name="left_arm" type="Node2D" parent="tableau_container"]
-position = Vector2( 1280, 384 )
+position = Vector2( 1248, 440 )
 
 [node name="legs" type="Node2D" parent="tableau_container"]
-position = Vector2( 1232, 832 )
+position = Vector2( 1352, 736 )
 
 [node name="enemy_tableau_container" type="Node2D" parent="."]
-position = Vector2( -1184, -296 )
+position = Vector2( -200, -64 )
 
 [node name="enemy_tableau" type="Sprite" parent="enemy_tableau_container"]
-visible = false
-modulate = Color( 0, 0, 0, 1 )
+modulate = Color( 0.784314, 1, 0.784314, 1 )
 position = Vector2( 1536, 672 )
-scale = Vector2( 0.3125, 0.34375 )
+scale = Vector2( 1.1, 2.2 )
 z_index = -1
-texture = ExtResource( 5 )
+texture = ExtResource( 6 )
 
 [node name="chassis" type="Node2D" parent="enemy_tableau_container"]
-position = Vector2( 1472, 344 )
+position = Vector2( 1370, 536 )
 
 [node name="right_arm" type="Node2D" parent="enemy_tableau_container"]
-position = Vector2( 1672, 384 )
+position = Vector2( 1666, 440 )
 
 [node name="left_arm" type="Node2D" parent="enemy_tableau_container"]
-position = Vector2( 1280, 384 )
+position = Vector2( 1280, 440 )
 
 [node name="legs" type="Node2D" parent="enemy_tableau_container"]
-position = Vector2( 1232, 832 )
+position = Vector2( 1256, 736 )
 
 [node name="text_overlay" type="Node2D" parent="."]
 position = Vector2( 962.372, 995.23 )
@@ -132,18 +130,18 @@ texture = ExtResource( 8 )
 
 [node name="line" type="Sprite" parent="."]
 self_modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 1020.81, 1263.27 )
+position = Vector2( 1016, 1315.62 )
 rotation = 1.5708
-scale = Vector2( 0.297675, 1.52838 )
+scale = Vector2( 0.247266, 1.52838 )
 z_index = 105
 texture = ExtResource( 5 )
 
 [node name="line2" type="Sprite" parent="."]
 self_modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 1024, -180.728 )
+position = Vector2( 1024, -196.021 )
 rotation = 1.5708
-scale = Vector2( 0.281102, 1.36887 )
-z_index = 105
+scale = Vector2( 0.269363, 1.36887 )
+z_index = 500
 texture = ExtResource( 5 )
 
 [node name="Button" type="Button" parent="."]
@@ -178,93 +176,190 @@ __meta__ = {
 }
 
 [node name="text_cont" type="Node2D" parent="."]
+position = Vector2( -16, 48 )
 z_index = 150
 
-[node name="enemy_heat_max" type="Label" parent="text_cont"]
-margin_left = 1408.0
-margin_top = 34.0
-margin_right = 1733.0
-margin_bottom = 97.0
-rect_scale = Vector2( 1.5, 1.5 )
-custom_fonts/font = SubResource( 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "1000"
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="enemy_health" type="Label" parent="text_cont"]
-margin_left = 43.0
-margin_top = 34.0
-margin_right = 654.0
-margin_bottom = 97.0
+margin_left = 1032.0
+margin_top = 120.0
+margin_right = 1171.0
+margin_bottom = 180.0
 rect_scale = Vector2( 1.5, 1.5 )
 custom_fonts/font = SubResource( 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "1000"
-align = 1
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="enemy_heat" type="Label" parent="text_cont"]
-margin_left = 960.0
-margin_top = 34.0
-margin_right = 1259.0
-margin_bottom = 97.0
+[node name="enemy_hunger" type="Label" parent="text_cont"]
+margin_left = 1256.0
+margin_top = 120.0
+margin_right = 1384.0
+margin_bottom = 180.0
 rect_scale = Vector2( 1.5, 1.5 )
 custom_fonts/font = SubResource( 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "1000"
-align = 1
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="enemy_hunger_max" type="Label" parent="text_cont"]
+margin_left = 1464.0
+margin_top = 120.0
+margin_right = 1592.0
+margin_bottom = 180.0
+rect_scale = Vector2( 1.5, 1.5 )
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+text = "1000"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="enemy_health_label" type="Label" parent="text_cont"]
+margin_left = 1072.0
+margin_top = 72.0
+margin_right = 1211.0
+margin_bottom = 132.0
+rect_scale = Vector2( 1.5, 1.5 )
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+text = "HP"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="enemy_hunger_label" type="Label" parent="text_cont"]
+margin_left = 1232.0
+margin_top = 72.0
+margin_right = 1382.0
+margin_bottom = 132.0
+rect_scale = Vector2( 1.5, 1.5 )
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+text = "Hunger"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="enemy_hunger_max_label" type="Label" parent="text_cont"]
+margin_left = 1456.0
+margin_top = 72.0
+margin_right = 1595.0
+margin_bottom = 132.0
+rect_scale = Vector2( 1.5, 1.5 )
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+text = "/max"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="enemy_health_max_pos" type="Position2D" parent="text_cont"]
+position = Vector2( 1090, 170 )
+
+[node name="enemy_hunger_max_pos" type="Position2D" parent="text_cont"]
+position = Vector2( 1528, 168 )
+
+[node name="enemy_hunger_pos" type="Position2D" parent="text_cont"]
+position = Vector2( 1320, 168 )
+
+[node name="player_health_max_pos" type="Position2D" parent="text_cont"]
+position = Vector2( 346, 170 )
+
+[node name="player_hunger_max_pos" type="Position2D" parent="text_cont"]
+position = Vector2( 788, 172 )
+
+[node name="player_hunger_pos" type="Position2D" parent="text_cont"]
+position = Vector2( 572, 172 )
 
 [node name="player_health" type="Label" parent="text_cont"]
-margin_left = 40.0
-margin_top = 960.0
-margin_right = 653.0
-margin_bottom = 1019.0
+margin_left = 280.0
+margin_top = 120.0
+margin_right = 419.0
+margin_bottom = 180.0
 rect_scale = Vector2( 1.5, 1.5 )
 custom_fonts/font = SubResource( 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "1000"
-align = 1
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="player_heat" type="Label" parent="text_cont"]
-margin_left = 960.0
-margin_top = 960.0
-margin_right = 1259.0
-margin_bottom = 1019.0
+[node name="player_health_label" type="Label" parent="text_cont"]
+margin_left = 320.0
+margin_top = 72.0
+margin_right = 459.0
+margin_bottom = 132.0
 rect_scale = Vector2( 1.5, 1.5 )
 custom_fonts/font = SubResource( 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "1000"
-align = 1
+text = "HP"
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="player_heat_max" type="Label" parent="text_cont"]
-margin_left = 1408.0
-margin_top = 960.0
-margin_right = 1707.0
-margin_bottom = 1019.0
+[node name="player_hunger" type="Label" parent="text_cont"]
+margin_left = 512.0
+margin_top = 120.0
+margin_right = 640.0
+margin_bottom = 180.0
 rect_scale = Vector2( 1.5, 1.5 )
 custom_fonts/font = SubResource( 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "1000"
-align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="player_hunger_label" type="Label" parent="text_cont"]
+margin_left = 488.0
+margin_top = 72.0
+margin_right = 638.0
+margin_bottom = 132.0
+rect_scale = Vector2( 1.5, 1.5 )
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+text = "Hunger"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="player_hunger_max" type="Label" parent="text_cont"]
+margin_left = 728.0
+margin_top = 120.0
+margin_right = 856.0
+margin_bottom = 180.0
+rect_scale = Vector2( 1.5, 1.5 )
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+text = "1000"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="enemy_hunger_max_label2" type="Label" parent="text_cont"]
+margin_left = 712.0
+margin_top = 72.0
+margin_right = 840.0
+margin_bottom = 132.0
+rect_scale = Vector2( 1.5, 1.5 )
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+text = "/max"
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false

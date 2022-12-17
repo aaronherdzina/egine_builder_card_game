@@ -1,9 +1,9 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://fonts/font3 copy.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://fonts/newfont2 copy.ttf" type="DynamicFontData" id=1]
 
-[sub_resource type="Animation" id=4]
-resource_name = "heat"
+[sub_resource type="Animation" id=1]
+resource_name = "hunger"
 length = 10.0
 tracks/0/type = "value"
 tracks/0/path = NodePath("anim_controller/text:custom_colors/default_color")
@@ -36,7 +36,7 @@ tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/keys = {
-"times": PoolRealArray( 0, 0.4, 0.7, 4.6, 10 ),
+"times": PoolRealArray( 0, 0.4, 0.7, 2, 3.3 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
 "update": 0,
 "values": [ Vector2( 1, 1 ), Vector2( 0.5, 0.5 ), Vector2( 0.6, 0.6 ), Vector2( 1, 1 ), Vector2( 0.1, 0.1 ) ]
@@ -48,7 +48,7 @@ tracks/3/loop_wrap = true
 tracks/3/imported = false
 tracks/3/enabled = true
 tracks/3/keys = {
-"times": PoolRealArray( 0, 10 ),
+"times": PoolRealArray( 0, 3.3 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
 "values": [ Vector2( 0, 0 ), Vector2( 50, -200 ) ]
@@ -72,7 +72,83 @@ tracks/5/loop_wrap = true
 tracks/5/imported = false
 tracks/5/enabled = true
 tracks/5/keys = {
-"times": PoolRealArray( 0, 10 ),
+"times": PoolRealArray( 0, 3.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "hunger up"
+length = 10.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("anim_controller/text:custom_colors/default_color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.4, 1, 7.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 0.659754 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 0.215686, 0.0588235, 0.0588235, 1 ), Color( 0.0980392, 0.0980392, 0.686275, 1 ), Color( 1, 1, 1, 0.686275 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("anim_controller:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.5, 0.7, 0.9, 1.2, 2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 30.0, -25.0, 46.0, 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("anim_controller:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.3, 0.7, 2, 3.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0.5, 0.5 ), Vector2( 1, 1 ), Vector2( 0.6, 0.6 ), Vector2( 1, 1 ), Vector2( 0.1, 0.1 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("anim_controller:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0.4, 3.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( 50, -200 ) ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("anim_controller/text:rect_scale")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0, 0.1, 0.5, 0.7 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 1.1, 1.1 ), Vector2( 0.9, 0.9 ), Vector2( 1, 1 ) ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("anim_controller:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0, 3.3 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ true, false ]
@@ -112,7 +188,7 @@ tracks/2/loop_wrap = true
 tracks/2/imported = false
 tracks/2/enabled = true
 tracks/2/keys = {
-"times": PoolRealArray( 0, 0.4, 0.7, 4.6, 10 ),
+"times": PoolRealArray( 0, 0.4, 0.7, 2.4, 4 ),
 "transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
 "update": 0,
 "values": [ Vector2( 1, 1 ), Vector2( 0.5, 0.5 ), Vector2( 0.6, 0.6 ), Vector2( 1, 1 ), Vector2( 0.1, 0.1 ) ]
@@ -124,7 +200,7 @@ tracks/3/loop_wrap = true
 tracks/3/imported = false
 tracks/3/enabled = true
 tracks/3/keys = {
-"times": PoolRealArray( 0, 10 ),
+"times": PoolRealArray( 0, 5.6 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
 "values": [ Vector2( 0, 0 ), Vector2( 200, -500 ) ]
@@ -148,7 +224,7 @@ tracks/5/loop_wrap = true
 tracks/5/imported = false
 tracks/5/enabled = true
 tracks/5/keys = {
-"times": PoolRealArray( 0, 10 ),
+"times": PoolRealArray( 0, 6.5 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ true, false ]
@@ -166,8 +242,9 @@ font_data = ExtResource( 1 )
 z_index = 150
 
 [node name="anim" type="AnimationPlayer" parent="."]
-playback_speed = 2.0
-anims/heat = SubResource( 4 )
+playback_speed = 3.0
+anims/hunger = SubResource( 1 )
+"anims/hunger up" = SubResource( 4 )
 anims/hurt = SubResource( 2 )
 
 [node name="anim_controller" type="Node2D" parent="."]
@@ -178,8 +255,8 @@ scale = Vector2( 0.1, 0.1 )
 [node name="Sprite" type="Sprite" parent="anim_controller"]
 
 [node name="text" type="RichTextLabel" parent="anim_controller"]
-margin_right = 159.0
-margin_bottom = 138.0
+margin_right = 418.0
+margin_bottom = 423.0
 custom_fonts/normal_font = SubResource( 3 )
 custom_colors/default_color = Color( 1, 1, 1, 0.686275 )
 text = "0"

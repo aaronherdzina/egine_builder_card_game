@@ -5,10 +5,26 @@ const debug = true # for dev
 # CARDS
 const CARD = preload("res://Scenes/card.tscn")
 
-const CARD_BLUE_BACKGROUND_1 = preload("res://Sprites/cards/blue card.png")
-const CARD_RED_BACKGROUND_1 = preload("res://Sprites/cards/red card.png")
-const CARD_YELLOW_BACKGROUND_1 = preload("res://Sprites/cards/yellow card.png")
-###
+const CARD_BLUE_BACKGROUND_1 = preload("res://Sprites/cards/blue card background.png")
+const CARD_GREY_BACKGROUND_1 = preload("res://Sprites/cards/grey caerd background.png")
+const CARD_RED_BACKGROUND_1 = preload("res://Sprites/cards/red card background.png")
+const CARD_GREEN_BACKGROUND_1 = preload("res://Sprites/cards/forest card background.png")
+const CARD_YELLOW_BACKGROUND_1 = preload("res://Sprites/cards/savanahha background.png")
+
+## Card sprites
+
+const TRIPPLE_ELEPHANT = preload("res://Sprites/char/Card-game-8.png")
+const BEAR_LIKE = preload("res://Sprites/char/bear thingy.png")
+const LARGE_ELEPHANT = preload("res://Sprites/char/Card-game-9.png")
+const SMALL_ELEPHANT = preload("res://Sprites/char/Card-game-10.png")
+const ROCK_FOX = preload("res://Sprites/char/Card-game-11.png")
+const PLASMA_GUN = preload("res://Sprites/char/gun bear.png")
+
+
+
+######
+
+
 
 const TEXT_EFECT = preload("res://Scenes/text_effect.tscn")
 
@@ -156,34 +172,29 @@ func _input(event):
 func handle_in_battle_input(action):
 	# var level = get_node("/root/level")
 	if action == "spacebar":
-		if not get_node("/root").has_node("level"):
-			var level = main.LEVEL.instance()
-			get_node("/root").add_child(level)
-
-		Cards.remove_all_cards_in_hand()
-		if meta.player_hand_limit > meta.player_hand_limit_max:
-			meta.player_hand_limit = meta.player_hand_limit_max
-		Cards.spawn_cards(meta.player_hand_limit)
-		if meta.player_hand_limit > meta.player_hand_limit_default:
-			meta.player_hand_limit = meta.player_hand_limit_default
-		Cards.play_all_display_card_actions()
-		"""
-		var timer = Timer.new()
-		var time = 0.1
-		print("time " + str(time))
-		get_node("/root").add_child(timer)
-		timer.set_wait_time(time)
-		timer.set_one_shot(true)
-		timer.start()
-		yield(timer, "timeout")
-		timer.queue_free()
-		"""
+		if not Cards.waiting:
+			if not get_node("/root").has_node("level"):
+				var level = main.LEVEL.instance()
+				get_node("/root").add_child(level)
+			Cards.take_turn(meta.player_turn)
+			"""
+			var timer = Timer.new()
+			var time = 0.1
+			print("time " + str(time))
+			get_node("/root").add_child(timer)
+			timer.set_wait_time(time)
+			timer.set_one_shot(true)
+			timer.start()
+			yield(timer, "timeout")
+			timer.queue_free()
+			"""
 	elif action == "start":
-		if Cards.current_card_menu != "hand":
-			Cards.expand_card_details()
-		else:
-			Cards.play_card(Cards.hand, Cards.hand_idx)
-			Cards.handle_cards_in_display()
+		if not Cards.waiting:
+			if Cards.current_card_menu != "hand":
+				Cards.expand_card_details()
+			else:
+				Cards.play_card(Cards.hand, Cards.hand_idx)
+				Cards.handle_cards_in_display()
 	elif action == "back": 
 		if meta.player_turn:
 			var player = get_node("/root/player")
@@ -237,12 +248,14 @@ func checkIfNodeDeleted(nodeToCheck, eraseNode=false):
 		return true
 	return false
 
+
 # add nodes to check wether we should allowing clicking
 func canClick(nodesAsStrIfDefinedClickIsFalse=[], parentToCheck=get_node("/root")):
 	for node in nodesAsStrIfDefinedClickIsFalse:
 		if parentToCheck.has_node(node):
 			return false
 	return true
+
 
 func saveAndQuit(shouldSave=true):
 	if shouldSave:
@@ -272,7 +285,6 @@ func cameraShake(mag, length):
 		timer.start()
 		yield(timer, "timeout")
 		timer.queue_free()
-
 
 
 func instancer(objToInstance=null, parent=null, addDeferred=false, addToThisGroup=null, returnObj=true):

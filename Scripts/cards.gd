@@ -12,6 +12,9 @@ extends Node
 # atk range is to represent if the ability buffs, or debuffs someones attack range
 # all values are literal, if targeting an enmy to debuff
 const CHAR_CARD = "char" # chars played onto field
+const FOOD_CARD = "food"
+const WATER_CARD = "water"
+const HUNGER_CARD = "hunger"
 const ID = "id"
 const CHASSIS_CARD = "chassis"
 const LEG_CARD = "leg"
@@ -41,9 +44,10 @@ const RUST = "rust"
 const POISON = "poison"
 const FREEZE = "freeze"
 const STUN = "stun"
-const OVERHEAT = "overheat"
+const OVERHUNGER = "overhunger"
 const WEAPON = "weapon"
 
+const FOOD = "food"
 const FIRE = "fire"
 const WATER = "water"
 const IMPACT = "impact"
@@ -57,7 +61,8 @@ const SHIELD = "shield"
 const ENEMIES = "enemies"
 const ALLIES = "allies"
 const SELF = "self"
-const HEAT_PRODUCTION = "heat_production"
+const HUNGER_PRODUCTION = "hunger_production"
+const FOOD_PRODUCTION = "food_production"
 const ABILITY_RANGE = "ability_range"
 const CARD_ACTION = "card_action"
 const TARGET = "target"
@@ -73,8 +78,9 @@ const CHASIS_ABL_7 = "chasis_ability_7"
 const DESCRIPTION = ""
 const CARD_WAIT_TIME = "card wait time"
 
+const OVEREXTENDED = "overextended"
 const COOLING = "cooling"
-const HEAT = "heat"
+const HUNGER = "hunger"
 const TAGS = "tags"
 ##
 const VOLLEY = "volley"
@@ -96,8 +102,8 @@ const IMG_PATH = "img_path"
 #####
 #####
 const TABLEAU_LIMIT = "tableau_limit"
-const HEAT_LIMIT = "heat_limit"
-const CURRENT_HEAT = "current_heat"
+const HUNGER_LIMIT = "hunger_limit"
+const CURRENT_HUNGER = "current_hunger"
 const RIGHT_ARM_HEALTH = "right_arm_health"
 const RIGHT_ARM_LIMIT = "right_arm_limit" 
 const LEFT_ARM_HEALTH = "left_arm_health"
@@ -117,12 +123,12 @@ var card_light_cobra = {
 	RIGHT_ARM_HEALTH: 20,
 	CHASIS_ABL_1: LIGHT_COBRA_ABILITY_1, # process based on str elsewhere
 	CHASIS_ABL_2: LIGHT_COBRA_ABILITY_2,
-	LEFT_ARM_LIMIT: 2,
-	RIGHT_ARM_LIMIT: 2,
+	LEFT_ARM_LIMIT: 3,
+	RIGHT_ARM_LIMIT: 3,
 	LEG_LIMIT: 3,
 	TABLEAU_LIMIT: 8,
-	IMG_PATH: "",
-	HEAT_LIMIT: 15, # adds to total heat of player, over heating adds overheat cards to deck each turn and disable random parts
+	IMG_PATH: false,
+	HUNGER_LIMIT: 15, # adds to total hunger of player, over hungering adds overhunger cards to deck each turn and disable random parts
 	ATTACK_RANGE: 0, # radius around character, or distance into enmy rank, 0-1 is adjacent
 	DEFENSE: 10, # blocks dmg until depleted, regain after fight
 	TOUGHNESS: 5, # blocks dmg until depleted, regain each round,
@@ -144,13 +150,13 @@ var card_plasma_rifle = {
 	WEAPON_DAMAGE_TYPE: FIRE + "_" + DAMAGE,
 	ATTACKS: 5,
 	DAMAGE: 2,
-	HEAT_PRODUCTION: 8,
-	IMG_PATH: " ",
-	CARD_WAIT_TIME: 1,
+	HUNGER_PRODUCTION: 8,
+	IMG_PATH: main.PLASMA_GUN,
+	CARD_WAIT_TIME: .5,
 	CARD_ACTION: "plasma_rifle_display_ability_1",
 	RECYCLE_ACTION: "",
 	DESCRIPTION: "Deals 1 additional damage for every Fire card attached and raises opponent Heat Production 1 for every 2 Fire cards attached.",
-	TAGS: [FIRE, RIFLE, HEAT]
+	TAGS: [FIRE, RIFLE, HUNGER]
 }
 
 const MISSILE_FLAK = "missile flak"
@@ -161,13 +167,13 @@ var card_missle_flak = {
 	WEAPON_DAMAGE_TYPE: EXPLOSION + "_" + DAMAGE,
 	ATTACKS: 5,
 	DAMAGE: 2,
-	HEAT_PRODUCTION: 3,
-	IMG_PATH: " ",
-	CARD_WAIT_TIME: .5,
+	HUNGER_PRODUCTION: 3,
+	IMG_PATH: main.PLASMA_GUN,
+	CARD_WAIT_TIME: .25,
 	CARD_ACTION: "missile_flak_display_ability_1",
 	RECYCLE_ACTION: "",
 	DESCRIPTION: "Deals 1 additional damage to oppopnent Arm, Leg, and total health for each Missile card attached",
-	TAGS: [MISSILE, EXPLOSION, HEAT]
+	TAGS: [MISSILE, EXPLOSION, HUNGER]
 }
 
 const IMPACT_LAUNCHER_ABILITY_1 = "impact_launcher_display_ability_1"
@@ -179,8 +185,8 @@ var card_impact_launcher = {
 	WEAPON_DAMAGE_TYPE: IMPACT + "_" + DAMAGE,
 	ATTACKS: 2,
 	DAMAGE: 3,
-	HEAT_PRODUCTION: 5,
-	IMG_PATH: " ",
+	HUNGER_PRODUCTION: 5,
+	IMG_PATH: main.PLASMA_GUN,
 	CARD_WAIT_TIME: .75,
 	CARD_ACTION: IMPACT_LAUNCHER_ABILITY_1,
 	RECYCLE_ACTION: "",
@@ -196,8 +202,9 @@ var card_weapon_removal_blade = {
 	WEAPON_DAMAGE_TYPE: BLADE + "_" + DAMAGE,
 	ATTACKS: 2,
 	DAMAGE: 1,
-	IMG_PATH: " ",
-	CARD_WAIT_TIME: .25,
+	HUNGER_PRODUCTION: 1,
+	IMG_PATH: main.PLASMA_GUN,
+	CARD_WAIT_TIME: .15,
 	CARD_ACTION: "weapon_removal_blade_display_ability_1",
 	RECYCLE_ACTION: "",
 	DESCRIPTION: "Deals damage to random opponent arm.\nIf total damage of all [BLADE] cards attached is greater than opponent Toughness and arm hit is at 50% or less health remove arm's first weapon.",
@@ -208,15 +215,15 @@ const TREADS = "treads"
 var card_treads = {
 	TITLE: TREADS,
 	CARD_TYPE: LEG_CARD,
-	HEAT_LIMIT: 3,
-	HEAT_PRODUCTION: 2,
+	HUNGER_LIMIT: 3,
+	HUNGER_PRODUCTION: 2,
 	TABLEAU_LIMIT: 4, 
 	DEFENSE: 15, # blocks dmg until depleted, regain after fight
 	TOUGHNESS: 5, # blocks dmg until depleted, regain each round
-	CARD_WAIT_TIME: .25,
+	CARD_WAIT_TIME: .15,
 	CARD_ACTION: "", # str name of func called elsewher
 	RECYCLE_ACTION: "",
-	IMG_PATH: " ",
+	IMG_PATH: false,
 	DESCRIPTION: "",
 	TAGS: []
 }
@@ -225,11 +232,11 @@ const RIGHT_ARM_SALVO = "right_arm_salvo"
 var card_ability_right_arm_salvo_1 = {
 	TITLE: RIGHT_ARM_SALVO,
 	CARD_TYPE: ABILITY_CARD,
-	HEAT_PRODUCTION: 5,
-	CARD_WAIT_TIME: .25,
+	HUNGER_PRODUCTION: 5,
+	CARD_WAIT_TIME: .15,
 	CARD_ACTION: "activate_right_arm", # str name of func called elsewher
 	RECYCLE_ACTION: "",
-	IMG_PATH: " ",
+	IMG_PATH: false,
 	DESCRIPTION: "Activate each right arm weapon.",
 	TAGS: []
 }
@@ -238,11 +245,11 @@ const LEFT_ARM_SALVO = "left_arm_salvo"
 var card_ability_left_arm_salvo_1 = {
 	TITLE: LEFT_ARM_SALVO,
 	CARD_TYPE: ABILITY_CARD,
-	HEAT_PRODUCTION: 5,
-	CARD_WAIT_TIME: .25,
+	HUNGER_PRODUCTION: 5,
+	CARD_WAIT_TIME: .15,
 	CARD_ACTION: "activate_left_arm", # str name of func called elsewher
 	RECYCLE_ACTION: "",
-	IMG_PATH: " ",
+	IMG_PATH: false,
 	DESCRIPTION: "Activate each left arm weapon.",
 	TAGS: []
 }
@@ -251,11 +258,11 @@ const EMERGENCY_TRANSMISSIONS = "emergency transmissions"
 var card_ability_emergency_transmission = {
 	TITLE: EMERGENCY_TRANSMISSIONS,
 	CARD_TYPE: ABILITY_CARD,
-	HEAT_PRODUCTION: 1,
-	CARD_WAIT_TIME: .25,
+	HUNGER_PRODUCTION: 1,
+	CARD_WAIT_TIME: .15,
 	CARD_ACTION: "draw_2", # str name of func called elsewher
 	RECYCLE_ACTION: "",
-	IMG_PATH: " ",
+	IMG_PATH: main.BEAR_LIKE,
 	DESCRIPTION: "Draw 2 cards",
 	TAGS: []
 }
@@ -264,11 +271,11 @@ const OPEN_FIRE = "open fire"
 var card_ability_open_fire = {
 	TITLE: OPEN_FIRE,
 	CARD_TYPE: ABILITY_CARD,
-	HEAT_PRODUCTION: 1,
-	CARD_WAIT_TIME: .25,
+	HUNGER_PRODUCTION: 1,
+	CARD_WAIT_TIME: .15,
 	CARD_ACTION: "open_fire_1_selected", # str name of func called elsewher
 	RECYCLE_ACTION: "",
-	IMG_PATH: " ",
+	IMG_PATH: main.LARGE_ELEPHANT,
 	DESCRIPTION: "Activate first x weapon of cards from right to left arm equal to your [IMPACT]",
 	TAGS: []
 }
@@ -277,12 +284,12 @@ const SHIELDS_UP = "shields up"
 var card_ability_shields_up = {
 	TITLE: SHIELDS_UP,
 	CARD_TYPE: ABILITY_CARD,
-	HEAT_PRODUCTION: 1,
+	HUNGER_PRODUCTION: 1,
 	DEFENSE: 2,
-	CARD_WAIT_TIME: .5,
+	CARD_WAIT_TIME: .15,
 	CARD_ACTION: "gain_defense", # str name of func called elsewher
 	RECYCLE_ACTION: "",
-	IMG_PATH: " ",
+	IMG_PATH: main.ROCK_FOX,
 	DESCRIPTION: "Gain 5 Defense plus 1 for every attached [SHIELD]",
 	TAGS: [SHIELD]
 }
@@ -292,64 +299,107 @@ const DEFAULT_HAND_LIMIT = 3
 
 const OPEN_FIRE_1_SELECTED = "open_fire_1_selected"
 
-const REINFORCEMENT_TRANSMITTERS_UP = "reinforcement_transmitters_up"
+const CALL_REINFORCEMENTS = "call reinforcements"
 const GAIN_START_DRAW_1 = "gain_start_draw_1"
-var card_chassis_reinforcment_transmitters_up = {
-	TITLE: REINFORCEMENT_TRANSMITTERS_UP,
+var card_chassis_call_reinforcments = {
+	TITLE: CALL_REINFORCEMENTS,
 	CARD_TYPE: CHASSIS_CARD,
-	HEAT_PRODUCTION: 1,
-	HEALTH: 2,
+	HUNGER_PRODUCTION: 5,
 	CARD_WAIT_TIME: .5,
 	CARD_ACTION: GAIN_START_DRAW_1, # str name of func called elsewher
 	RECYCLE_ACTION: "",
-	IMG_PATH: " ",
+	IMG_PATH: main.TRIPPLE_ELEPHANT,
 	DESCRIPTION: "Add 1 to your draw next turn",
 	TAGS: [HEALTH]
 }
 
 
-const COOLING_MEMBRANE = "cooling membrane"
-const COOL_DOWN_1 = "cool_down_1"
-var card_cooling_membrane_1 = {
-	TITLE: COOLING_MEMBRANE,
+const FORAGERS = "foragers"
+const FORAGERS_1 = "foragers_1"
+var card_foragers_1 = {
+	TITLE: FORAGERS,
 	CARD_TYPE: CHASSIS_CARD,
-	HEAT_PRODUCTION: 2,
+	FOOD_PRODUCTION: 2,
+	HUNGER_PRODUCTION: 2,
 	HEALTH: 5,
 	CARD_WAIT_TIME: .5,
-	CARD_ACTION: COOL_DOWN_1, # str name of func called elsewher
+	CARD_ACTION: FORAGERS_1, # str name of func called elsewher
 	RECYCLE_ACTION: "",
-	IMG_PATH: " ",
-	DESCRIPTION: "Heal 5 and reduce [HEAT PRODUCTION] by 2",
+	IMG_PATH: main.BEAR_LIKE,
+	DESCRIPTION: "Heal 5 and reduce [HUNGER PRODUCTION] by 2",
 	TAGS: [HEALTH]
 }
 
-const COOLING_EXHUASTS = "cooling exhuasts"
-const COOL_OFF_1 = "cool_off_1"
-var card_cooling_exhuasts = {
-	TITLE: COOLING_EXHUASTS,
+const WASTE_REDUCTION = "waste reduction"
+const WASTE_REDUCTION_1 = "waste_reduction_1"
+var card_waste_reduction = {
+	# Vultrues 
+	TITLE: WASTE_REDUCTION,
 	CARD_TYPE: CHASSIS_CARD,
-	HEAT_PRODUCTION: 1,
+	HUNGER_PRODUCTION: 1,
 	CARD_WAIT_TIME: .5,
-	CARD_ACTION: COOL_OFF_1, # str name of func called elsewher
+	CARD_ACTION: WASTE_REDUCTION_1, # str name of func called elsewher
 	RECYCLE_ACTION: "",
-	IMG_PATH: " ",
-	DESCRIPTION: "Reduce [HEAT PRODUCTION by 1 + each [HEAT] card in play on your side",
+	IMG_PATH: false,
+	DESCRIPTION: "Reduce [HUNGER PRODUCTION] by 1 + each [HUNGER] card in play on your side",
 	TAGS: [HEALTH, COOLING]
 }
+const GROWING_HUNGER = "growing hunger"
+const GROWING_HUNGER_1 = "growing_hunger_1"
+var card_growing_hunger = {
+	# Vultrues 
+	TITLE: GROWING_HUNGER,
+	CARD_TYPE: ABILITY_CARD,
+	FOOD_PRODUCTION: 10,
+	CARD_WAIT_TIME: .5,
+	CARD_ACTION: GROWING_HUNGER_1, # str name of func called elsewher
+	RECYCLE_ACTION: "",
+	IMG_PATH: false,
+	DESCRIPTION: "Increase Hunger by 10",
+	TAGS: [HUNGER]
+}
+const FOOD_STOCK = "growing_hunger"
+const FOOD_STOCK_1 = "food_stock_1"
+var card_food_stock = {
+	# Vultrues 
+	TITLE: FOOD_STOCK,
+	CARD_TYPE: ABILITY_CARD,
+	FOOD_PRODUCTION: 2,
+	CARD_WAIT_TIME: .5,
+	CARD_ACTION: FOOD_STOCK_1, # str name of func called elsewher
+	RECYCLE_ACTION: "",
+	IMG_PATH: false,
+	DESCRIPTION: "Decrease Hunger by 2",
+	TAGS: [FOOD]
+}
+const OVEREXTENDED_CARD_TITLE = "overextended"
+const OVEREXTENDED_1 = "overextended_1"
+var card_overextended_stock = {
+	# Vultrues 
+	TITLE: OVEREXTENDED_CARD_TITLE,
+	CARD_TYPE: FOOD_CARD,
+	DAMAGE: 5,
+	CARD_WAIT_TIME: .5,
+	CARD_ACTION: OVEREXTENDED_1, # str name of func called elsewher
+	RECYCLE_ACTION: "",
+	IMG_PATH: false,
+	DESCRIPTION: "Take 5 damage",
+	TAGS: [FOOD]
+}
 
-var starting_deck = [card_treads, card_treads, card_ability_emergency_transmission, card_ability_emergency_transmission, card_ability_emergency_transmission,
-					card_cooling_exhuasts, card_plasma_rifle, card_plasma_rifle, card_plasma_rifle, card_ability_open_fire, card_ability_open_fire,
-					card_impact_launcher, card_impact_launcher, card_ability_right_arm_salvo_1, card_ability_shields_up, card_ability_shields_up,
-					card_missle_flak, card_missle_flak, card_ability_left_arm_salvo_1, card_ability_shields_up, card_ability_shields_up,
-					card_cooling_membrane_1, card_cooling_membrane_1,
-					card_weapon_removal_blade, card_cooling_exhuasts, card_weapon_removal_blade]
+var starting_deck = [card_treads, card_treads, card_waste_reduction, card_waste_reduction, card_waste_reduction,
+					card_growing_hunger, card_growing_hunger, card_growing_hunger, card_ability_open_fire, card_ability_open_fire,
+					card_plasma_rifle, card_plasma_rifle, card_ability_shields_up, card_ability_shields_up, card_ability_shields_up,
+					card_impact_launcher, card_impact_launcher, card_foragers_1, card_foragers_1, card_ability_shields_up,
+					card_food_stock, card_food_stock, card_food_stock, card_food_stock, card_food_stock,
+					card_chassis_call_reinforcments, card_chassis_call_reinforcments, card_foragers_1, card_foragers_1, card_ability_shields_up ]
 
-var impact_starting_deck = [card_impact_launcher, card_impact_launcher, card_ability_emergency_transmission, card_ability_emergency_transmission, card_ability_emergency_transmission,
-					card_impact_launcher, card_chassis_reinforcment_transmitters_up, card_impact_launcher, card_chassis_reinforcment_transmitters_up, card_ability_open_fire, card_ability_open_fire,
-					card_impact_launcher, card_chassis_reinforcment_transmitters_up, card_chassis_reinforcment_transmitters_up, card_ability_shields_up, card_ability_shields_up,
-					card_missle_flak, card_missle_flak, card_chassis_reinforcment_transmitters_up, card_ability_shields_up, card_ability_shields_up,
-					card_ability_left_arm_salvo_1, card_ability_right_arm_salvo_1,
-					card_weapon_removal_blade, card_chassis_reinforcment_transmitters_up, card_weapon_removal_blade]
+var impact_starting_deck = [card_treads, card_treads, card_waste_reduction, card_waste_reduction, card_waste_reduction,
+					card_chassis_call_reinforcments, card_growing_hunger, card_growing_hunger, card_growing_hunger, card_impact_launcher,
+					card_impact_launcher, card_food_stock, card_waste_reduction, card_waste_reduction, card_waste_reduction,
+					card_impact_launcher, card_impact_launcher, card_food_stock, card_foragers_1, card_foragers_1,
+					card_food_stock, card_food_stock, card_food_stock, card_food_stock, card_food_stock,
+					card_chassis_call_reinforcments, card_chassis_call_reinforcments, card_foragers_1, card_foragers_1, card_foragers_1 ]
 
 var hand = []
 var hand_idx = 0
@@ -363,6 +413,69 @@ var enm_hand_idx = 0
 var enm_tableau_idx = 0
 var enm_card_detail_list = []
 var player_display_turn = true
+var waiting = false
+
+func take_turn(is_player=true):
+	if not waiting:
+		waiting = true
+		remove_all_cards_in_hand(is_player)
+	
+		if is_player:
+			if meta.player_hand_limit > meta.player_hand_limit_max:
+				meta.player_hand_limit = meta.player_hand_limit_max
+			spawn_cards(meta.player_hand_limit)
+			if meta.player_hand_limit > meta.player_hand_limit_default:
+				meta.player_hand_limit = meta.player_hand_limit_default
+			meta.player_turn = false
+				
+			var timer = Timer.new()
+			var time = 1
+			get_node("/root").add_child(timer)
+			timer.set_wait_time(time)
+			timer.set_one_shot(true)
+			timer.start()
+			yield(timer, "timeout")
+			timer.queue_free()
+			waiting = false
+		else:
+			play_all_display_card_actions(true)
+			remove_all_cards_in_hand(false)
+			var timer = Timer.new()
+			var time = 4
+			get_node("/root").add_child(timer)
+			timer.set_wait_time(time)
+			timer.set_one_shot(true)
+			timer.start()
+			yield(timer, "timeout")
+			timer.queue_free()
+			spawn_cards(4, false)
+	
+			var timer2 = Timer.new()
+			var time2 = 3
+			get_node("/root").add_child(timer2)
+			timer2.set_wait_time(time2)
+			timer2.set_one_shot(true)
+			timer2.start()
+			yield(timer2, "timeout")
+			timer2.queue_free()
+			play_all_display_card_actions(false)
+			
+			var timer3 = Timer.new()
+			var time3 = 3
+			get_node("/root").add_child(timer3)
+			timer3.set_wait_time(time3)
+			timer3.set_one_shot(true)
+			timer3.start()
+			yield(timer3, "timeout")
+			timer3.queue_free()
+			meta.player_turn = true
+			for card in enm_hand:
+				if card and main.checkIfNodeDeleted(card) == false:
+					card.modulate = Color(.5, .5, .5, 1)
+			waiting = false
+			take_turn(meta.player_turn)
+
+
 
 func play_all_display_card_actions(is_player=true):
 	if get_node("/root").has_node("level"):
@@ -372,6 +485,9 @@ func play_all_display_card_actions(is_player=true):
 				card.modulate = Color(.4, .4, 1, 1)
 				expand_card_details(card)
 
+				var should_stop = card_action(card.get_node("action").get_text(), is_player, "", card)
+				level.update_text_overlays()
+				if should_stop: return
 				var timer = Timer.new()
 				var time = float(card.get_node("timer").get_text())
 				print("time " + str(time))
@@ -381,14 +497,15 @@ func play_all_display_card_actions(is_player=true):
 				timer.start()
 				yield(timer, "timeout")
 				timer.queue_free()
-				card_action(card.get_node("action").get_text(), is_player, "", card)
-				level.update_text_overlays()
 				card.modulate = Color(1, 1, 1, 1)
 
 			for card in level.player_right_arm_list:
 				card.modulate = Color(.4, .4, 1, 1)
 				expand_card_details(card)
 
+				var should_stop = card_action(card.get_node("action").get_text(), is_player, "", card)
+				level.update_text_overlays()
+				if should_stop: return
 				var timer = Timer.new()
 				get_node("/root").add_child(timer)
 				timer.set_wait_time(float(card.get_node("timer").get_text()))
@@ -396,14 +513,15 @@ func play_all_display_card_actions(is_player=true):
 				timer.start()
 				yield(timer, "timeout")
 				timer.queue_free()
-				card_action(card.get_node("action").get_text(), is_player, "", card)
-				level.update_text_overlays()
 				card.modulate = Color(1, 1, 1, 1)
 
 			for card in level.player_left_arm_list:
 				card.modulate = Color(.4, .4, 1, 1)
 				expand_card_details(card)
 				
+				var should_stop = card_action(card.get_node("action").get_text(), is_player, "", card)
+				level.update_text_overlays()
+				if should_stop: return
 				var timer = Timer.new()
 				get_node("/root").add_child(timer)
 				timer.set_wait_time(float(card.get_node("timer").get_text()))
@@ -411,14 +529,15 @@ func play_all_display_card_actions(is_player=true):
 				timer.start()
 				yield(timer, "timeout")
 				timer.queue_free()
-				card_action(card.get_node("action").get_text(), is_player, "", card)
-				level.update_text_overlays()
 				card.modulate = Color(1, 1, 1, 1)
 
 			for card in level.player_leg_list:
 				card.modulate = Color(.4, .4, 1, 1)
 				expand_card_details(card)
 
+				var should_stop = card_action(card.get_node("action").get_text(), is_player, "", card)
+				level.update_text_overlays()
+				if should_stop: return
 				var timer = Timer.new()
 				get_node("/root").add_child(timer)
 				timer.set_wait_time(float(card.get_node("timer").get_text()))
@@ -426,8 +545,6 @@ func play_all_display_card_actions(is_player=true):
 				timer.start()
 				yield(timer, "timeout")
 				timer.queue_free()
-				card_action(card.get_node("action").get_text(), is_player, "", card)
-				level.update_text_overlays()
 				card.modulate = Color(1, 1, 1, 1)
 			player_display_turn = false
 		# end of player logic
@@ -437,6 +554,9 @@ func play_all_display_card_actions(is_player=true):
 				card.modulate = Color(.4, .4, 1, 1)
 				expand_card_details(card)
 
+				var should_stop = card_action(card.get_node("action").get_text(), is_player, "", card)
+				level.update_text_overlays()
+				if should_stop: return
 				var timer = Timer.new()
 				var time = float(card.get_node("timer").get_text())
 				print("time " + str(time))
@@ -446,14 +566,15 @@ func play_all_display_card_actions(is_player=true):
 				timer.start()
 				yield(timer, "timeout")
 				timer.queue_free()
-				card_action(card.get_node("action").get_text(), is_player, "", card)
-				level.update_text_overlays()
 				card.modulate = Color(1, 1, 1, 1)
 
 			for card in level.enemy_right_arm_list:
 				card.modulate = Color(.4, .4, 1, 1)
 				expand_card_details(card)
 
+				var should_stop = card_action(card.get_node("action").get_text(), is_player, "", card)
+				if should_stop: return
+				level.update_text_overlays()
 				var timer = Timer.new()
 				get_node("/root").add_child(timer)
 				timer.set_wait_time(float(card.get_node("timer").get_text()))
@@ -461,14 +582,15 @@ func play_all_display_card_actions(is_player=true):
 				timer.start()
 				yield(timer, "timeout")
 				timer.queue_free()
-				card_action(card.get_node("action").get_text(), is_player, "", card)
-				level.update_text_overlays()
 				card.modulate = Color(1, 1, 1, 1)
 
 			for card in level.enemy_left_arm_list:
 				card.modulate = Color(.4, .4, 1, 1)
 				expand_card_details(card)
 				
+				var should_stop = card_action(card.get_node("action").get_text(), is_player, "", card)
+				level.update_text_overlays()
+				if should_stop: return
 				var timer = Timer.new()
 				get_node("/root").add_child(timer)
 				timer.set_wait_time(float(card.get_node("timer").get_text()))
@@ -476,14 +598,15 @@ func play_all_display_card_actions(is_player=true):
 				timer.start()
 				yield(timer, "timeout")
 				timer.queue_free()
-				card_action(card.get_node("action").get_text(), is_player, "", card)
-				level.update_text_overlays()
 				card.modulate = Color(1, 1, 1, 1)
 
 			for card in level.enemy_leg_list:
 				card.modulate = Color(.4, .4, 1, 1)
 				expand_card_details(card)
 
+				var should_stop = card_action(card.get_node("action").get_text(), is_player, "", card)
+				level.update_text_overlays()
+				if should_stop: return
 				var timer = Timer.new()
 				get_node("/root").add_child(timer)
 				timer.set_wait_time(float(card.get_node("timer").get_text()))
@@ -491,11 +614,8 @@ func play_all_display_card_actions(is_player=true):
 				timer.start()
 				yield(timer, "timeout")
 				timer.queue_free()
-				card_action(card.get_node("action").get_text(), is_player, "", card)
-				level.update_text_overlays()
 				card.modulate = Color(1, 1, 1, 1)
 			player_display_turn = true
-		
 
 
 func apply_text_effect(text_type, text, is_player=true, card=null):
@@ -503,7 +623,7 @@ func apply_text_effect(text_type, text, is_player=true, card=null):
 	if get_node("/root").has_node("level"):
 		var level = get_node("/root/level")
 		var hurt = "hurt"
-		var heat = "heat"
+		var hunger = "hunger"
 		var normal = "normal"
 		var healed = "healed"
 		var burn = "burn"
@@ -512,30 +632,38 @@ func apply_text_effect(text_type, text, is_player=true, card=null):
 			get_node("/root").call_deferred("add_child", effect)
 			effect.get_node("anim_controller/text").set_text(str(text))
 			if is_player:
-				if card:
-					effect.position = card.global_position
-				else:
-					effect.position = Vector2(450, 150)
+				effect.position = level.get_node("text_cont/enemy_health_max_pos").global_position
 			else:
-				if card:
-					effect.position = card.global_position
-				else:
-					effect.position = Vector2(450, 700)
+				effect.position = level.get_node("text_cont/player_health_max_pos").global_position
+
 			effect.get_node("anim").play(hurt)
-		elif text_type == heat:
+		elif text_type == hunger:
 			var effect = main.TEXT_EFECT.instance()
 			get_node("/root").call_deferred("add_child", effect)
 			effect.get_node("anim_controller/text").set_text(str(text))
 			if is_player:
-				effect.position = Vector2(1250, 1000)
+				effect.position = level.get_node("text_cont/player_hunger_pos").global_position
 			else:
-				effect.position = Vector2(450, 150)
-			effect.get_node("anim").play(heat)
+				effect.position = level.get_node("text_cont/enemy_hunger_pos").global_position
+
+			effect.get_node("anim").play(hunger)
 
 
 func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
-	# try first person over parralax paper baclgrounds?
-	###
+	#
+	# Change pulling card details from text boxes to storing in new attached script
+	#
+	#
+	#
+	#
+	#
+	#
+	#
+	#
+	#
+	#
+	#
+	
 
 	act_str = act_str.to_lower()
 	avoid_recursion_str = avoid_recursion_str.to_lower()
@@ -550,38 +678,92 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 			card.modulate = Color(.4, .4, 1, 1)
 		var level = get_node("/root/level")
 		print(str(card.get_node("tags").get_text().split(",")) + " act_str " + act_str + " avoid_recursion_str " + avoid_recursion_str)
-		if is_player:
-			if meta.current_player_heat > meta.max_player_heat:
-				meta.current_player_heat = 0
-				print("OVERHEATING")
-				if card:
-					card.modulate = Color(1, 1, 1, 1)
-				return
+		
+		# will be print(card.tags)
+		# 1 ############################################
+		## make sure there is enough food and water to play card
+		#
+		if is_player: # EVENTUALLY REMOVE THIS CONDITOONAL 
 
-			# ACTIVATING cards applies basic stats if present on card like when player, 
-			# and additional func called
-			# spend heat, multiply dmg by atk, ect
-			var atks = int(card.get_node("detail_4").get_text()) + meta.player_attacks_bonus
-			var dmg = int(card.get_node("detail_5").get_text()) + meta.player_damage_bonus 
+			if is_player:
+				if meta.current_player_hunger > meta.max_player_hunger:
+					meta.current_player_hunger = 0
+					meta.player_health -= meta.player_hunger_damage
+					print("OVERHUNGERING")
+					if card:
+						card.modulate = Color(1, 1, 1, 1)
+					return "stop"
+			else:
+				if meta.current_enemy_hunger > meta.max_enemy_hunger:
+					meta.current_enemy_hunger = 0
+					meta.enemy_health -= meta.enemy_hunger_damage
+					print("ENM OVERHUNGERING")
+					if card:
+						card.modulate = Color(1, 1, 1, 1)
+					return "stop"
 
-			var health = int(card.get_node("detail_1").get_text()) + meta.player_health_bonus
-			var toughnes = int(card.get_node("detail_2").get_text())  + meta.player_toughness_bonus
-			var defense = int(card.get_node("detail_3").get_text()) + meta.player_defense_bonus
 			
+			# 2 ############################################
+			## Get info from played cards (may be changed)
+			#
+			
+			var bonus_atks = meta.player_attacks_bonus
+			var bonus_dmg = meta.player_damage_bonus
+			var bonus_def = meta.player_health_bonus
+			var bonus_toughness = meta.player_toughness_bonus
+			var bonus_health = meta.player_defense_bonus
+			var hunger_bonus = meta.player_hunger_production_bonus
+			var water_bonus = meta.player_water_bonus
+			if not is_player:
+				bonus_atks = meta.enemy_attacks_bonus
+				bonus_dmg = meta.enemy_damage_bonus
+				bonus_def = meta.enemy_health_bonus
+				bonus_toughness = meta.enemy_toughness_bonus
+				bonus_health = meta.enemy_defense_bonus
+				hunger_bonus = meta.enemy_hunger_production_bonus
+				water_bonus = meta.enemy_water_bonus
+			
+			##### will be card.atks + bonus_atks
+			var atks = int(card.get_node("detail_4").get_text()) + bonus_atks
+			var dmg = int(card.get_node("detail_5").get_text()) + bonus_dmg 
+
+			var health = int(card.get_node("detail_1").get_text()) + bonus_health
+			var toughnes = int(card.get_node("detail_2").get_text()) + bonus_toughness
+			var defense = int(card.get_node("detail_3").get_text()) + bonus_def
+
+			var total_dmg = round(atks * dmg)
+
+			var action_sub_time = (action_time*.33)
+			var action_sub_shake_vel = 2
+
+			##### will be card.hunger + hunger_bonus
+			var hunger = int(card.get_node("detail_6").get_text()) + hunger_bonus
+
 			meta.player_health += health
 			meta.player_defense += defense
 			meta.player_toughnes += toughnes
+			if hunger > 0:
+				if is_player:
+					var leftover_food = meta.player_food - hunger
+					if leftover_food > 0:
+						meta.player_food -= hunger
+					else:
+						print("player out of food("+str(meta.player_food)+"), can't do " + act_str)
+				else:
+					var leftover_food = meta.enemy_food - hunger
+					if leftover_food > 0:
+						meta.enemy_food -= hunger
+					else:
+						print("enemy out of food ("+str(meta.enemy_food)+"), can't do " + act_str)
+				main.cameraShake(.1, action_sub_time)
+				apply_text_effect("hunger", "- " + str(hunger), is_player) #TEXT_EFECT
 
-			var total_dmg = atks * dmg
-			print("deal " + str(total_dmg) + " total_dmg")
-			#meta.enm_total_health -= total_dmg
+			# 3 ############################################
+			## PROCESS ATKS/DAMAGE
 			#
-			#
-			########
-			var heat = int(card.get_node("detail_6").get_text()) + meta.player_heat_production_bonus
 			if atks > 0:
 				for atk in range(0, atks):
-					# print("heat: " +str(heat) + " atks: " + str(atks) + " atk: " + str(atk))
+					# print("hunger: " +str(hunger) + " atks: " + str(atks) + " atk: " + str(atk))
 					if dmg > 0:
 						var timer = Timer.new()
 						get_node("/root").add_child(timer)
@@ -590,31 +772,40 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 						timer.start()
 						yield(timer, "timeout")
 						timer.queue_free()
-						main.cameraShake(2, (action_time*.4))
-						apply_text_effect("hurt", "- " + str(dmg)) #TEXT_EFECT
-						meta.enm_total_health -= int(dmg)
-					apply_text_effect("heat", "+ " + str(heat)) #TEXT_EFECT
-					meta.current_player_heat += heat
-					level.update_text_overlays()
-			else:
-				if heat > 0:
-					meta.current_player_heat -= heat
-					main.cameraShake(.6, (action_time*.4))
-					apply_text_effect("heat", "- " + str(heat)) #TEXT_EFECT
-				level.update_text_overlays()
+						main.cameraShake(action_sub_shake_vel, action_sub_time)
+						apply_text_effect("hurt", "- " + str(dmg), is_player) #TEXT_EFECT
+						meta.enemy_health -= int(dmg)
 
+			level.update_text_overlays()
+			############################################
+			#### Process Actions
+			if act_str == OVEREXTENDED_1 and not "stop_" in avoid_recursion_str:
+				card.modulate = Color(1, .2, .2, 1)
+				apply_text_effect("hurt", "- " + str(dmg)) #TEXT_EFECT
+				meta.enemy_health += int(dmg)
+				
+			elif act_str == FOOD_STOCK_1 and not "stop_" in avoid_recursion_str:
+				card.modulate = Color(.2, 1, .2, 1)
+				apply_text_effect("hunger", "- " + str(hunger)) #TEXT_EFECT
+				meta.current_player_hunger -= hunger
+			elif act_str == GROWING_HUNGER_1 and not "stop_" in avoid_recursion_str:
+				card.modulate = Color(.2, 1, .2, 1)
+				apply_text_effect("hunger", "+ " + str(hunger)) #TEXT_EFECT
+				meta.current_player_hunger += hunger
 			if act_str == GAIN_START_DRAW_1 and not "stop_" in avoid_recursion_str:
 				meta.player_hand_limit += 1
 				meta.current_salvage += 10
-			elif act_str == COOL_OFF_1 and not "stop_" in avoid_recursion_str:
-				var total_heat_count = 0
-				print("COOL_OFF_1 " + str(COOL_OFF_1))
+				apply_text_effect("hunger", "+ 10") #TEXT_EFECT
+				meta.current_player_hunger += 10
+			elif act_str == WASTE_REDUCTION_1 and not "stop_" in avoid_recursion_str:
+				var total_hunger_count = 0
+				print("WASTE_REDUCTION_1 " + str(WASTE_REDUCTION_1))
 				for weapon_card in level.player_right_arm_list:
 					for tag in weapon_card.get_node("tags").get_text().split(","):
-						if tag == HEAT:
-							main.cameraShake(.6, (action_time*.4))
+						if tag == HUNGER:
+							main.cameraShake(action_sub_shake_vel, action_sub_time)
 							expand_card_details(weapon_card)
-							total_heat_count += 1
+							total_hunger_count += 1
 							var timer = Timer.new()
 							get_node("/root").add_child(timer)
 							timer.set_wait_time(action_time)
@@ -622,15 +813,15 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 							timer.start()
 							yield(timer, "timeout")
 							timer.queue_free()
-							apply_text_effect("skill", "- " + str(heat)) #TEXT_EFECT
+							apply_text_effect("hunger up", "- 1") #TEXT_EFECT
 							break
 				
 				for weapon_card in level.player_left_arm_list:
 					for tag in weapon_card.get_node("tags").get_text().split(","):
-						if tag == HEAT:
-							main.cameraShake(.6, (action_time*.4))
+						if tag == HUNGER:
+							main.cameraShake(action_sub_shake_vel, action_sub_time)
 							expand_card_details(weapon_card)
-							total_heat_count += 1
+							total_hunger_count += 1
 							var timer = Timer.new()
 							get_node("/root").add_child(timer)
 							timer.set_wait_time(action_time)
@@ -638,15 +829,15 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 							timer.start()
 							yield(timer, "timeout")
 							timer.queue_free()
-							apply_text_effect("skill", "+ 1") #TEXT_EFECT
+							apply_text_effect("hunger up", "- 1") #TEXT_EFECT
 							break
 				
 				for weapon_card in level.player_chassis_list:
 					for tag in weapon_card.get_node("tags").get_text().split(","):
-						if tag == HEAT:
-							main.cameraShake(.6, (action_time*.4))
+						if tag == HUNGER:
+							main.cameraShake(action_sub_shake_vel, action_sub_time)
 							expand_card_details(weapon_card)
-							total_heat_count += 1
+							total_hunger_count += 1
 							var timer = Timer.new()
 							get_node("/root").add_child(timer)
 							timer.set_wait_time(action_time)
@@ -654,15 +845,15 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 							timer.start()
 							yield(timer, "timeout")
 							timer.queue_free()
-							apply_text_effect("heat", "+ 1") #TEXT_EFECT
+							apply_text_effect("hunger up", "- 1") #TEXT_EFECT
 							break
 				
 				for weapon_card in level.player_leg_list:
 					for tag in weapon_card.get_node("tags").get_text().split(","):
-						if tag == HEAT:
-							main.cameraShake(.6, (action_time*.4))
+						if tag == HUNGER:
+							main.cameraShake(action_sub_shake_vel, action_sub_time)
 							expand_card_details(weapon_card)
-							total_heat_count += 1
+							total_hunger_count += 1
 							var timer = Timer.new()
 							get_node("/root").add_child(timer)
 							timer.set_wait_time(action_time)
@@ -670,10 +861,10 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 							timer.start()
 							yield(timer, "timeout")
 							timer.queue_free()
-							apply_text_effect("heat", "+ 1") #TEXT_EFECT
+							apply_text_effect("hunger up", "- 1") #TEXT_EFECT
 							break
-				print("total_heat_count: " + str(total_heat_count))
-				meta.current_player_heat -= total_heat_count
+				print(act_str + ": total_hunger_count: " + str(total_hunger_count))
+				meta.current_player_hunger -= total_hunger_count
 				level.update_text_overlays()
 				if card:
 					card.modulate = Color(1, 1, 1, 1)
@@ -689,7 +880,7 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 							expand_card_details(weapon_card)
 							#card_action(card.get_node("action").get_text(), is_player, "stop_"+act_str, card)
 							skill_impact_count += 1
-							meta.enm_total_health -= int(dmg)
+							meta.enemy_health -= int(dmg)
 							var timer = Timer.new()
 							get_node("/root").add_child(timer)
 							timer.set_wait_time(action_time)
@@ -697,9 +888,9 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 							timer.start()
 							yield(timer, "timeout")
 							timer.queue_free()
-							apply_text_effect("heat", "+ 1") #TEXT_EFECT
+							apply_text_effect("hunger", "+ 1") #TEXT_EFECT
 							break
-					meta.enm_total_health -= int(skill_impact_count)
+					meta.enemy_health -= int(skill_impact_count)
 					apply_text_effect("hurt", "- " + str(skill_impact_count)) #TEXT_EFECT
 
 				for weapon_card in level.player_left_arm_list:
@@ -717,23 +908,261 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 							timer.start()
 							yield(timer, "timeout")
 							timer.queue_free()
-							apply_text_effect("heat", "+ 1") #TEXT_EFECT
+							apply_text_effect("hunger", "+ 1") #TEXT_EFECT
 							break
-					meta.enm_total_health -= int(skill_impact_count)
+					meta.enemy_health -= int(skill_impact_count)
 					main.cameraShake(skill_impact_count*.5, (action_time*.4))
 					apply_text_effect("hurt", "- " + str(skill_impact_count)) #TEXT_EFECT
+			level.update_text_overlays()
+
+		else: # EVENTUALLY REMOVE THIS CONDITOONAL 
+			####
+			#
+			#
+			### Enemy
+			#
+			#
+			####
+			if meta.current_enemy_hunger > meta.max_enemy_hunger:
+				meta.current_enemy_hunger = 0
+				meta.enemy_health -= meta.enemy_hunger_damage
+				print("ENM OVERHUNGERING")
+				if card:
+					card.modulate = Color(1, 1, 1, 1)
+				return "stop"
+
+			# ACTIVATING cards applies basic stats if present on card like when player, 
+			# and additional func called
+			# spend hunger, multiply dmg by atk, ect
+			var atks = int(card.get_node("detail_4").get_text()) + meta.enemy_attacks_bonus
+			var dmg = int(card.get_node("detail_5").get_text()) + meta.enemy_damage_bonus 
+
+			var health = int(card.get_node("detail_1").get_text()) + meta.enemy_health_bonus
+			var toughnes = int(card.get_node("detail_2").get_text())  + meta.enemy_toughness_bonus
+			var defense = int(card.get_node("detail_3").get_text()) + meta.enemy_defense_bonus
+			
+			meta.enemy_health += health
+			meta.enemy_defense += defense
+			meta.enemy_toughnes += toughnes
+
+			var total_dmg = atks * dmg
+			print("enm deals " + str(total_dmg) + " total_dmg")
+			#
+			#
+			########
+			var hunger = int(card.get_node("detail_6").get_text()) + meta.enemy_hunger_production_bonus
+			if atks > 0:
+				for atk in range(0, atks):
+					# print("hunger: " +str(hunger) + " atks: " + str(atks) + " atk: " + str(atk))
+					if dmg > 0:
+						var timer = Timer.new()
+						get_node("/root").add_child(timer)
+						timer.set_wait_time(action_time)
+						timer.set_one_shot(true)
+						timer.start()
+						yield(timer, "timeout")
+						timer.queue_free()
+						main.cameraShake(2, (action_time*.4))
+						apply_text_effect("hurt", "- " + str(dmg), false) #TEXT_EFECT
+						meta.player_health -= int(dmg)
+					apply_text_effect("hunger", "+ " + str(hunger), false) #TEXT_EFECT
+					meta.current_enemy_hunger += hunger
+					level.update_text_overlays()
+			else:
+				if hunger > 0:
+					meta.current_enemy_hunger -= hunger
+					main.cameraShake(.6, (action_time*.4))
+					apply_text_effect("hunger up", "- " + str(hunger), false) #TEXT_EFECT
+				level.update_text_overlays()
+
+			if act_str == OVEREXTENDED_1 and not "stop_" in avoid_recursion_str:
+				card.modulate = Color(1, .2, .2, 1)
+				apply_text_effect("hurt", "- " + str(dmg), false) #TEXT_EFECT
+				meta.player_health += int(dmg)
+			elif act_str == FOOD_STOCK_1 and not "stop_" in avoid_recursion_str:
+				card.modulate = Color(.2, 1, .2, 1)
+				apply_text_effect("hunger", "- " + str(hunger), false) #TEXT_EFECT
+				meta.current_enemy_hunger -= hunger
+			elif act_str == GROWING_HUNGER_1 and not "stop_" in avoid_recursion_str:
+				card.modulate = Color(.2, 1, .2, 1)
+				apply_text_effect("hunger", "+ " + str(hunger), false) #TEXT_EFECT
+				meta.current_enemy_hunger += hunger
+			elif act_str == GAIN_START_DRAW_1 and not "stop_" in avoid_recursion_str:
+				meta.enemy_hand_limit += 1
+				apply_text_effect("hunger", "+ 10", false) #TEXT_EFECT
+				meta.current_enemy_hunger += 10
+			elif act_str == WASTE_REDUCTION_1 and not "stop_" in avoid_recursion_str:
+				var total_hunger_count = 0
+				print("WASTE_REDUCTION_1 " + str(act_str))
+				for weapon_card in level.enemy_right_arm_list:
+					for tag in weapon_card.get_node("tags").get_text().split(","):
+						if tag == HUNGER:
+							main.cameraShake(.6, (action_time*.4))
+							expand_card_details(weapon_card)
+							total_hunger_count += 1
+							var timer = Timer.new()
+							get_node("/root").add_child(timer)
+							timer.set_wait_time(action_time)
+							timer.set_one_shot(true)
+							timer.start()
+							yield(timer, "timeout")
+							timer.queue_free()
+							apply_text_effect("hunger up", "- 1", false) #TEXT_EFECT
+							break
+				
+				for weapon_card in level.enemy_left_arm_list:
+					for tag in weapon_card.get_node("tags").get_text().split(","):
+						if tag == HUNGER:
+							main.cameraShake(.6, (action_time*.4))
+							expand_card_details(weapon_card)
+							total_hunger_count += 1
+							var timer = Timer.new()
+							get_node("/root").add_child(timer)
+							timer.set_wait_time(action_time)
+							timer.set_one_shot(true)
+							timer.start()
+							yield(timer, "timeout")
+							timer.queue_free()
+							apply_text_effect("hunger up", "- 1", false) #TEXT_EFECT
+							break
+				
+				for weapon_card in level.enemy_chassis_list:
+					for tag in weapon_card.get_node("tags").get_text().split(","):
+						if tag == HUNGER:
+							main.cameraShake(.6, (action_time*.4))
+							expand_card_details(weapon_card)
+							total_hunger_count += 1
+							var timer = Timer.new()
+							get_node("/root").add_child(timer)
+							timer.set_wait_time(action_time)
+							timer.set_one_shot(true)
+							timer.start()
+							yield(timer, "timeout")
+							timer.queue_free()
+							apply_text_effect("hunger up", "- 1", false) #TEXT_EFECT
+							break
+				
+				for weapon_card in level.enemy_leg_list:
+					for tag in weapon_card.get_node("tags").get_text().split(","):
+						if tag == HUNGER:
+							main.cameraShake(.6, (action_time*.4))
+							expand_card_details(weapon_card)
+							total_hunger_count += 1
+							var timer = Timer.new()
+							get_node("/root").add_child(timer)
+							timer.set_wait_time(action_time)
+							timer.set_one_shot(true)
+							timer.start()
+							yield(timer, "timeout")
+							timer.queue_free()
+							apply_text_effect("hunger up", "- 1", false) #TEXT_EFECT
+							break
+				print("enm total_hunger_count: " + str(total_hunger_count))
+				meta.current_enemy_hunger -= total_hunger_count
+				level.update_text_overlays()
+				if card:
+					card.modulate = Color(1, 1, 1, 1)
+				return
+
+			elif act_str == IMPACT_LAUNCHER_ABILITY_1 and not "stop_" in avoid_recursion_str:
+				# Activate first x weapon of cards from right to left arm equal to your [IMPACT]"
+				for weapon_card in level.enemy_right_arm_list:
+					var skill_impact_count = 0
+					for tag in card.get_node("tags").get_text().split(","):
+						if IMPACT == tag:
+							main.cameraShake(.6, (action_time*.4))
+							expand_card_details(weapon_card)
+							#card_action(card.get_node("action").get_text(), is_player, "stop_"+act_str, card)
+							skill_impact_count += 1
+							meta.player_health -= int(dmg)
+							var timer = Timer.new()
+							get_node("/root").add_child(timer)
+							timer.set_wait_time(action_time)
+							timer.set_one_shot(true)
+							timer.start()
+							yield(timer, "timeout")
+							timer.queue_free()
+							apply_text_effect("hunger", "+ 1", false) #TEXT_EFECT
+							break
+					meta.player_health -= int(skill_impact_count)
+					main.cameraShake(skill_impact_count*.5, (action_time*.4))
+					apply_text_effect("hurt", "- " + str(skill_impact_count), false) #TEXT_EFECT
+
+				for weapon_card in level.enemy_left_arm_list:
+					var skill_impact_count = 0
+					for tag in card.get_node("tags").get_text().split(","):
+						if IMPACT == tag:
+							main.cameraShake(.6, (action_time*.4))
+							expand_card_details(weapon_card)
+							#card_action(card.get_node("action").get_text(), is_player, "stop_"+act_str, card)
+							skill_impact_count += 1
+							var timer = Timer.new()
+							get_node("/root").add_child(timer)
+							timer.set_wait_time(action_time)
+							timer.set_one_shot(true)
+							timer.start()
+							yield(timer, "timeout")
+							timer.queue_free()
+							apply_text_effect("hunger", "+ 1", false) #TEXT_EFECT
+							break
+					meta.player_health -= int(skill_impact_count)
+					main.cameraShake(skill_impact_count*.5, (action_time*.4))
+					apply_text_effect("hurt", "- " + str(skill_impact_count), false) #TEXT_EFECT
+					
+				level.update_text_overlays()
 		if card:
 			card.modulate = Color(1, 1, 1, 1)
 		level.update_text_overlays()
 		reset_display_card_sizes()
 
+
 func play_card(player_card_list, player_card_idx, is_player=true):
 	# card_action(player_card_list[player_card_idx][CARD_ACTION], is_player, "")
-	place_card_in_display(Cards.hand, Cards.hand_idx)
+	if is_player:
+		if hand_idx >= 0 and hand_idx <= len(hand) - 1 and len(hand) > 0:
+			if card_detail_list[hand_idx][CARD_TYPE] == ABILITY_CARD:
+				hand[hand_idx].visible = false
+				var level = get_node("/root/level")
+				var should_stop = card_action(card_detail_list[player_card_idx][CARD_ACTION], is_player, "", hand[hand_idx])
+				level.update_text_overlays()
+				if should_stop: return
+				var timer = Timer.new()
+				get_node("/root").add_child(timer)
+				timer.set_wait_time(float(card_detail_list[player_card_idx][CARD_WAIT_TIME]))
+				timer.set_one_shot(true)
+				timer.start()
+				yield(timer, "timeout")
+				timer.queue_free()
+				hand[hand_idx].modulate = Color(1, 1, 1, 1)
+			else:
+				place_card_in_display(player_card_list, player_card_idx, is_player)
+		else:
+			print("whoops player, didn't play a card successfully")
+
+	else:
+		if player_card_idx >= 0 and player_card_idx <= len(player_card_list) - 1 and len(player_card_list) > 0:
+			if enm_card_detail_list[player_card_idx][CARD_TYPE] == ABILITY_CARD:
+				player_card_list[player_card_idx].visible = false
+				var level = get_node("/root/level")
+				var should_stop = card_action(enm_card_detail_list[player_card_idx][CARD_ACTION], is_player, "", player_card_list[player_card_idx])
+				level.update_text_overlays()
+				if should_stop: return
+				var timer = Timer.new()
+				get_node("/root").add_child(timer)
+				timer.set_wait_time(float(enm_card_detail_list[player_card_idx][CARD_WAIT_TIME]))
+				timer.set_one_shot(true)
+				timer.start()
+				yield(timer, "timeout")
+				timer.queue_free()
+				player_card_list[player_card_idx].modulate = Color(1, 1, 1, 1)
+			else:
+				place_card_in_display(player_card_list, player_card_idx, is_player)
+		else:
+			print("whoops enm, didn't play a card successfully")
 
 
-func place_card_in_display(player_card_list, player_card_idx, tableau_list=null):
-	if tableau_list == null:
+func place_card_in_display(player_card_list, player_card_idx, is_player=false):
+	if is_player:
 		if hand_idx >= 0 and hand_idx <= len(hand) - 1 and len(hand) > 0:
 			if card_detail_list[hand_idx][CARD_TYPE] == ABILITY_CARD:
 				hand[hand_idx].visible = false
@@ -749,7 +1178,9 @@ func place_card_in_display(player_card_list, player_card_idx, tableau_list=null)
 						level.player_left_arm_list.append(new_card)
 					else:
 						print("no more room for weapon cards")
-				elif card_detail_list[hand_idx][CARD_TYPE] == CHASSIS_CARD:
+				elif card_detail_list[hand_idx][CARD_TYPE] == CHASSIS_CARD ||\
+					 card_detail_list[hand_idx][CARD_TYPE] == HUNGER_CARD ||\
+					 card_detail_list[hand_idx][CARD_TYPE] == FOOD_CARD:
 					if len(level.player_chassis_list) < level.player_chassis_list_limit:
 						level.player_chassis_list.append(new_card)
 				elif card_detail_list[hand_idx][CARD_TYPE] == LEG_CARD:
@@ -763,25 +1194,61 @@ func place_card_in_display(player_card_list, player_card_idx, tableau_list=null)
 				card_detail_list.remove(hand_idx)
 				print("in place_card_in_display hand after card played: " + str(len(hand)) + " + card_detail_list: " + str(len(card_detail_list)))
 
-			#if card_detail_list[hand_idx][CARD_TYPE] != ABILITY_CARD:
 			handle_cards_in_display()
-			#var card = get_card_payload(card_detail_list[hand_idx])
 			#update_display_card(new_card, card_payload)
 		else:
 			print("tableau list doesn't match?")
+	else:
+		# Is Enemy
+		if player_card_idx >= 0 and player_card_idx <= len(player_card_list) - 1 and len(player_card_list) > 0:
+			if enm_card_detail_list[player_card_idx][CARD_TYPE] == ABILITY_CARD:
+				player_card_list[player_card_idx].visible = false
+			else:
+				var level = get_node("/root/level")
+				var new_card = main.CARD.instance()
+				new_card.set_scale(Vector2(.3, .3))
+				get_node("/root").add_child(new_card)
+				if enm_card_detail_list[player_card_idx][CARD_TYPE] == WEAPON_CARD:
+					if len(level.enemy_right_arm_list) < level.enemy_right_arm_list_limit:
+						level.enemy_right_arm_list.append(new_card)
+					elif len(level.player_left_arm_list) < level.enemy_left_arm_list_limit:
+						level.enemy_left_arm_list.append(new_card)
+					else:
+						print("no more room for weapon cards")
+				elif enm_card_detail_list[player_card_idx][CARD_TYPE] == CHASSIS_CARD ||\
+					 enm_card_detail_list[player_card_idx][CARD_TYPE] == HUNGER_CARD ||\
+					 enm_card_detail_list[player_card_idx][CARD_TYPE] == FOOD_CARD:
+					if len(level.enemy_chassis_list) < level.enemy_chassis_list_limit:
+						level.enemy_chassis_list.append(new_card)
+				elif enm_card_detail_list[player_card_idx][CARD_TYPE] == LEG_CARD:
+					if len(level.enemy_leg_list) < level.enemy_leg_list_limit:
+						level.enemy_leg_list.append(new_card)
+				else:
+					reset_display_card_sizes()
+
+				set_card_img(new_card, enm_card_detail_list[player_card_idx])
+				update_display_card(new_card, enm_card_detail_list[hand_idx])
+				remove_card(player_card_list[player_card_idx])
+				player_card_list.remove(player_card_idx)
+				if player_card_idx >= 0 and player_card_idx < len(enm_hand) and len(enm_hand) > 0:
+					enm_hand.remove(player_card_idx)
+				enm_card_detail_list.remove(hand_idx)
+				print("in place_card_in_display player_card_list after card played: " + str(len(player_card_list)) + " + card_detail_list: " + str(len(card_detail_list)))
+
+			handle_cards_in_display()
+			#update_display_card(new_card, card_payload)
+		else:
+			print("tableau list doesn't match?")
+
 	#var card_payload = get_card_payload(rand_card)
 	#var rand_card = get_random_card(starting_deck)
-	#card_detail_list.append(rand_card)
 	#hand.append(new_card)
-	print("***hand: " + str(len(hand)))
-	for card in hand:
-		print(card.get_node("title").get_text())
+	#print("***hand: " + str(len(hand)))
 
-	var level = get_node("/root/level")
 
-	print("***player_tableau_list: " + str(len(level.player_tableau_list)))
-	for card in level.player_tableau_list:
-		print(card.get_node("title").get_text())
+	#print("***player_tableau_list: " + str(len(level.player_tableau_list)))
+	#print("***enemy_tableau_list: " + str(len(level.enemy_tableau_list)))
+
 	reset_display_card_sizes()
 
 func reset_display_card_sizes():
@@ -795,6 +1262,15 @@ func reset_display_card_sizes():
 		for card in level.player_right_arm_list:
 			card.set_scale(normal_size)
 		for card in level.player_leg_list:
+			card.set_scale(normal_size)
+			
+		for card in level.enemy_chassis_list:
+			card.set_scale(normal_size)
+		for card in level.enemy_left_arm_list:
+			card.set_scale(normal_size)
+		for card in level.enemy_right_arm_list:
+			card.set_scale(normal_size)
+		for card in level.enemy_leg_list:
 			card.set_scale(normal_size)
 	if card_expanded:
 		card_expanded = false
@@ -817,6 +1293,7 @@ func expand_card_details(chosen_card=false):
 		var card_zoomed_location = Vector2(400, 900)
 		var zoomed_idx = 200
 		reset_display_card_sizes()
+		level.reset_card_z_indexes()
 		handle_cards_in_display()
 		if chosen_card:
 			chosen_card.z_index = zoomed_idx
@@ -900,6 +1377,9 @@ func card_container_navigation_controller(val, location="change"):
 
 
 func change_hand_idx(val=0):
+	if get_node("/root").has_node("level"):
+		var level = get_node("/root/level")
+		level.reset_card_z_indexes()
 	var idx = 1
 	for card in hand:
 		card.modulate = Color(.55, .55, .55, 1)
@@ -917,17 +1397,31 @@ func change_hand_idx(val=0):
 
 
 func set_card_img(new_card, card_payload):
-		if card_payload[CARD_TYPE] == WEAPON_CARD:
-			new_card.get_node("inner_art_container/background").set_texture(main.CARD_RED_BACKGROUND_1)
-		elif card_payload[CARD_TYPE] == LEG_CARD:
-			new_card.get_node("inner_art_container/background").set_texture(main.CARD_YELLOW_BACKGROUND_1)
-		else:
-			new_card.get_node("inner_art_container/background").set_texture(main.CARD_BLUE_BACKGROUND_1)
-		if card_payload[IMG_PATH] and false == true:
-			new_card.get_node("inner_art_container/sprite").set_texture(card_payload[IMG_PATH])
+	new_card.get_node("outer_art_container/sprite").visible = false
+	new_card.get_node("inner_art_container/sprite").visible = false
+	new_card.get_node("inner_art_container/background").visible = true
+	if card_payload[CARD_TYPE] == WEAPON_CARD:
+		new_card.get_node("inner_art_container/background").set_texture(main.CARD_RED_BACKGROUND_1)
+	elif card_payload[CARD_TYPE] == LEG_CARD:
+		new_card.get_node("inner_art_container/background").set_texture(main.CARD_GREY_BACKGROUND_1)
+	elif card_payload[CARD_TYPE] == CHASSIS_CARD:
+		new_card.get_node("inner_art_container/background").set_texture(main.CARD_GREY_BACKGROUND_1)
+	elif card_payload[CARD_TYPE] == FOOD_CARD:
+		new_card.get_node("inner_art_container/background").set_texture(main.CARD_GREEN_BACKGROUND_1)
+	elif card_payload[CARD_TYPE] == WATER_CARD:
+		new_card.get_node("inner_art_container/background").set_texture(main.CARD_BLUE_BACKGROUND_1)
+	elif card_payload[CARD_TYPE] == HUNGER_CARD:
+		new_card.get_node("inner_art_container/background").set_texture(main.CARD_RED_BACKGROUND_1)
+	elif card_payload[CARD_TYPE] == ABILITY_CARD:
+		new_card.get_node("inner_art_container/background").set_texture(main.CARD_YELLOW_BACKGROUND_1)
+	else:
+		new_card.get_node("inner_art_container/background").set_texture(main.CARD_RED_BACKGROUND_1)
+	if card_payload[IMG_PATH]:
+		new_card.get_node("inner_art_container/sprite").visible = true
+		new_card.get_node("inner_art_container/sprite").set_texture(card_payload[IMG_PATH])
 
 
-func spawn_cards(hand_limit, is_player=true, deck=starting_deck):
+func spawn_cards(hand_limit, is_player=true, deck=impact_starting_deck):
 	randomize()
 	if is_player:
 		hand = []
@@ -945,18 +1439,30 @@ func spawn_cards(hand_limit, is_player=true, deck=starting_deck):
 			card_detail_list.append(rand_card)
 			hand.append(new_card)
 			if card == 0:
-				new_card.position = Vector2((400) + 250 / (meta.player_hand_limit), 725)
+				new_card.position = Vector2(325 / (meta.player_hand_limit), 785)
 				og_card_pos = new_card.position
 			else:
 				new_card.position = og_card_pos
-				new_card.position.x += (card * 250)
-				new_card.position.y = 725
+				new_card.position.x += (card * 200)
+				new_card.position.y = 785
 				#Vector2((card * 175) + 400 / (hand_limit), 800)
+			var timer = Timer.new()
+			var time = .25
+			print("time " + str(time))
+			get_node("/root").add_child(timer)
+			timer.set_wait_time(time)
+			timer.set_one_shot(true)
+			timer.start()
+			yield(timer, "timeout")
+			timer.queue_free()
+			handle_cards_in_display()
 	else:
 		enm_hand = []
 		enm_card_detail_list = []
+		var og_card_pos = Vector2(0, 0)
 		for card in range(hand_limit):
 			var new_card = main.CARD.instance()
+			new_card.z_index = 120
 			get_node("/root").call_deferred("add_child", new_card)
 			var rand_card = get_random_card(deck)
 			var card_payload = get_card_payload(rand_card)
@@ -965,7 +1471,38 @@ func spawn_cards(hand_limit, is_player=true, deck=starting_deck):
 			update_display_card(new_card, card_payload)
 			enm_card_detail_list.append(rand_card)
 			enm_hand.append(new_card)
-			new_card.position = Vector2((card * 200) + 400 / (hand_limit), 400)
+			if card == 0:
+				new_card.position = Vector2(1000, 785)
+				og_card_pos = new_card.position
+				new_card.modulate = Color(.7, .2, .2, 1)
+			else:
+				new_card.position = og_card_pos
+				new_card.position.x += (card * 200)
+				new_card.position.y = 785
+				new_card.modulate = Color(.7, .2, .2, 1)
+			var timer = Timer.new()
+			var time = .25
+			print("time " + str(time))
+			get_node("/root").add_child(timer)
+			timer.set_wait_time(time)
+			timer.set_one_shot(true)
+			timer.start()
+			yield(timer, "timeout")
+			timer.queue_free()
+			handle_cards_in_display()
+		
+		var timer = Timer.new()
+		var time = 1.5
+		print("time " + str(time))
+		get_node("/root").add_child(timer)
+		timer.set_wait_time(time)
+		timer.set_one_shot(true)
+		timer.start()
+		yield(timer, "timeout")
+		timer.queue_free()
+		for i in range(len(enm_hand)):
+			play_card(enm_hand, i, false)
+		handle_cards_in_display()
 
 
 func get_card_id():
@@ -1017,14 +1554,12 @@ func get_card_payload(card):
 		card_payload[STUN] = card[STUN]
 	if WEAPON in card:
 		card_payload[WEAPON] = card[WEAPON]
-	if OVERHEAT in card:
-		card_payload[OVERHEAT] = card[OVERHEAT]
+	if OVERHUNGER in card:
+		card_payload[OVERHUNGER] = card[OVERHUNGER]
 	if FLAMMABLE in card:
 		card_payload[FLAMMABLE] = card[FLAMMABLE]
 	if POISON in card:
 		card_payload[POISON] = card[POISON]
-	if OVERHEAT in card:
-		card_payload[OVERHEAT] = card[OVERHEAT]
 	if FIRE in card:
 		card_payload[FIRE] = card[FIRE]
 	if WATER in card:
@@ -1044,14 +1579,14 @@ func get_card_payload(card):
 	if LEADER in card:
 		card_payload[LEADER] = card[LEADER]
 
-	if HEAT_PRODUCTION in card:
-		card_payload[HEAT_PRODUCTION] = card[HEAT_PRODUCTION]
+	if FOOD_PRODUCTION in card:
+		card_payload[FOOD_PRODUCTION] = card[FOOD_PRODUCTION]
 	if ABILITY_RANGE in card:
 		card_payload[ABILITY_RANGE] = card[ABILITY_RANGE]
 	if SHIELD in card:
 		card_payload[SHIELD] = card[SHIELD]
-	if HEAT_PRODUCTION in card:
-		card_payload[HEAT_PRODUCTION] = card[HEAT_PRODUCTION]
+	if FOOD_PRODUCTION in card:
+		card_payload[FOOD_PRODUCTION] = card[FOOD_PRODUCTION]
 	if ABILITY_RANGE in card:
 		card_payload[ABILITY_RANGE] = card[ABILITY_RANGE]
 	if CARD_ACTION in card:
@@ -1086,14 +1621,18 @@ func update_display_card(card_node, card_payload):
 	print(card_payload[CARD_TYPE])
 	var sprite_node = card_node.get_node("inner_art_container/background")
 	sprite_node.modulate = Color(1, 1, 1, 1)
-	if card_payload[CARD_TYPE] == CHAR_CARD:
-		sprite_node.modulate = Color(1, 1, 1, 1)
-	elif card_payload[CARD_TYPE] == ABILITY_CARD:
-		sprite_node.modulate = Color(.85, .85, 1, 1)
-	elif card_payload[CARD_TYPE] == WEAPON_CARD:
-		sprite_node.modulate = Color(1, .85, .85, 1)
-	elif card_payload[CARD_TYPE] == LEG_CARD:
-		sprite_node.modulate = Color(.85, 1, .85, 1)
+	# if card_payload[CARD_TYPE] == CHAR_CARD:
+	#	sprite_node.modulate = Color(1, 1, 1, 1)
+	# elif card_payload[CARD_TYPE] == ABILITY_CARD:
+	#	sprite_node.modulate = Color(.85, .85, 1, 1)
+	# elif card_payload[CARD_TYPE] == WEAPON_CARD:
+	#	sprite_node.modulate = Color(1, .85, .85, 1)
+	# elif card_payload[CARD_TYPE] == LEG_CARD:
+	#	sprite_node.modulate = Color(.85, 1, .85, 1)
+	# elif card_payload[CARD_TYPE] == FOOD_CARD:
+	#	sprite_node.modulate = Color(.35, 1, .35, 1)
+	# elif card_payload[CARD_TYPE] == HUNGER_CARD:
+	#	sprite_node.modulate = Color(.75, .5, .1, 1)
 	
 	# pass id from payload to card node for unique access when needed
 	if ID in card_payload:
@@ -1103,7 +1642,9 @@ func update_display_card(card_node, card_payload):
 	   or card_payload[CARD_TYPE] == ABILITY_CARD\
 	   or card_payload[CARD_TYPE] == LEG_CARD\
 	   or card_payload[CARD_TYPE] == WEAPON_CARD\
-	   or card_payload[CARD_TYPE] == CHASSIS_CARD:
+	   or card_payload[CARD_TYPE] == CHASSIS_CARD\
+	   or card_payload[CARD_TYPE] == HUNGER_CARD\
+	   or card_payload[CARD_TYPE] == FOOD_CARD:
 		#### Upper card section details
 		if TAGS in card_payload:
 			var tags = ""
@@ -1144,8 +1685,8 @@ func update_display_card(card_node, card_payload):
 		else:
 			card_node.get_node("detail_1").set_text("")
 			
-		if HEAT_PRODUCTION in card_payload:
-			card_node.get_node("detail_6").set_text(str(card_payload[HEAT_PRODUCTION]))
+		if FOOD_PRODUCTION in card_payload:
+			card_node.get_node("detail_6").set_text(str(card_payload[FOOD_PRODUCTION]))
 		else:
 			card_node.get_node("detail_6").set_text("")
 		#####
@@ -1154,8 +1695,8 @@ func update_display_card(card_node, card_payload):
 		card_node.get_node("title").set_text(title_text)
 		if DESCRIPTION in card_payload:
 			bottom_section_text += card_payload[DESCRIPTION]+"\n"
-		# if HEAT_PRODUCTION in card_payload:
-		# 	bottom_section_text += HEAT_PRODUCTION.to_upper() + " " + str(card_payload[HEAT_PRODUCTION])
+		# if FOOD_PRODUCTION in card_payload:
+		# 	bottom_section_text += FOOD_PRODUCTION.to_upper() + " " + str(card_payload[FOOD_PRODUCTION])
 		if PIERCING in card_payload:
 			bottom_section_text += PIERCING.to_upper() + " "
 		if BLEED in card_payload:
@@ -1168,8 +1709,8 @@ func update_display_card(card_node, card_payload):
 			bottom_section_text += FREEZE.to_upper() + " "
 		if STUN in card_payload:
 			bottom_section_text += STUN.to_upper() + " "
-		if OVERHEAT in card_payload:
-			bottom_section_text += OVERHEAT.to_upper() + " "
+		if OVERHUNGER in card_payload:
+			bottom_section_text += OVERHUNGER.to_upper() + " "
 		if WEAPON in card_payload:
 			bottom_section_text += "\n"
 			bottom_section_text += str(card_payload[WEAPON]).to_upper()
@@ -1181,7 +1722,7 @@ func update_display_card(card_node, card_payload):
 		print("n/**Can't find card_payload[CARD_TYPE]: " + str(card_payload[CARD_TYPE]) +" **")
 
 
-func handle_cards_in_display(is_player=true):
+func handle_cards_in_display():
 	if not get_node("/root").has_node("level"):
 		print("no level??")
 		return
@@ -1192,96 +1733,106 @@ func handle_cards_in_display(is_player=true):
 	var idx = 0
 	var x_buffer = 80
 	var y_buffer = 200
-	if is_player:
-		for card in level.player_chassis_list:
-			print("player_chassis_list moving: " + str(card.get_node("title").get_text()))
-			var node_ref = level.get_node("tableau_container/chassis").global_position
-			level.player_chassis_list[idx].position = node_ref
-			level.player_chassis_list[idx].position.x += x_buffer * x
-			level.player_chassis_list[idx].position.y += y_buffer * y
-			idx += 1
-			x += 1
-			if x % 3 == 0:
-				x = 0
-				y += 1
-	
-		y = 0
-		x = 0
-		idx = 0
-	
-		for card in level.player_leg_list:
-			print("player_leg_list moving: " + str(card.get_node("title").get_text()))
-			var node_ref = level.get_node("tableau_container/legs").global_position
-			level.player_leg_list[idx].position = Vector2(node_ref.x + (x_buffer * x), node_ref.y + (y_buffer * y))
-			idx += 1
-			x += 1
-		y = 0
-		x = 0
-		idx = 0
-	
-		for card in level.player_right_arm_list:
-			print("player_right_arm_list moving: " + str(card.get_node("title").get_text()))
-			var node_ref = level.get_node("tableau_container/right_arm").global_position
-			level.player_right_arm_list[idx].position = node_ref#Vector2(node_ref.x + (x_buffer * x), node_ref.y + (y_buffer * y))
-			print("level.player_right_arm_list[idx] beofre " + str(level.player_right_arm_list[idx].position))
-			level.player_right_arm_list[idx].position.y += (y_buffer * y)
-			print("level.player_right_arm_list[idx] after " + str(level.player_right_arm_list[idx].position))
+	for card in level.player_chassis_list:
+		print("player_chassis_list moving: " + str(card.get_node("title").get_text()))
+		var node_ref = level.get_node("tableau_container/chassis").global_position
+		level.player_chassis_list[idx].position = node_ref
+		level.player_chassis_list[idx].position.x += x_buffer * x
+		level.player_chassis_list[idx].position.y += y_buffer * y
+		idx += 1
+		x += 1
+		if x % 3 == 0:
+			x = 0
 			y += 1
-			idx += 1
-		y = 0
-		x = 0
-		idx = 0
-	
-		for card in level.player_left_arm_list:
-			print("player_left_arm_list moving: " + str(card.get_node("title").get_text()))
-			var node_ref = level.get_node("tableau_container/left_arm").global_position
-			level.player_left_arm_list[idx].position = node_ref#Vector2(node_ref.x + (x_buffer * x), node_ref.y + (y_buffer * y))
-			level.player_left_arm_list[idx].position.y += (y_buffer * y)
+
+	y = 0
+	x = 0
+	idx = 0
+
+	for card in level.player_leg_list:
+		print("player_leg_list moving: " + str(card.get_node("title").get_text()))
+		var node_ref = level.get_node("tableau_container/legs").global_position
+		level.player_leg_list[idx].position = Vector2(node_ref.x + (x_buffer * x), node_ref.y + (y_buffer * y))
+		idx += 1
+		x += 1
+	y = 0
+	x = 0
+	idx = 0
+
+	for card in level.player_right_arm_list:
+		print("player_right_arm_list moving: " + str(card.get_node("title").get_text()))
+		var node_ref = level.get_node("tableau_container/right_arm").global_position
+		level.player_right_arm_list[idx].position = node_ref#Vector2(node_ref.x + (x_buffer * x), node_ref.y + (y_buffer * y))
+		print("level.player_right_arm_list[idx] beofre " + str(level.player_right_arm_list[idx].position))
+		level.player_right_arm_list[idx].position.y += (y_buffer * y)
+		print("level.player_right_arm_list[idx] after " + str(level.player_right_arm_list[idx].position))
+		y += 1
+		idx += 1
+	y = 0
+	x = 0
+	idx = 0
+
+	for card in level.player_left_arm_list:
+		print("player_left_arm_list moving: " + str(card.get_node("title").get_text()))
+		var node_ref = level.get_node("tableau_container/left_arm").global_position
+		level.player_left_arm_list[idx].position = node_ref#Vector2(node_ref.x + (x_buffer * x), node_ref.y + (y_buffer * y))
+		level.player_left_arm_list[idx].position.y += (y_buffer * y)
+		y += 1
+		idx += 1
+
+
+	#####
+	#
+	###  Enemy
+	#
+	#####
+	y = 0
+	x = 0
+	idx = 0
+	for card in level.enemy_chassis_list:
+		print("enemy_chassis_list moving: " + str(card.get_node("title").get_text()))
+		var node_ref = level.get_node("enemy_tableau_container/chassis").global_position
+		level.enemy_chassis_list[idx].position = node_ref
+		level.enemy_chassis_list[idx].position.x += x_buffer * x
+		level.enemy_chassis_list[idx].position.y += y_buffer * y
+		idx += 1
+		x += 1
+		if x % 3 == 0:
+			x = 0
 			y += 1
-			idx += 1
-	else:
-		for card in level.enemy_chassis_list:
-			print("enemy_chassis_list moving: " + str(card.get_node("title").get_text()))
-			var node_ref = level.get_node("enemy_tableau_container/chassis").global_position
-			level.enemy_chassis_list[idx].position = Vector2(node_ref.x + (x_buffer * x), node_ref.y + (y_buffer * y))
-			idx += 1
-			x += 1
-			if x % 3 == 0:
-				x = 0
-				y += 1
-	
-		y = 0
-		x = 0
-		idx = 0
-	
-		for card in level.enemy_leg_list:
-			print("player_leg_list moving: " + str(card.get_node("title").get_text()))
-			var node_ref = level.get_node("enemy_tableau_container/legs").global_position
-			level.player_leg_list[idx].position = Vector2(node_ref.x + (x_buffer * x), node_ref.y + (y_buffer * y))
-			idx += 1
-			x += 1
-		y = 0
-		x = 0
-		idx = 0
-	
-		for card in level.enemy_right_arm_list:
-			print("enemy_right_arm_list moving: " + str(card.get_node("title").get_text()))
-			var node_ref = level.get_node("enemy_tableau_container/right_arm").global_position
-			level.enemy_right_arm_list[idx].position = node_ref
-			level.enemy_right_arm_list[idx].position.y += (y_buffer * y)
-			y += 1
-			idx += 1
-		y = 0
-		x = 0
-		idx = 0
-	
-		for card in level.enemy_left_arm_list:
-			print("enemy_left_arm_list moving: " + str(card.get_node("title").get_text()))
-			var node_ref = level.get_node("enemy_tableau_container/left_arm").global_position
-			level.enemy_left_arm_list[idx].position = node_ref
-			level.enemy_left_arm_list[idx].position.y += (y_buffer * y)
-			y += 1
-			idx += 1
+
+	y = 0
+	x = 0
+	idx = 0
+
+	for card in level.enemy_leg_list:
+		print("player_leg_list moving: " + str(card.get_node("title").get_text()))
+		var node_ref = level.get_node("enemy_tableau_container/legs").global_position
+		level.enemy_leg_list[idx].position = Vector2(node_ref.x + (x_buffer * x), node_ref.y + (y_buffer * y))
+		idx += 1
+		x += 1
+	y = 0
+	x = 0
+	idx = 0
+
+	for card in level.enemy_right_arm_list:
+		print("enemy_right_arm_list moving: " + str(card.get_node("title").get_text()))
+		var node_ref = level.get_node("enemy_tableau_container/right_arm").global_position
+		level.enemy_right_arm_list[idx].position = node_ref
+		level.enemy_right_arm_list[idx].position.y += (y_buffer * y)
+		y += 1
+		idx += 1
+	y = 0
+	x = 0
+	idx = 0
+
+	for card in level.enemy_left_arm_list:
+		print("enemy_left_arm_list moving: " + str(card.get_node("title").get_text()))
+		var node_ref = level.get_node("enemy_tableau_container/left_arm").global_position
+		level.enemy_left_arm_list[idx].position = node_ref
+		level.enemy_left_arm_list[idx].position.y += (y_buffer * y)
+		y += 1
+		idx += 1
 
 
 func remove_card(card_node):
@@ -1300,11 +1851,17 @@ func remove_all_cards():
 			card.queue_free()
 
 
-func remove_all_cards_in_hand():
-	for card in hand:
-		if card and main.checkIfNodeDeleted(card) == false:
-			card.visible = false
-			card.queue_free()
+func remove_all_cards_in_hand(is_player):
+	if is_player:
+		for card in hand:
+			if card and main.checkIfNodeDeleted(card) == false:
+				card.visible = false
+				card.queue_free()
+	else:
+		for card in enm_hand:
+			if card and main.checkIfNodeDeleted(card) == false:
+				card.visible = false
+				card.queue_free()
 
 		
 ##### AI/ENM:
