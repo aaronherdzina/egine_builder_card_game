@@ -47,10 +47,10 @@ func cycle_active_menu_lists(val):
 
 func update_text_overlays():
 	get_node("/root/level").get_node("text_cont/enemy_health").set_text(str(meta.enemy_health))
-	get_node("/root/level").get_node("text_cont/enemy_hunger").set_text(str(meta.current_enemy_hunger))
+	get_node("/root/level").get_node("text_cont/enemy_hunger").set_text(str(meta.current_enemy_food))
 	get_node("/root/level").get_node("text_cont/enemy_hunger_max").set_text(str(meta.max_enemy_hunger))
 	get_node("/root/level").get_node("text_cont/player_health").set_text(str(meta.player_health))
-	get_node("/root/level").get_node("text_cont/player_hunger").set_text(str(meta.current_player_hunger))
+	get_node("/root/level").get_node("text_cont/player_hunger").set_text(str(meta.current_player_food))
 	get_node("/root/level").get_node("text_cont/player_hunger_max").set_text(str(meta.max_player_hunger))
 
 
