@@ -22,10 +22,10 @@ var lists_idx_max = 4
 var lists_idx = 4
 var list_navigation_idx = 1
 
-var player_chassis_list_limit = 10
+var player_chassis_list_limit = 5
 var player_leg_list_limit = 5
 var player_right_arm_list_limit = 2
-var player_left_arm_list_limit = 2
+var player_left_arm_list_limit = 1
 
 var right_arm_idx = 0
 var left_arm_idx = 0
@@ -46,12 +46,17 @@ func cycle_active_menu_lists(val):
 
 
 func update_text_overlays():
+	
+	$ui.animate_value(int(meta.player_health * 1.1), meta.player_health)
+	$ui.animate_value(int(meta.player_food * 1.1), meta.player_food, 'food')
 	get_node("/root/level").get_node("text_cont/enemy_health").set_text(str(meta.enemy_health))
-	get_node("/root/level").get_node("text_cont/enemy_hunger").set_text(str(meta.current_enemy_food))
-	get_node("/root/level").get_node("text_cont/enemy_hunger_max").set_text(str(meta.max_enemy_hunger))
+	get_node("/root/level").get_node("text_cont/enemy_hunger").set_text(str(meta.enemy_food))
+	get_node("/root/level").get_node("text_cont/enemy_water").set_text(str(meta.enemy_water))
 	get_node("/root/level").get_node("text_cont/player_health").set_text(str(meta.player_health))
-	get_node("/root/level").get_node("text_cont/player_hunger").set_text(str(meta.current_player_food))
-	get_node("/root/level").get_node("text_cont/player_hunger_max").set_text(str(meta.max_player_hunger))
+	get_node("/root/level").get_node("text_cont/player_hunger").set_text(str(meta.player_food))
+	get_node("/root/level").get_node("text_cont/player_defense").set_text(str(meta.player_defense))
+	get_node("/root/level").get_node("text_cont/player_toughness").set_text(str(meta.player_toughness))
+	get_node("/root/level").get_node("text_cont/player_water").set_text(str(meta.player_water))
 
 
 func reset_card_z_indexes():

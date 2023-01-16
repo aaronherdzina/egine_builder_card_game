@@ -11,8 +11,8 @@ var player_turn = true
 var occupied_tile_weight = 1000
 var unccupied_tile_weight = 1
 var wall_tile_weight = 2000
-var current_player_food = 300
-var max_player_hunger = 400 # auto loose if lack of food exceeds this 
+var current_player_food = 20
+var max_player_hunger = 100 # auto loose if lack of food exceeds this 
 
 var player_toughness_bonus = 0
 var player_health_bonus = 0
@@ -22,36 +22,37 @@ var player_food_production_bonus = 0
 var player_water_bonus = 0
 var player_attacks_bonus = 0
 var player_damage_bonus = 0
-var player_starving_damage = 250
+var player_starving_damage = 5
 var player_food_bonus = 0
+var player_food = 20
 
-var enm_total_health = 300
-var enemy_health = 300
+var enm_total_health = 100
+var enemy_health = 100
 var enemy_water = 50
-var enemy_food = 20
-var current_enemy_food = 300
-var max_enemy_hunger = 300 # auto loose if lack of food exceeds this 
-var enemy_starving_damage = 150
+var enemy_food = 50
+var current_enemy_food = 50
+var max_enemy_hunger = 100 # auto loose if lack of food exceeds this 
+var enemy_starving_damage = 5
 
 var enemy_toughness_bonus = 0
 var enemy_health_bonus = 0
 var enemy_defense_bonus = 0
 var enemy_hunger_production_bonus = 0
 var enemy_food_production_bonus = 0
+var enemy_food_bonus = 0
 var enemy_water_bonus = 0
 var enemy_attacks_bonus = 0
 var enemy_damage_bonus = 0
-var enemy_defense = 10
+var enemy_defense = 0
 var enemy_toughnes = 0
 var enemy_hand_limit = 3
 var enemy_hand_limit_default = 3
 var enemy_hand_limit_max = 6
 
-var player_health = 500
+var player_health = 100
 var player_water = 50
-var player_food = 20
 var player_defense = 10
-var player_toughnes = 0
+var player_toughness = 0
 var player_hand_limit = 3
 var player_hand_limit_default = 3
 var player_hand_limit_max = 6
@@ -64,6 +65,44 @@ var current_char = {
 	"energy_max": 3
 }
 
+var current_enemy_deck = []
+var current_player_deck = []
+
+var area_food_per_turn = 5
+var area_water_per_turn = 5
+var area_biome = "null"
+
+var riverlands_area = {
+		Cards.CARD_BIOME: Cards.RIVERLANDS,
+		Cards.FOOD: 4,
+		Cards.WATER: 5,
+		"food_bias": .4,
+		"water_bias": .6
+	}
+
+var forest_area = {
+		Cards.CARD_BIOME: Cards.FOREST,
+		Cards.FOOD: 6,
+		Cards.WATER: 3,
+		"food_bias": .7,
+		"water_bias": .3
+	}
+
+var savannah_area = {
+		Cards.CARD_BIOME: Cards.SAVANNAH,
+		Cards.FOOD: 4,
+		Cards.WATER: 1,
+		"food_bias": .9,
+		"water_bias": .1
+	}
+
+var coastal_area = {
+		Cards.CARD_BIOME: Cards.COASTAL,
+		Cards.FOOD: 1,
+		Cards.WATER: 8,
+		"food_bias": .1,
+		"water_bias": .9,
+	}
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.

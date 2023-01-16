@@ -23,7 +23,14 @@ const PLASMA_GUN = preload("res://Sprites/char/gun bear.png")
 
 
 ######
+# LEVEL
+const COASTAL_BACKDROP = preload("res://Sprites/UI/water backdrop.png")
+const WHITE_BACKDROP = preload("res://Sprites/UI/white backdrop.png")
+const RIVERLANDS_BACKDROP = preload("res://Sprites/UI/water backdrop.png")
+const SAVANNAH_BACKDROP = preload("res://Sprites/UI/savanha backdrop.png")
+const FOREST_BACKDROP = preload("res://Sprites/UI/forest backdrop.png")
 
+#
 
 
 const TEXT_EFECT = preload("res://Scenes/text_effect.tscn")
@@ -176,6 +183,9 @@ func handle_in_battle_input(action):
 			if not get_node("/root").has_node("level"):
 				var level = main.LEVEL.instance()
 				get_node("/root").add_child(level)
+				meta.current_player_deck = Cards.starting_deck
+				meta.current_enemy_deck = Cards.riverlands_deck
+				Cards.set_area_bonuses()
 			Cards.take_turn(meta.player_turn)
 			"""
 			var timer = Timer.new()
