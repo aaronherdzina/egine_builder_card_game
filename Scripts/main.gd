@@ -19,7 +19,7 @@ const LARGE_ELEPHANT = preload("res://Sprites/char/Card-game-9.png")
 const SMALL_ELEPHANT = preload("res://Sprites/char/Card-game-10.png")
 const ROCK_FOX = preload("res://Sprites/char/Card-game-11.png")
 const PLASMA_GUN = preload("res://Sprites/char/gun bear.png")
-
+const PIRANHA = preload("res://Sprites/char/piranha card.png")
 
 
 ######
@@ -181,10 +181,11 @@ func handle_in_battle_input(action):
 	if action == "spacebar":
 		if not Cards.waiting:
 			if not get_node("/root").has_node("level"):
+				randomize()
 				var level = main.LEVEL.instance()
 				get_node("/root").add_child(level)
-				meta.current_player_deck = Cards.starting_deck
-				meta.current_enemy_deck = Cards.riverlands_deck
+				meta.current_player_deck = Cards.all_decks[rand_range(0, len(Cards.all_decks))]
+				meta.current_enemy_deck = Cards.all_decks[rand_range(0, len(Cards.all_decks))]
 				Cards.set_area_bonuses()
 			Cards.take_turn(meta.player_turn)
 			"""

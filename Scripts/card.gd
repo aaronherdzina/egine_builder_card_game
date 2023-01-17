@@ -16,7 +16,7 @@ var card_biome = ""
 var id = -333
 var card_type = ""
 var card_action = "??default??"
-var card_wait_time = 1
+var card_wait_time = .5
 var img_path = ""
 var title = ""
 var rarity = 1
@@ -53,7 +53,6 @@ func map_card(card_payload):
 		water = card_payload[Cards.WATER]
 	if Cards.CARD_BIOME in card_payload:
 		card_biome = card_payload[Cards.CARD_BIOME]
-		
 	if Cards.HEALTH in card_payload:
 		health = card_payload[Cards.HEALTH]
 	if Cards.DAMAGE in card_payload:
@@ -66,13 +65,12 @@ func map_card(card_payload):
 		defense = card_payload[Cards.DEFENSE]
 	if Cards.TAGS in card_payload:
 		tags = card_payload[Cards.TAGS]
-		
-	if Cards.HUNGER_PRODUCTION in card_payload or\
-	   Cards.WATER_PRODUCTION in card_payload:
+	if hunger_production > 0 or\
+	   water_production > 0 in card_payload:
 		var costs = Cards.create_card_cost(self)
 		print("setting cost?? costs " + str(costs))
-		hunger_production = costs["food_cost"]
-		water_production = costs["water_cost"]
+		hunger_production += costs["food_cost"]
+		water_production += costs["water_cost"]
 	print("cost?? hunger_production " + str(hunger_production))
 	print("cost?? water_production " + str(water_production))
 	update_card_display_info(self, card_payload)

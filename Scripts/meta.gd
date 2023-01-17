@@ -45,17 +45,17 @@ var enemy_attacks_bonus = 0
 var enemy_damage_bonus = 0
 var enemy_defense = 0
 var enemy_toughnes = 0
-var enemy_hand_limit = 3
-var enemy_hand_limit_default = 3
+var enemy_hand_limit = 2
+var enemy_hand_limit_default = 2
 var enemy_hand_limit_max = 6
 
 var player_health = 100
 var player_water = 50
 var player_defense = 10
 var player_toughness = 0
-var player_hand_limit = 3
-var player_hand_limit_default = 3
-var player_hand_limit_max = 6
+var player_hand_limit = 2
+var player_hand_limit_default = 2
+var player_hand_limit_max = 5
 var current_salvage = 0
 var current_char = {
 	"move_distance": 2,

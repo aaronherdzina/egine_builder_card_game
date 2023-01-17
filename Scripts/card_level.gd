@@ -46,7 +46,6 @@ func cycle_active_menu_lists(val):
 
 
 func update_text_overlays():
-	
 	$ui.animate_value(int(meta.player_health * 1.1), meta.player_health)
 	$ui.animate_value(int(meta.player_food * 1.1), meta.player_food, 'food')
 	get_node("/root/level").get_node("text_cont/enemy_health").set_text(str(meta.enemy_health))
@@ -81,7 +80,6 @@ func reset_card_z_indexes():
 		card.get_node("text").visible = false
 		card.z_index = 1
 
-
 	for card in enemy_chassis_list:
 		card.modulate = Color(.75, .75, .75, 1)
 		card.set_scale(Vector2(.5, .5))
@@ -110,7 +108,6 @@ func cycle_current_card_menu(val):
 	current_menu = Cards.current_card_menu
 	
 	reset_card_z_indexes()
-
 	if current_menu == CHASSIS_MENU and len(player_chassis_list) > 0:
 		if list_navigation_idx < 0:
 			list_navigation_idx = len(player_chassis_list) - 1
