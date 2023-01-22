@@ -78,7 +78,7 @@ tracks/5/keys = {
 "values": [ true, false ]
 }
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=2]
 resource_name = "hunger up"
 length = 10.0
 tracks/0/type = "value"
@@ -154,8 +154,7 @@ tracks/5/keys = {
 "values": [ true, false ]
 }
 
-[sub_resource type="Animation" id=2]
-resource_name = "hurt"
+[sub_resource type="Animation" id=3]
 length = 10.0
 tracks/0/type = "value"
 tracks/0/path = NodePath("anim_controller/text:custom_colors/default_color")
@@ -230,7 +229,7 @@ tracks/5/keys = {
 "values": [ true, false ]
 }
 
-[sub_resource type="DynamicFont" id=3]
+[sub_resource type="DynamicFont" id=4]
 size = 50
 outline_size = 1
 outline_color = Color( 0, 0, 0, 1 )
@@ -242,24 +241,20 @@ font_data = ExtResource( 1 )
 z_index = 150
 
 [node name="anim" type="AnimationPlayer" parent="."]
-playback_speed = 3.0
+playback_speed = 2.0
 anims/hunger = SubResource( 1 )
-"anims/hunger up" = SubResource( 4 )
-anims/hurt = SubResource( 2 )
+"anims/hunger up" = SubResource( 2 )
+anims/hurt = SubResource( 3 )
 
 [node name="anim_controller" type="Node2D" parent="."]
-visible = false
-position = Vector2( 50, -200 )
-scale = Vector2( 0.1, 0.1 )
 
 [node name="Sprite" type="Sprite" parent="anim_controller"]
 
 [node name="text" type="RichTextLabel" parent="anim_controller"]
 margin_right = 418.0
 margin_bottom = 423.0
-custom_fonts/normal_font = SubResource( 3 )
-custom_colors/default_color = Color( 1, 1, 1, 0.686275 )
-text = "0"
+custom_fonts/normal_font = SubResource( 4 )
+custom_colors/default_color = Color( 1, 1, 1, 1 )
 scroll_active = false
 __meta__ = {
 "_edit_use_anchors_": false

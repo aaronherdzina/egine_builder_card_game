@@ -4,10 +4,15 @@ extends Control
 
 var maximum = 100
 var current_health = 0
-
+var min_val = 5
 func _ready():
-	animate_value(int(meta.player_health * 1.1), meta.player_health)
-	animate_value(int(meta.player_food * 1.1), meta.player_food, 'food')
+	animate_value(meta.player_health-min_val, meta.player_health)
+	animate_value(meta.player_food-min_val, meta.player_food, 'food')
+	animate_value(meta.player_water-min_val, meta.player_water, 'water')
+
+	animate_value(meta.enemy_health-min_val, meta.enemy_health, 'health', false)
+	animate_value(meta.enemy_food-min_val, meta.enemy_food, 'food', false)
+	animate_value(meta.enemy_water-min_val, meta.enemy_water, 'water', false)
 	
 	#get_node("AnimationPlayer").connect("finished", self, "return_enm_icon_to_idle")
 
@@ -29,27 +34,33 @@ func animate_value(start, end, val_type='health', is_player=true, for_punch=fals
 	var node_to_anim = null
 	var node_to_tween = null
 	var anim_type = Tween.TRANS_ELASTIC
+	var set_max = false
 	if 'food' in val_type:
 		timing = .25
 		anim_type = Tween.TRANS_BACK
-		node_to_tween = $z/player_food_bar/Tween if is_player else $z/enemy_stamina_bar/Tween
-		node_to_anim = $z/player_food_bar/TextureProgress if is_player else $z/enemy_stamina_bar/TextureProgress
-		# also change the max
-		"""
-		var stamina_max = meta_state.game_data.pd.stamina_max if is_player else meta_state.game_data.ed.stamina_max
-		var stamina_max_default = meta_state.game_data.pd.stamina_max_default if is_player else meta_state.game_data.ed.stamina_max_default
-		
-		if is_player:
-			$z/player_stamina_max/Tween.interpolate_property($z/player_stamina_max/stamina_max, "value", 0, stamina_max_default - stamina_max, timing, anim_type, Tween.EASE_OUT)
-		else:
-			print('stamina_max ' + str(stamina_max) + ' stamina_max_default ' + str(stamina_max_default))
-			$z/enemy_stamina_max/Tween.interpolate_property($z/enemy_stamina_max/stamina_max, "value", 0, stamina_max_default - stamina_max, timing, anim_type, Tween.EASE_OUT)
-		"""
-	elif 'momentum' in val_type:
+		if set_max:
+			if is_player:
+				$z/player_food_bar/TextureProgress.max_value = meta.player_food_max
+			else:
+				$z/enemy_food_bar/TextureProgress.max_value = meta.enemy_food_max
+		node_to_tween = $z/player_food_bar/Tween if is_player else $z/enemy_food_bar/Tween
+		node_to_anim = $z/player_food_bar/TextureProgress if is_player else $z/enemy_food_bar/TextureProgress
+
+	elif 'water' in val_type:
 		timing = 4 if for_punch else .1
-		node_to_tween = $z/player_momentum_bar/Tween if is_player else $z/enemy_momentum_bar/Tween
-		node_to_anim = $z/player_momentum_bar/TextureProgress if is_player else $z/enemy_momentum_bar/TextureProgress
+		if set_max:
+			if is_player:
+				$z/player_water_bar/TextureProgress.max_value = meta.player_water_max
+			else:
+				$z/enemy_water_bar/TextureProgress.max_value = meta.enemy_water_max
+		node_to_tween = $z/player_water_bar/Tween if is_player else $z/enemy_water_bar/Tween
+		node_to_anim = $z/player_water_bar/TextureProgress if is_player else $z/enemy_water_bar/TextureProgress
 	else:
+		if set_max:
+			if is_player:
+				$z/player_health_bar/TextureProgress.max_value = meta.player_health_max
+			else:
+				$z/enemy_health_bar/TextureProgress.max_value = meta.enemy_health_max
 		node_to_tween = $z/player_health_bar/Tween if is_player else $z/enemy_health_bar/Tween
 		node_to_anim = $z/player_health_bar/TextureProgress if is_player else $z/enemy_health_bar/TextureProgress
 	

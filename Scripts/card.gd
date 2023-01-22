@@ -21,10 +21,10 @@ var img_path = ""
 var title = ""
 var rarity = 1
 var description = ''
+var selected_for_action_phase = false
 
 
-func map_card(card_payload):
-	print("map card: " + str(card_payload[Cards.TITLE]) + " " + str(card_payload))
+func map_card(card_payload, recalc_costs=true):
 	if Cards.RARITY in card_payload:
 		rarity = card_payload[Cards.RARITY]
 	if Cards.TITLE in card_payload:
@@ -48,7 +48,7 @@ func map_card(card_payload):
 	if Cards.HUNGER in card_payload:
 		hunger = card_payload[Cards.HUNGER]
 	if Cards.FOOD in card_payload:
-		defense = card_payload[Cards.FOOD]
+		food = card_payload[Cards.FOOD]
 	if Cards.WATER in card_payload:
 		water = card_payload[Cards.WATER]
 	if Cards.CARD_BIOME in card_payload:
@@ -65,14 +65,16 @@ func map_card(card_payload):
 		defense = card_payload[Cards.DEFENSE]
 	if Cards.TAGS in card_payload:
 		tags = card_payload[Cards.TAGS]
-	if hunger_production > 0 or\
-	   water_production > 0 in card_payload:
+
+	if recalc_costs:
 		var costs = Cards.create_card_cost(self)
-		print("setting cost?? costs " + str(costs))
-		hunger_production += costs["food_cost"]
-		water_production += costs["water_cost"]
-	print("cost?? hunger_production " + str(hunger_production))
-	print("cost?? water_production " + str(water_production))
+		if costs:
+			if hunger_production > 0 or\
+			   water_production > 0 in card_payload:
+				print("setting cost?? costs " + str(costs))
+				hunger_production = costs["food_cost"]
+				water_production = costs["water_cost"]
+	print("cost? hunger_production: " + str(hunger_production)+ " water_production: " + str(water_production))
 	update_card_display_info(self, card_payload)
 
 
@@ -100,45 +102,49 @@ func update_card_display_info(card_node, card_payload):
 	   or card_node.card_type == Cards.WATER_CARD:
 		print("setting display values for " + str(card_node.title) + " hunger " + str(card_node.hunger_production) + " water " + str(card_node.water_production))
 		#### Upper card section details
-		var tag_text = ""
+		var tag_text = "tags: "
 		for tag in card_node.tags:
-			tag_text += tag + ","
+			tag_text += tag + ", "
 		card_node.get_node("tags").set_text(str(tag_text))
 
 		card_node.get_node("timer").set_text(str(card_node.card_wait_time))
 		card_node.get_node("action").set_text(card_node.card_action)
-		if card_node.damage > 0:
-			card_node.get_node("detail_5").set_text(str(card_node.damage))
+		if card_node.attacks > 0 or card_node.damage > 0:
+			if card_node.damage <= 0:
+				card_node.damage = 1
+			if card_node.attacks <= 0:
+				card_node.attacks = 1
+			card_node.get_node("damage").set_text(str(card_node.attacks*card_node.damage))
 		else:
-			card_node.get_node("detail_5").set_text("")
-		if card_node.attacks > 0:
-			card_node.get_node("detail_4").set_text(str(attacks))
-			card_node.get_node("detail_4_5_operator").set_text("*")
-		else:
-			card_node.get_node("detail_4_5_operator").set_text("")
+			card_node.get_node("damage").set_text("")
+
 		if card_node.defense > 0:
-			card_node.get_node("detail_3").set_text(str(card_node.defense))
+			card_node.get_node("defense").set_text("D "+str(card_node.defense))
 		else:
-			card_node.get_node("detail_3").set_text("")
+			card_node.get_node("defense").set_text("")
+
 		if card_node.toughness in card_payload:
-			card_node.get_node("detail_2").set_text(str(card_node.toughness))
+			card_node.get_node("toughness").set_text("T"+str(card_node.toughness))
 		else:
-			card_node.get_node("detail_2").set_text("")
+			card_node.get_node("toughness").set_text("")
+
 		if card_node.health > 0:
-			card_node.get_node("detail_1").set_text(str(card_node.health))
+			card_node.get_node("health").set_text("H "+str(card_node.health))
 		else:
-			card_node.get_node("detail_1").set_text("")
+			card_node.get_node("health").set_text("")
 			
-		if card_node.hunger_production > 0 and card_node.water_production > 0:
-			card_node.get_node("detail_6").set_text(str(card_node.hunger_production) + " / " + str(card_node.water_production))
-		elif card_node.hunger_production > 0:
-			card_node.get_node("detail_6").set_text(str(card_node.hunger_production) + " / ")
-		elif card_node.water_production > 0:
-			card_node.get_node("detail_6").set_text(" / " + str(card_node.water_production))
+		if card_node.hunger_production > 0:
+			card_node.get_node("food_cost").set_text("F "+str(card_node.hunger_production))
 		else:
-			card_node.get_node("detail_6").set_text("")
+			card_node.get_node("food_cost").set_text("")
+
+		if card_node.water_production > 0:
+			card_node.get_node("water_cost").set_text("W "+str(card_node.water_production))
+		else:
+			card_node.get_node("water_cost").set_text("")
+
 		#####
-		var bottom_section_text = "("+str(card_node.rarity)+") "
+		var bottom_section_text = "R("+str(card_node.rarity)+") "
 		var title_text = card_node.title.to_upper()
 		card_node.get_node("title").set_text(title_text)
 		bottom_section_text += card_node.description+"\n"
@@ -150,7 +156,6 @@ func update_card_display_info(card_node, card_payload):
 			bottom_section_text += "\n"
 			bottom_section_text += str(card_payload[Cards.WEAPON]).to_upper()
 
-		print("** whats in cost spot??: " + card_node.get_node("detail_6").get_text())
 		card_node.get_node("text").set_text(bottom_section_text)
 	else:
 		print("n/**Can't find card_payload[card_type]: " + str(card_node.card_type) +" **")

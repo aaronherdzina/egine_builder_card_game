@@ -5,11 +5,11 @@ const debug = true # for dev
 # CARDS
 const CARD = preload("res://Scenes/card.tscn")
 
-const CARD_BLUE_BACKGROUND_1 = preload("res://Sprites/cards/blue card background.png")
+const CARD_COASTAL_BACKGROUND_1 = preload("res://Sprites/cards/blue card background.png")
 const CARD_GREY_BACKGROUND_1 = preload("res://Sprites/cards/grey caerd background.png")
-const CARD_RED_BACKGROUND_1 = preload("res://Sprites/cards/red card background.png")
-const CARD_GREEN_BACKGROUND_1 = preload("res://Sprites/cards/forest card background.png")
-const CARD_YELLOW_BACKGROUND_1 = preload("res://Sprites/cards/savanahha background.png")
+const CARD_RIVERLANDS_BACKGROUND_1 = preload("res://Sprites/cards/red card background.png")
+const CARD_FOREST_BACKGROUND_1 = preload("res://Sprites/cards/forest card background.png")
+const CARD_SAVANNHA_BACKGROUND_1 = preload("res://Sprites/cards/savanahha background.png")
 
 ## Card sprites
 
@@ -92,7 +92,7 @@ var controllerCursorObj = false
 
 
 #### SAVE LOAD FUNCS
-var debug_remove_save_file = true
+var debug_remove_save_file = false
 
 func loadGameData(onlyGameData=false):
 	print("loading...")
@@ -139,13 +139,11 @@ func savePlayerData():
 	file.close()
 	print("Saved " + str(playerFilepath))
 	pass
-
 #### END OF SAVE LOAD FUNCS
 
 
 
 #### INPUT FUNCS #MOVE TO INPUT ONLY NODE/SCRIPT
-
 func _input(event):
    # Mouse in viewport coordinates
 	if Input.is_action_pressed("ui_quit"): 
@@ -155,7 +153,6 @@ func _input(event):
 			handle_main_menu_input("start")
 		elif current_screen == "battle":
 			handle_in_battle_input("start")
-			#get_node("/root/main_menu").visible = false
 	if Input.is_action_pressed("back"):
 		if current_screen == "battle":
 			handle_in_battle_input("back")
@@ -182,11 +179,11 @@ func handle_in_battle_input(action):
 		if not Cards.waiting:
 			if not get_node("/root").has_node("level"):
 				randomize()
-				var level = main.LEVEL.instance()
-				get_node("/root").add_child(level)
 				meta.current_player_deck = Cards.all_decks[rand_range(0, len(Cards.all_decks))]
 				meta.current_enemy_deck = Cards.all_decks[rand_range(0, len(Cards.all_decks))]
-				Cards.set_area_bonuses()
+				var level = main.LEVEL.instance()
+				get_node("/root").add_child(level)
+				level.start_level()
 			Cards.take_turn(meta.player_turn)
 			"""
 			var timer = Timer.new()

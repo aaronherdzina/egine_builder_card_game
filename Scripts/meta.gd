@@ -24,14 +24,16 @@ var player_attacks_bonus = 0
 var player_damage_bonus = 0
 var player_starving_damage = 5
 var player_food_bonus = 0
-var player_food = 20
+var player_food = 10
+var player_food_max = 0
+var player_water_max = 0
 
-var enm_total_health = 100
+var enemy_health_max = 100
 var enemy_health = 100
-var enemy_water = 50
-var enemy_food = 50
-var current_enemy_food = 50
-var max_enemy_hunger = 100 # auto loose if lack of food exceeds this 
+var enemy_water = 30
+var enemy_food = 30
+var enemy_food_max = 0
+var enemy_water_max = 0
 var enemy_starving_damage = 5
 
 var enemy_toughness_bonus = 0
@@ -50,7 +52,8 @@ var enemy_hand_limit_default = 2
 var enemy_hand_limit_max = 6
 
 var player_health = 100
-var player_water = 50
+var player_health_max = 100
+var player_water = 10
 var player_defense = 10
 var player_toughness = 0
 var player_hand_limit = 2

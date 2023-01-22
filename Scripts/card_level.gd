@@ -45,9 +45,29 @@ func cycle_active_menu_lists(val):
 	list_navigation_idx = 1
 
 
+func start_level():
+	meta.enemy_health_max = meta.enemy_health
+
+	meta.player_health_max = meta.player_health 
+	Cards.remove_all_cards()
+	Cards.remove_all_cards_in_hand(true)
+	Cards.remove_all_cards_in_hand(false)
+	Cards.set_area_bonuses()
+	reset_card_z_indexes()
+	
+	update_text_overlays()
+
+
 func update_text_overlays():
-	$ui.animate_value(int(meta.player_health * 1.1), meta.player_health)
-	$ui.animate_value(int(meta.player_food * 1.1), meta.player_food, 'food')
+	var min_val = 5
+	$ui.animate_value(meta.player_health-min_val, meta.player_health)
+	$ui.animate_value(meta.player_food-min_val, meta.player_food, 'food')
+	$ui.animate_value(meta.player_water-min_val, meta.player_water, 'water')
+
+	$ui.animate_value(meta.enemy_health-min_val, meta.enemy_health, 'health', false)
+	$ui.animate_value(meta.enemy_food-min_val, meta.enemy_food, 'food', false)
+	$ui.animate_value(meta.enemy_water-min_val, meta.enemy_water, 'water', false)
+
 	get_node("/root/level").get_node("text_cont/enemy_health").set_text(str(meta.enemy_health))
 	get_node("/root/level").get_node("text_cont/enemy_hunger").set_text(str(meta.enemy_food))
 	get_node("/root/level").get_node("text_cont/enemy_water").set_text(str(meta.enemy_water))
@@ -61,44 +81,60 @@ func update_text_overlays():
 func reset_card_z_indexes():
 	for card in player_chassis_list:
 		card.modulate = Color(.75, .75, .75, 1)
-		card.set_scale(Vector2(.5, .5))
+		card.set_scale(Cards.STANDARD_DISPLAY_CARD_SCALE)
 		card.get_node("text").visible = false
+		card.get_node("tags").visible = false
+		card.get_node("action").visible = false
 		card.z_index = 1
 	for card in player_right_arm_list:
 		card.modulate = Color(.75, .75, .75, 1)
-		card.set_scale(Vector2(.5, .5))
+		card.set_scale(Cards.STANDARD_DISPLAY_CARD_SCALE)
 		card.get_node("text").visible = false
+		card.get_node("tags").visible = false
+		card.get_node("action").visible = false
 		card.z_index = 1
 	for card in player_left_arm_list:
 		card.modulate = Color(.75, .75, .75, 1)
-		card.set_scale(Vector2(.5, .5))
+		card.set_scale(Cards.STANDARD_DISPLAY_CARD_SCALE)
 		card.get_node("text").visible = false
+		card.get_node("tags").visible = false
+		card.get_node("action").visible = false
 		card.z_index = 1
 	for card in player_leg_list:
 		card.modulate = Color(.75, .75, .75, 1)
-		card.set_scale(Vector2(.5, .5))
+		card.set_scale(Cards.STANDARD_DISPLAY_CARD_SCALE)
 		card.get_node("text").visible = false
+		card.get_node("tags").visible = false
+		card.get_node("action").visible = false
 		card.z_index = 1
 
 	for card in enemy_chassis_list:
 		card.modulate = Color(.75, .75, .75, 1)
-		card.set_scale(Vector2(.5, .5))
+		card.set_scale(Cards.STANDARD_DISPLAY_CARD_SCALE)
 		card.get_node("text").visible = false
+		card.get_node("tags").visible = false
+		card.get_node("action").visible = false
 		card.z_index = 1
 	for card in enemy_right_arm_list:
 		card.modulate = Color(.75, .75, .75, 1)
-		card.set_scale(Vector2(.5, .5))
+		card.set_scale(Cards.STANDARD_DISPLAY_CARD_SCALE)
 		card.get_node("text").visible = false
+		card.get_node("tags").visible = false
+		card.get_node("action").visible = false
 		card.z_index = 1
 	for card in enemy_left_arm_list:
 		card.modulate = Color(.75, .75, .75, 1)
-		card.set_scale(Vector2(.5, .5))
+		card.set_scale(Cards.STANDARD_DISPLAY_CARD_SCALE)
 		card.get_node("text").visible = false
+		card.get_node("tags").visible = false
+		card.get_node("action").visible = false
 		card.z_index = 1
 	for card in enemy_leg_list:
 		card.modulate = Color(.75, .75, .75, 1)
-		card.set_scale(Vector2(.5, .5))
+		card.set_scale(Cards.STANDARD_DISPLAY_CARD_SCALE)
 		card.get_node("text").visible = false
+		card.get_node("tags").visible = false
+		card.get_node("action").visible = false
 		card.z_index = 1
 
 
@@ -114,8 +150,10 @@ func cycle_current_card_menu(val):
 		elif list_navigation_idx >= len(player_chassis_list):
 			list_navigation_idx = 0
 		player_chassis_list[list_navigation_idx].modulate = Color(1, 1, 1, 1)
-		player_chassis_list[list_navigation_idx].set_scale(Vector2(1, 1))
+		player_chassis_list[list_navigation_idx].set_scale(Cards.STANDARD_CARD_SCALE)
 		player_chassis_list[list_navigation_idx].get_node("text").visible = true
+		player_chassis_list[list_navigation_idx].get_node("tags").visible = true
+		player_chassis_list[list_navigation_idx].get_node("action").visible = true
 		player_chassis_list[list_navigation_idx].z_index = 5
 
 	elif current_menu == LEFT_ARM_MENU and len(player_left_arm_list) > 0:
@@ -124,8 +162,10 @@ func cycle_current_card_menu(val):
 		elif list_navigation_idx >= len(player_left_arm_list):
 			list_navigation_idx = 0
 		player_left_arm_list[list_navigation_idx].modulate = Color(1, 1, 1, 1)
-		player_left_arm_list[list_navigation_idx].set_scale(Vector2(1, 1))
+		player_left_arm_list[list_navigation_idx].set_scale(Cards.STANDARD_CARD_SCALE)
 		player_left_arm_list[list_navigation_idx].get_node("text").visible = true
+		player_left_arm_list[list_navigation_idx].get_node("tags").visible = true
+		player_left_arm_list[list_navigation_idx].get_node("action").visible = true
 		player_left_arm_list[list_navigation_idx].z_index = 5
 
 	elif current_menu == RIGHT_ARM_MENU and len(player_right_arm_list) > 0:
@@ -134,8 +174,10 @@ func cycle_current_card_menu(val):
 		elif list_navigation_idx >= len(player_right_arm_list):
 			list_navigation_idx = 0
 		player_right_arm_list[list_navigation_idx].modulate = Color(1, 1, 1, 1)
-		player_right_arm_list[list_navigation_idx].set_scale(Vector2(1, 1))
+		player_right_arm_list[list_navigation_idx].set_scale(Cards.STANDARD_CARD_SCALE)
 		player_right_arm_list[list_navigation_idx].get_node("text").visible = true
+		player_right_arm_list[list_navigation_idx].get_node("tags").visible = true
+		player_right_arm_list[list_navigation_idx].get_node("action").visible = true
 		player_right_arm_list[list_navigation_idx].z_index = 5
 
 	elif current_menu == LEGS_MENU and len(player_leg_list) > 0:
@@ -144,8 +186,10 @@ func cycle_current_card_menu(val):
 		elif list_navigation_idx >= len(player_leg_list):
 			list_navigation_idx = 0
 		player_leg_list[list_navigation_idx].modulate = Color(1, 1, 1, 1)
-		player_leg_list[list_navigation_idx].set_scale(Vector2(1, 1))
+		player_leg_list[list_navigation_idx].set_scale(Cards.STANDARD_CARD_SCALE)
 		player_leg_list[list_navigation_idx].get_node("text").visible = true
+		player_leg_list[list_navigation_idx].get_node("tags").visible = true
+		player_leg_list[list_navigation_idx].get_node("action").visible = true
 		player_leg_list[list_navigation_idx].z_index = 5
 	else:
 		print("current_menu is " + str(current_menu))

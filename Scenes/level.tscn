@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://Scripts/card_level.gd" type="Script" id=1]
 [ext_resource path="res://Sprites/General/blueDot.png" type="Texture" id=2]
@@ -14,17 +14,18 @@
 [ext_resource path="res://Sprites/General/health bar.png" type="Texture" id=12]
 [ext_resource path="res://Sprites/General/stamina bar.png" type="Texture" id=13]
 [ext_resource path="res://Sprites/General/stamina behind.png" type="Texture" id=14]
-[ext_resource path="res://Sprites/hud/card area.png" type="Texture" id=15]
 [ext_resource path="res://Sprites/hud/sun icon.png" type="Texture" id=16]
 [ext_resource path="res://Sprites/hud/sun glow.png" type="Texture" id=17]
 [ext_resource path="res://Sprites/UI/white backdrop.png" type="Texture" id=18]
+[ext_resource path="res://shaders/3d-perspective.tres" type="Material" id=19]
+[ext_resource path="res://Sprites/UI/Untitled_Artwork.jpg" type="Texture" id=20]
+[ext_resource path="res://shaders/water_shader.tres" type="Material" id=21]
 
 [sub_resource type="DynamicFont" id=1]
 size = 25
 font_data = ExtResource( 3 )
 
 [sub_resource type="Animation" id=2]
-resource_name = "sun_anim"
 length = 4.0
 loop = true
 tracks/0/type = "bezier"
@@ -161,8 +162,8 @@ texture = ExtResource( 18 )
 
 [node name="Sprite3" type="Sprite" parent="background_imgs"]
 modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 1028, 668 )
-scale = Vector2( 1.62083, 0.733333 )
+position = Vector2( 1028, 628 )
+scale = Vector2( 1.62083, 0.807407 )
 texture = ExtResource( 9 )
 
 [node name="Sprite4" type="Sprite" parent="background_imgs"]
@@ -173,8 +174,8 @@ texture = ExtResource( 9 )
 
 [node name="Sprite5" type="Sprite" parent="background_imgs"]
 modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 2560, 952 )
-scale = Vector2( 1.62083, 0.733333 )
+position = Vector2( 2498, 952 )
+scale = Vector2( 1.68542, 0.733333 )
 texture = ExtResource( 9 )
 
 [node name="Sprite6" type="Sprite" parent="background_imgs"]
@@ -190,14 +191,24 @@ scale = Vector2( 1.62083, 0.733333 )
 texture = ExtResource( 9 )
 
 [node name="Sprite" type="Sprite" parent="background_imgs"]
-position = Vector2( 960, 544 )
-scale = Vector2( 0.983333, 0.962963 )
+self_modulate = Color( 0.588235, 0.588235, 0.607843, 1 )
+material = ExtResource( 21 )
+position = Vector2( 960, 542.75 )
+scale = Vector2( 3.12, 3.405 )
+texture = ExtResource( 20 )
+
+[node name="Sprite8" type="Sprite" parent="background_imgs"]
+self_modulate = Color( 0, 0, 0, 0.784314 )
+material = ExtResource( 19 )
+position = Vector2( 972, 580 )
+scale = Vector2( 0.7125, 0.762963 )
 texture = ExtResource( 9 )
 
 [node name="Sprite2" type="Sprite" parent="background_imgs"]
-position = Vector2( 960, 568 )
-scale = Vector2( 1.01, 0.95 )
-texture = ExtResource( 15 )
+material = ExtResource( 19 )
+position = Vector2( 960, 544 )
+scale = Vector2( 0.7, 0.7 )
+texture = ExtResource( 9 )
 
 [node name="tableau_container" type="Node2D" parent="."]
 position = Vector2( -968, -64 )
@@ -211,16 +222,16 @@ z_index = -1
 texture = ExtResource( 6 )
 
 [node name="chassis" type="Node2D" parent="tableau_container"]
-position = Vector2( 1360, 528 )
+position = Vector2( 1440, 512 )
 
 [node name="right_arm" type="Node2D" parent="tableau_container"]
-position = Vector2( 1248, 832 )
+position = Vector2( 1672, 448 )
 
 [node name="left_arm" type="Node2D" parent="tableau_container"]
-position = Vector2( 1248, 440 )
+position = Vector2( 1352, 448 )
 
 [node name="legs" type="Node2D" parent="tableau_container"]
-position = Vector2( 1352, 736 )
+position = Vector2( 1288, 896 )
 
 [node name="enemy_tableau_container" type="Node2D" parent="."]
 position = Vector2( -200, -64 )
@@ -234,16 +245,16 @@ z_index = -1
 texture = ExtResource( 6 )
 
 [node name="chassis" type="Node2D" parent="enemy_tableau_container"]
-position = Vector2( 1370, 536 )
+position = Vector2( 1568, 512 )
 
 [node name="right_arm" type="Node2D" parent="enemy_tableau_container"]
-position = Vector2( 1666, 440 )
+position = Vector2( 1224, 448 )
 
 [node name="left_arm" type="Node2D" parent="enemy_tableau_container"]
-position = Vector2( 1280, 440 )
+position = Vector2( 1672, 448 )
 
 [node name="legs" type="Node2D" parent="enemy_tableau_container"]
-position = Vector2( 1256, 736 )
+position = Vector2( 1736, 896 )
 
 [node name="text_overlay" type="Node2D" parent="."]
 position = Vector2( 962.372, 995.23 )
@@ -278,26 +289,24 @@ texture = ExtResource( 2 )
 
 [node name="Sprite3" type="Sprite" parent="."]
 modulate = Color( 1, 1, 1, 0.215686 )
-position = Vector2( 1166.05, 481.952 )
+position = Vector2( 1160, 488 )
 scale = Vector2( 0.829339, 0.958834 )
 texture = ExtResource( 17 )
 
 [node name="Sprite4" type="Sprite" parent="."]
 modulate = Color( 1, 1, 1, 0.215686 )
-position = Vector2( 1168, 443.905 )
+position = Vector2( 1168, 456 )
 scale = Vector2( 0.829339, 0.958834 )
 texture = ExtResource( 17 )
 
 [node name="Sprite5" type="Sprite" parent="."]
 modulate = Color( 1, 1, 1, 0.215686 )
-position = Vector2( 1188.1, 435.905 )
+position = Vector2( 1176, 448 )
 scale = Vector2( 0.829339, 0.958834 )
 texture = ExtResource( 17 )
 
 [node name="sun" type="Sprite" parent="."]
-position = Vector2( 960, 531.905 )
-rotation = 0.0131938
-scale = Vector2( 1.01937, 1.00031 )
+position = Vector2( 960, 544 )
 texture = ExtResource( 16 )
 
 [node name="hud" type="Sprite" parent="."]
@@ -310,7 +319,7 @@ texture = ExtResource( 8 )
 
 [node name="line" type="Sprite" parent="."]
 self_modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 1125.5, 1434.5 )
+position = Vector2( 1128, 1432 )
 rotation = 1.5708
 scale = Vector2( 0.351268, 2.42731 )
 z_index = 105
@@ -356,7 +365,7 @@ __meta__ = {
 }
 
 [node name="text_cont" type="Node2D" parent="."]
-position = Vector2( -16, 48 )
+position = Vector2( -16, 0 )
 z_index = 150
 
 [node name="enemy_health" type="Label" parent="text_cont"]
@@ -402,10 +411,10 @@ __meta__ = {
 }
 
 [node name="enemy_health_label" type="Label" parent="text_cont"]
-margin_left = 1072.0
-margin_top = 72.0
-margin_right = 1211.0
-margin_bottom = 132.0
+margin_left = 952.0
+margin_top = 120.0
+margin_right = 1091.0
+margin_bottom = 180.0
 rect_scale = Vector2( 1.5, 1.5 )
 custom_fonts/font = SubResource( 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
@@ -416,50 +425,50 @@ __meta__ = {
 }
 
 [node name="enemy_hunger_label" type="Label" parent="text_cont"]
-margin_left = 1232.0
-margin_top = 72.0
-margin_right = 1382.0
-margin_bottom = 132.0
+margin_left = 1216.0
+margin_top = 120.0
+margin_right = 1366.0
+margin_bottom = 180.0
 rect_scale = Vector2( 1.5, 1.5 )
 custom_fonts/font = SubResource( 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "Hunger"
+text = "F"
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="enemy_water_label" type="Label" parent="text_cont"]
-margin_left = 1456.0
-margin_top = 72.0
-margin_right = 1595.0
-margin_bottom = 132.0
+margin_left = 1424.0
+margin_top = 120.0
+margin_right = 1563.0
+margin_bottom = 180.0
 rect_scale = Vector2( 1.5, 1.5 )
 custom_fonts/font = SubResource( 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "Water"
+text = "W"
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="enemy_health_max_pos" type="Position2D" parent="text_cont"]
-position = Vector2( 1090, 170 )
+position = Vector2( 1064, 144 )
 
-[node name="enemy_hunger_max_pos" type="Position2D" parent="text_cont"]
-position = Vector2( 1528, 168 )
+[node name="enemy_water_pos" type="Position2D" parent="text_cont"]
+position = Vector2( 1504, 144 )
 
 [node name="enemy_hunger_pos" type="Position2D" parent="text_cont"]
-position = Vector2( 1320, 168 )
+position = Vector2( 1296, 144 )
 
 [node name="player_health_max_pos" type="Position2D" parent="text_cont"]
-position = Vector2( 346, 170 )
+position = Vector2( 312, 144 )
 
-[node name="player_hunger_max_pos" type="Position2D" parent="text_cont"]
-position = Vector2( 788, 172 )
+[node name="player_water_pos" type="Position2D" parent="text_cont"]
+position = Vector2( 760, 144 )
 
 [node name="player_hunger_pos" type="Position2D" parent="text_cont"]
-position = Vector2( 572, 172 )
+position = Vector2( 552, 144 )
 
 [node name="player_defense_pos" type="Position2D" parent="text_cont"]
 position = Vector2( 232, 384 )
@@ -482,10 +491,10 @@ __meta__ = {
 }
 
 [node name="player_health_label" type="Label" parent="text_cont"]
-margin_left = 320.0
-margin_top = 72.0
-margin_right = 459.0
-margin_bottom = 132.0
+margin_left = 200.0
+margin_top = 120.0
+margin_right = 339.0
+margin_bottom = 180.0
 rect_scale = Vector2( 1.5, 1.5 )
 custom_fonts/font = SubResource( 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
@@ -538,14 +547,14 @@ __meta__ = {
 }
 
 [node name="player_hunger_label" type="Label" parent="text_cont"]
-margin_left = 496.0
-margin_top = 72.0
-margin_right = 646.0
-margin_bottom = 132.0
+margin_left = 472.0
+margin_top = 120.0
+margin_right = 622.0
+margin_bottom = 180.0
 rect_scale = Vector2( 1.5, 1.5 )
 custom_fonts/font = SubResource( 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "Hunger"
+text = "F"
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
@@ -566,14 +575,14 @@ __meta__ = {
 }
 
 [node name="player_water_label" type="Label" parent="text_cont"]
-margin_left = 712.0
-margin_top = 72.0
-margin_right = 840.0
-margin_bottom = 132.0
+margin_left = 688.0
+margin_top = 120.0
+margin_right = 816.0
+margin_bottom = 180.0
 rect_scale = Vector2( 1.5, 1.5 )
 custom_fonts/font = SubResource( 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "Water"
+text = "W"
 valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
@@ -602,12 +611,14 @@ __meta__ = {
 }
 
 [node name="z" type="Node2D" parent="ui"]
+position = Vector2( 24, 896 )
 
 [node name="player_health_bar" type="HBoxContainer" parent="ui/z"]
 margin_left = 40.0
 margin_top = 88.0
 margin_right = 440.0
 margin_bottom = 138.0
+rect_scale = Vector2( 0.5, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -617,7 +628,7 @@ __meta__ = {
 [node name="TextureProgress" type="TextureProgress" parent="ui/z/player_health_bar"]
 margin_right = 400.0
 margin_bottom = 50.0
-max_value = 500.0
+step = 5.0
 texture_under = ExtResource( 11 )
 texture_progress = ExtResource( 12 )
 __meta__ = {
@@ -625,10 +636,11 @@ __meta__ = {
 }
 
 [node name="player_food_bar" type="HBoxContainer" parent="ui/z"]
-margin_left = 480.0
+margin_left = 256.0
 margin_top = 88.0
-margin_right = 664.0
-margin_bottom = 128.0
+margin_right = 656.0
+margin_bottom = 138.0
+rect_scale = Vector2( 0.5, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -638,7 +650,97 @@ __meta__ = {
 [node name="TextureProgress" type="TextureProgress" parent="ui/z/player_food_bar"]
 margin_right = 400.0
 margin_bottom = 50.0
-max_value = 500.0
+step = 5.0
+texture_under = ExtResource( 14 )
+texture_progress = ExtResource( 13 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="player_water_bar" type="HBoxContainer" parent="ui/z"]
+self_modulate = Color( 0.392157, 0.392157, 1, 1 )
+margin_left = 472.0
+margin_top = 88.0
+margin_right = 872.0
+margin_bottom = 138.0
+rect_scale = Vector2( 0.5, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="ui/z/player_water_bar"]
+
+[node name="TextureProgress" type="TextureProgress" parent="ui/z/player_water_bar"]
+margin_right = 400.0
+margin_bottom = 50.0
+step = 5.0
+texture_under = ExtResource( 14 )
+texture_progress = ExtResource( 13 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="enemy_health_bar" type="HBoxContainer" parent="ui/z"]
+margin_left = 1200.0
+margin_top = 88.0
+margin_right = 1600.0
+margin_bottom = 138.0
+rect_scale = Vector2( 0.5, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="ui/z/enemy_health_bar"]
+
+[node name="TextureProgress" type="TextureProgress" parent="ui/z/enemy_health_bar"]
+margin_right = 400.0
+margin_bottom = 50.0
+step = 5.0
+texture_under = ExtResource( 11 )
+texture_progress = ExtResource( 12 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="enemy_food_bar" type="HBoxContainer" parent="ui/z"]
+margin_left = 1416.0
+margin_top = 88.0
+margin_right = 1816.0
+margin_bottom = 138.0
+rect_scale = Vector2( 0.5, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="ui/z/enemy_food_bar"]
+
+[node name="TextureProgress" type="TextureProgress" parent="ui/z/enemy_food_bar"]
+margin_right = 400.0
+margin_bottom = 50.0
+step = 5.0
+texture_under = ExtResource( 14 )
+texture_progress = ExtResource( 13 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="enemy_water_bar" type="HBoxContainer" parent="ui/z"]
+self_modulate = Color( 0.392157, 0.392157, 1, 1 )
+margin_left = 1632.0
+margin_top = 88.0
+margin_right = 2032.0
+margin_bottom = 138.0
+rect_scale = Vector2( 0.5, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="ui/z/enemy_water_bar"]
+
+[node name="TextureProgress" type="TextureProgress" parent="ui/z/enemy_water_bar"]
+margin_right = 400.0
+margin_bottom = 50.0
+step = 5.0
 texture_under = ExtResource( 14 )
 texture_progress = ExtResource( 13 )
 __meta__ = {
