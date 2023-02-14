@@ -21,10 +21,127 @@ var img_path = ""
 var title = ""
 var rarity = 1
 var description = ''
-var selected_for_action_phase = false
+var selected_for_action_phase = true
+var removing = false
+var ready_to_remove = false
+
+func get_card_payload(card):
+	var card_payload = {Cards.CARD_TYPE: card[Cards.CARD_TYPE]}
+	#### Upper card section details
+	if Cards.RARITY in card:
+		card_payload[Cards.RARITY] = card[Cards.RARITY]
+	if Cards.FOOD in card:
+		card_payload[Cards.FOOD] = card[Cards.FOOD]
+	if Cards.WATER in card:
+		card_payload[Cards.WATER] = card[Cards.WATER]
+	if Cards.CARD_WAIT_TIME in card:
+		card_payload[Cards.CARD_WAIT_TIME] = card[Cards.CARD_WAIT_TIME]
+	if Cards.CARD_ACTION in card:
+		card_payload[Cards.CARD_ACTION] = card[Cards.CARD_ACTION]
+	if Cards.CARD_BIOME in card:
+		card_payload[Cards.CARD_BIOME] = card[Cards.CARD_BIOME]
+	if Cards.TITLE in card:
+		card_payload[Cards.TITLE] = card[Cards.TITLE]
+	if Cards.DESCRIPTION in card:
+		card_payload[Cards.DESCRIPTION] = card[Cards.DESCRIPTION]
+	if Cards.ATTACKS in card:
+		card_payload[Cards.ATTACKS] = card[Cards.ATTACKS]
+	if Cards.DAMAGE in card:
+		card_payload[Cards.DAMAGE] = card[Cards.DAMAGE]
+	if Cards.ATTACK_RANGE in card:
+		card_payload[Cards.ATTACK_RANGE] = card[Cards.ATTACK_RANGE]
+	if Cards.DEFENSE in card:
+		card_payload[Cards.DEFENSE] = card[Cards.DEFENSE]
+	if Cards.TOUGHNESS in card:
+		card_payload[Cards.TOUGHNESS] = card[Cards.TOUGHNESS]
+	if Cards.HEALTH in card:
+		card_payload[Cards.HEALTH] = card[Cards.HEALTH]
+	#####
+	if Cards.PIERCING in card:
+		card_payload[Cards.PIERCING] = card[Cards.PIERCING]
+	if Cards.BLEED in card:
+		card_payload[Cards.BLEED] = card[Cards.BLEED]
+	if Cards.BURN in card:
+		card_payload[Cards.BURN] = card[Cards.BURN]
+	if Cards.RUST in card:
+		card_payload[Cards.RUST] = card[Cards.RUST]
+	if Cards.FREEZE in card:
+		card_payload[Cards.FREEZE] = card[Cards.FREEZE]
+	if Cards.STUN in card:
+		card_payload[Cards.STUN] = card[Cards.STUN]
+	if Cards.WEAPON in card:
+		card_payload[Cards.WEAPON] = card[Cards.WEAPON]
+	if Cards.OVERHUNGER in card:
+		card_payload[Cards.OVERHUNGER] = card[Cards.OVERHUNGER]
+	if Cards.FLAMMABLE in card:
+		card_payload[Cards.FLAMMABLE] = card[Cards.FLAMMABLE]
+	if Cards.POISON in card:
+		card_payload[Cards.POISON] = card[Cards.POISON]
+	if Cards.FIRE in card:
+		card_payload[Cards.FIRE] = card[Cards.FIRE]
+	if Cards.WATER in card:
+		card_payload[Cards.WATER] = card[Cards.WATER]
+	if Cards.IMPACT in card:
+		card_payload[Cards.IMPACT] = card[Cards.IMPACT]
+	if Cards.BLADE in card:
+		card_payload[Cards.BLADE] = card[Cards.BLADE]
+	if Cards.STEAM in card:
+		card_payload[Cards.STEAM] = card[Cards.STEAM]
+	if Cards.ENERGY in card:
+		card_payload[Cards.ENERGY] = card[Cards.ENERGY]
+	if Cards.MISSILE in card:
+		card_payload[Cards.MISSILE] = card[Cards.MISSILE]
+	if Cards.EXPLOSION in card:
+		card_payload[Cards.EXPLOSION] = card[Cards.EXPLOSION]
+	if Cards.LEADER in card:
+		card_payload[Cards.LEADER] = card[Cards.LEADER]
+
+	if Cards.FOOD_PRODUCTION in card:
+		card_payload[Cards.FOOD_PRODUCTION] = card[Cards.FOOD_PRODUCTION]
+	if Cards.FOOD in card:
+		card_payload[Cards.FOOD] = card[Cards.FOOD]
+	if Cards.ABILITY_RANGE in card:
+		card_payload[Cards.ABILITY_RANGE] = card[Cards.ABILITY_RANGE]
+	if Cards.SHIELD in card:
+		card_payload[Cards.SHIELD] = card[Cards.SHIELD]
+	if Cards.HUNGER_PRODUCTION in card:
+		card_payload[Cards.HUNGER_PRODUCTION] = card[Cards.HUNGER_PRODUCTION]
+	if Cards.WATER_PRODUCTION in card:
+		card_payload[Cards.WATER_PRODUCTION] = card[Cards.WATER_PRODUCTION]
+	if Cards.WATER in card:
+		card_payload[Cards.WATER] = card[Cards.WATER]
+	if Cards.ABILITY_RANGE in card:
+		card_payload[Cards.ABILITY_RANGE] = card[Cards.ABILITY_RANGE]
+	if Cards.CARD_ACTION in card:
+		card_payload[Cards.CARD_ACTION] = card[Cards.CARD_ACTION]
+
+	if Cards.BUFF in card:
+		card_payload[Cards.BUFF] = card[Cards.BUFF]
+	if Cards.DEBUFF in card:
+		card_payload[Cards.DEBUFF] = card[Cards.DEBUFF]
+
+	if Cards.TARGET in card:
+		card_payload[Cards.TARGET] = card[Cards.TARGET]
+
+	if Cards.ENEMIES in card:
+		card_payload[Cards.ENEMIES] = card[Cards.ENEMIES]
+	if Cards.ALLIES in card:
+		card_payload[Cards.ALLIES] = card[Cards.ALLIES]
+	if Cards.SELF in card:
+		card_payload[Cards.SELF] = card[Cards.SELF]
+	if Cards.IMG_PATH in card:
+		card_payload[Cards.IMG_PATH] = card[Cards.IMG_PATH]
+
+	if Cards.ID in card:
+		card_payload[Cards.ID] = card[Cards.ID]
+	if Cards.TAGS in card:
+		card_payload[Cards.TAGS] = card[Cards.TAGS]
+	return card_payload
 
 
 func map_card(card_payload, recalc_costs=true):
+	if removing:
+		return
 	if Cards.RARITY in card_payload:
 		rarity = card_payload[Cards.RARITY]
 	if Cards.TITLE in card_payload:
@@ -71,10 +188,10 @@ func map_card(card_payload, recalc_costs=true):
 		if costs:
 			if hunger_production > 0 or\
 			   water_production > 0 in card_payload:
-				print("setting cost?? costs " + str(costs))
+				#print("setting cost?? costs " + str(costs))
 				hunger_production = costs["food_cost"]
 				water_production = costs["water_cost"]
-	print("cost? hunger_production: " + str(hunger_production)+ " water_production: " + str(water_production))
+	#print("cost? hunger_production: " + str(hunger_production)+ " water_production: " + str(water_production))
 	update_card_display_info(self, card_payload)
 
 
@@ -82,6 +199,8 @@ func update_card_display_info(card_node, card_payload):
 	# meant to be broad for cards that may not be a 'character'
 	if not card_node:
 		card_node = self
+	if card_node.removing:
+		return
 	var sprite_node = card_node.get_node("inner_art_container/sprite")
 	var card_background_node = card_node.get_node("inner_art_container/background")
 
@@ -100,7 +219,7 @@ func update_card_display_info(card_node, card_payload):
 	   or card_node.card_type == Cards.HUNGER_CARD\
 	   or card_node.card_type == Cards.FOOD_CARD\
 	   or card_node.card_type == Cards.WATER_CARD:
-		print("setting display values for " + str(card_node.title) + " hunger " + str(card_node.hunger_production) + " water " + str(card_node.water_production))
+		#print("setting display values for " + str(card_node.title) + " hunger " + str(card_node.hunger_production) + " water " + str(card_node.water_production))
 		#### Upper card section details
 		var tag_text = "tags: "
 		for tag in card_node.tags:
@@ -173,3 +292,15 @@ func update_card_display_info(card_node, card_payload):
 #
 #
 #
+
+
+func _on_AnimationPlayer_animation_finished(anim_name):
+
+	if ready_to_remove:
+		print("ready_to_remove. removing " + title)
+		Cards.remove_card(self)
+		return
+	if anim_name == "remove":
+		print("removing " + title)
+		Cards.remove_card(self)
+	pass # Replace with function body.

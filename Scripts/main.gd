@@ -5,22 +5,45 @@ const debug = true # for dev
 # CARDS
 const CARD = preload("res://Scenes/card.tscn")
 
-const CARD_COASTAL_BACKGROUND_1 = preload("res://Sprites/cards/blue card background.png")
-const CARD_GREY_BACKGROUND_1 = preload("res://Sprites/cards/grey caerd background.png")
-const CARD_RIVERLANDS_BACKGROUND_1 = preload("res://Sprites/cards/red card background.png")
-const CARD_FOREST_BACKGROUND_1 = preload("res://Sprites/cards/forest card background.png")
-const CARD_SAVANNHA_BACKGROUND_1 = preload("res://Sprites/cards/savanahha background.png")
+const CARD_COASTAL_BACKGROUND_1 = preload("res://Sprites/cards/blue boat card background.png")
+const CARD_COASTAL_BACKGROUND_2 = preload("res://Sprites/cards/blue weapon card background.png")
+const CARD_COASTAL_BACKGROUND_3 = preload("res://Sprites/cards/bue ability card background.png")
+const CARD_GREY_BACKGROUND_1 = preload("res://Sprites/cards/general boat card background.png")
+const CARD_GREY_BACKGROUND_2 = preload("res://Sprites/cards/general weapon card background.png")
+const CARD_GREY_BACKGROUND_3 = preload("res://Sprites/cards/general ability card background.png")
+const CARD_RIVERLANDS_BACKGROUND_1 = preload("res://Sprites/cards/red boat card background.png")
+const CARD_RIVERLANDS_BACKGROUND_2 = preload("res://Sprites/cards/red weapon card background.png")
+const CARD_RIVERLANDS_BACKGROUND_3 = preload("res://Sprites/cards/red ability card background.png")
+const CARD_FOREST_BACKGROUND_1 = preload("res://Sprites/cards/green boat card background.png")
+const CARD_FOREST_BACKGROUND_2 = preload("res://Sprites/cards/green weapon card background.png")
+const CARD_FOREST_BACKGROUND_3 = preload("res://Sprites/cards/green ability card background.png")
+const CARD_SAVANNHA_BACKGROUND_1 = preload("res://Sprites/cards/grey boat card background.png")
+const CARD_SAVANNHA_BACKGROUND_2 = preload("res://Sprites/cards/grey weapon card background.png")
+const CARD_SAVANNHA_BACKGROUND_3 = preload("res://Sprites/cards/grey ability card background.png")
 
 ## Card sprites
 
 const TRIPPLE_ELEPHANT = preload("res://Sprites/char/Card-game-8.png")
 const BEAR_LIKE = preload("res://Sprites/char/bear thingy.png")
-const LARGE_ELEPHANT = preload("res://Sprites/char/Card-game-9.png")
+const ELEPHANT_OUTLINE = preload("res://Sprites/char/elephant outline.png")
 const SMALL_ELEPHANT = preload("res://Sprites/char/Card-game-10.png")
 const ROCK_FOX = preload("res://Sprites/char/Card-game-11.png")
 const PLASMA_GUN = preload("res://Sprites/char/gun bear.png")
 const PIRANHA = preload("res://Sprites/char/piranha card.png")
 
+const WINDOW_FIX = preload("res://Sprites/char/window_fix.png")
+const SQUID_WINDOW_FIX = preload("res://Sprites/char/squid_window_fix.png")
+const RATIONS = preload("res://Sprites/char/rations.png")
+const MESSAGE_BOTTLE = preload("res://Sprites/char/message_bottle.png")
+const HAND_GUN = preload("res://Sprites/char/hand_gun.png")
+const FLYING_CUTLASS = preload("res://Sprites/char/flying_cutlass.png")
+
+const FOOD_STOCK = preload("res://Sprites/char/food stock.png")
+const SMALL_FOOD_STOCK = preload("res://Sprites/char/single food stock.png")
+const LARGE_FOODD_BASKET = preload("res://Sprites/char/large food basket.png")
+const CANNON = preload("res://Sprites/char/cannon.png")
+const DOUBLE_CANNON = preload("res://Sprites/char/double cannon.png")
+const INFILTRATOR = preload("res://Sprites/char/infiltrator.png")
 
 ######
 # LEVEL
@@ -178,45 +201,46 @@ func handle_in_battle_input(action):
 	if action == "spacebar":
 		if not Cards.waiting:
 			if not get_node("/root").has_node("level"):
-				randomize()
-				meta.current_player_deck = Cards.all_decks[rand_range(0, len(Cards.all_decks))]
-				meta.current_enemy_deck = Cards.all_decks[rand_range(0, len(Cards.all_decks))]
 				var level = main.LEVEL.instance()
 				get_node("/root").add_child(level)
 				level.start_level()
-			Cards.take_turn(meta.player_turn)
-			"""
-			var timer = Timer.new()
-			var time = 0.1
-			print("time " + str(time))
-			get_node("/root").add_child(timer)
-			timer.set_wait_time(time)
-			timer.set_one_shot(true)
-			timer.start()
-			yield(timer, "timeout")
-			timer.queue_free()
-			"""
+			
+			Cards.call_deferred("take_turn", meta.player_turn)
 	elif action == "start":
 		if not Cards.waiting:
-			if Cards.current_card_menu != "hand":
-				Cards.expand_card_details()
-			else:
-				Cards.play_card(Cards.hand, Cards.hand_idx)
-				Cards.handle_cards_in_display()
+			if get_node("/root").has_node("level"):
+				var level = get_node("/root/level")
+				if Cards.current_card_menu != "hand":
+					level.expand_card_details()
+				else:
+					level.play_card(level.hand, Cards.hand_idx)
+					level.handle_cards_in_display()
 	elif action == "back": 
 		if meta.player_turn:
 			var player = get_node("/root/player")
 			player.reset_turn()
 	elif action == "up": 
-		Cards.card_container_navigation_controller(0)
-		Cards.card_container_navigation_controller(1, "current")
+		if not Cards.waiting:
+			if get_node("/root").has_node("level"):
+				var level = get_node("/root/level")
+				level.card_container_navigation_controller(0)
+				level.card_container_navigation_controller(1, "current")
 	elif action == "down": 
-		Cards.card_container_navigation_controller(0)
-		Cards.card_container_navigation_controller(-1, "current")
+		if not Cards.waiting:
+			if get_node("/root").has_node("level"):
+				var level = get_node("/root/level")
+				level.card_container_navigation_controller(0)
+				level.card_container_navigation_controller(-1, "current")
 	elif action == "right": 
-		Cards.card_container_navigation_controller(-1, "current")
+		if not Cards.waiting:
+			if get_node("/root").has_node("level"):
+				var level = get_node("/root/level")
+				level.card_container_navigation_controller(-1, "current")
 	elif action == "left": 
-		Cards.card_container_navigation_controller(1, "current")
+		if not Cards.waiting:
+			if get_node("/root").has_node("level"):
+				var level = get_node("/root/level")
+				level.card_container_navigation_controller(1, "current")
 
 
 func handle_main_menu_input(action):
@@ -250,11 +274,15 @@ func handle_main_menu_input(action):
 
 #### HELPER FUNCS
 func checkIfNodeDeleted(nodeToCheck, eraseNode=false):
-	if 'Deleted' in str(nodeToCheck) or 'Object:0' in str(nodeToCheck):
-		if eraseNode:
-			print('should erase?')
-		return true
-	return false
+	if nodeToCheck != null\
+		&& nodeToCheck\
+		and not 'Deleted' in str(nodeToCheck)\
+		and not 'Object:0' in str(nodeToCheck)\
+		and not '[Deleted]' in str(nodeToCheck):
+		return false
+	if eraseNode:
+		print('should erase? ' + str(nodeToCheck))
+	return true
 
 
 # add nodes to check wether we should allowing clicking

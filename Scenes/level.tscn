@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://Scripts/card_level.gd" type="Script" id=1]
 [ext_resource path="res://Sprites/General/blueDot.png" type="Texture" id=2]
@@ -7,147 +7,162 @@
 [ext_resource path="res://Sprites/General/basic tile.png" type="Texture" id=5]
 [ext_resource path="res://Sprites/UI/Untitled_Artwork 2.png" type="Texture" id=6]
 [ext_resource path="res://Sprites/tiles/basic/gridrpgWall.png" type="Texture" id=7]
-[ext_resource path="res://Sprites/hud/hud_full.png" type="Texture" id=8]
 [ext_resource path="res://Sprites/UI/forest backdrop.png" type="Texture" id=9]
 [ext_resource path="res://Scripts/uibar.gd" type="Script" id=10]
 [ext_resource path="res://Sprites/General/health behind.png" type="Texture" id=11]
 [ext_resource path="res://Sprites/General/health bar.png" type="Texture" id=12]
 [ext_resource path="res://Sprites/General/stamina bar.png" type="Texture" id=13]
 [ext_resource path="res://Sprites/General/stamina behind.png" type="Texture" id=14]
-[ext_resource path="res://Sprites/hud/sun icon.png" type="Texture" id=16]
-[ext_resource path="res://Sprites/hud/sun glow.png" type="Texture" id=17]
+[ext_resource path="res://Sprites/General/pirate_ship.png" type="Texture" id=15]
 [ext_resource path="res://Sprites/UI/white backdrop.png" type="Texture" id=18]
-[ext_resource path="res://shaders/3d-perspective.tres" type="Material" id=19]
+[ext_resource path="res://shaders/wind.shader" type="Shader" id=19]
 [ext_resource path="res://Sprites/UI/Untitled_Artwork.jpg" type="Texture" id=20]
 [ext_resource path="res://shaders/water_shader.tres" type="Material" id=21]
+[ext_resource path="res://shaders/screen_brighten_shader.tres" type="Material" id=22]
+[ext_resource path="res://Sprites/General/ship_forward.png" type="Texture" id=23]
+[ext_resource path="res://Sprites/General/ship_backwards.png" type="Texture" id=24]
 
-[sub_resource type="DynamicFont" id=1]
+[sub_resource type="Shader" id=1]
+code = "// original wind shader from https://github.com/Maujoe/godot-simple-wind-shader-2d/tree/master/assets/maujoe.simple_wind_shader_2d
+// original script modified by HungryProton so that the assets are moving differently : https://pastebin.com/VL3AfV8D
+//
+// speed - The speed of the wind movement.
+// minStrength - The minimal strength of the wind movement.
+// maxStrength - The maximal strength of the wind movement.
+// strengthScale - Scalefactor for the wind strength.
+// interval - The time between minimal and maximal strength changes.
+// detail - The detail (number of waves) of the wind movement.
+// distortion - The strength of geometry distortion.
+// heightOffset - The height where the wind begins to move. By default 0.0.
+
+shader_type canvas_item;
+render_mode blend_mix;
+
+// Wind settings.
+uniform float speed = 1.0;
+uniform float minStrength : hint_range(0.0, 1.0) = 0.05;
+uniform float maxStrength : hint_range(0.0, 1.0) = 0.01;
+uniform float strengthScale = 100.0;
+uniform float interval = 3.5;
+uniform float detail = 1.0;
+uniform float distortion : hint_range(0.0, 1.0);
+uniform float heightOffset : hint_range(0.0, 1.0);
+
+// With the offset value, you can if you want different moves for each asset. Just put a random value (1, 2, 3) in the editor. Don't forget to mark the material as unique if you use this
+uniform float offset = 0; 
+
+
+float getWind(vec2 vertex, vec2 uv, float time){
+    float diff = pow(maxStrength - minStrength, 2.0);
+    float strength = clamp(minStrength + diff + sin(time / interval) * diff, minStrength, maxStrength) * strengthScale;
+    float wind = (sin(time) + cos(time * detail)) * strength * max(0.0, (1.0-uv.y) - heightOffset);
+    
+    return wind; 
+}
+
+void vertex() {
+    vec4 pos = WORLD_MATRIX * vec4(0.0, 0.0, 0.0, 1.0);
+    float time = TIME * speed + offset;
+    //float time = TIME * speed + pos.x * pos.y  ; not working when moving...
+    VERTEX.x += getWind(VERTEX.xy, UV, time);
+}"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_param/speed = 5.0
+shader_param/minStrength = 0.05
+shader_param/maxStrength = 0.08
+shader_param/strengthScale = 100.0
+shader_param/interval = 3.5
+shader_param/detail = 1.0
+shader_param/distortion = null
+shader_param/heightOffset = null
+shader_param/offset = 0.0
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = ExtResource( 19 )
+shader_param/speed = 3.0
+shader_param/minStrength = 0.02
+shader_param/maxStrength = 0.09
+shader_param/strengthScale = 140.0
+shader_param/interval = 3.5
+shader_param/detail = 1.6
+shader_param/distortion = 0.2
+shader_param/heightOffset = null
+shader_param/offset = 0.0
+
+[sub_resource type="Shader" id=4]
+code = "// original wind shader from https://github.com/Maujoe/godot-simple-wind-shader-2d/tree/master/assets/maujoe.simple_wind_shader_2d
+// original script modified by HungryProton so that the assets are moving differently : https://pastebin.com/VL3AfV8D
+//
+// speed - The speed of the wind movement.
+// minStrength - The minimal strength of the wind movement.
+// maxStrength - The maximal strength of the wind movement.
+// strengthScale - Scalefactor for the wind strength.
+// interval - The time between minimal and maximal strength changes.
+// detail - The detail (number of waves) of the wind movement.
+// distortion - The strength of geometry distortion.
+// heightOffset - The height where the wind begins to move. By default 0.0.
+
+shader_type canvas_item;
+render_mode blend_mix;
+
+// Wind settings.
+uniform float speed = 2.0;
+uniform float minStrength : hint_range(0.0, 1.0) = 0.05;
+uniform float maxStrength : hint_range(0.0, 1.0) = 0.01;
+uniform float strengthScale = 100.0;
+uniform float interval = 3.3;
+uniform float detail = 1.0;
+uniform float distortion : hint_range(0.0, 1.0);
+uniform float heightOffset : hint_range(0.0, 1.0);
+
+uniform float offset = 0; 
+
+
+float getWind(vec2 vertex, vec2 uv, float time){
+    float diff = pow(maxStrength - minStrength, 2.0);
+    float strength = clamp(minStrength + diff + sin(time / interval) * diff, minStrength, maxStrength) * strengthScale;
+    float wind = (sin(time) + cos(time * detail)) * strength * max(0.0, (1.0-uv.y) - heightOffset);
+    
+    return wind; 
+}
+
+void vertex() {
+    vec4 pos = WORLD_MATRIX * vec4(0.0, 0.0, 0.0, 1.0);
+    float time = TIME * speed + offset;
+    VERTEX.x += getWind(VERTEX.xy, UV, time);
+}
+
+"
+
+[sub_resource type="ShaderMaterial" id=5]
+shader = SubResource( 4 )
+shader_param/speed = 2.0
+shader_param/minStrength = 0.02
+shader_param/maxStrength = 0.08
+shader_param/strengthScale = 140.0
+shader_param/interval = 3.3
+shader_param/detail = 1.8
+shader_param/distortion = null
+shader_param/heightOffset = null
+shader_param/offset = 0.0
+
+[sub_resource type="ShaderMaterial" id=6]
+shader = ExtResource( 19 )
+shader_param/speed = 2.0
+shader_param/minStrength = 0.02
+shader_param/maxStrength = 0.06
+shader_param/strengthScale = 140.0
+shader_param/interval = 3.5
+shader_param/detail = 1.6
+shader_param/distortion = null
+shader_param/heightOffset = null
+shader_param/offset = 0.0
+
+[sub_resource type="DynamicFont" id=7]
 size = 25
 font_data = ExtResource( 3 )
-
-[sub_resource type="Animation" id=2]
-length = 4.0
-loop = true
-tracks/0/type = "bezier"
-tracks/0/path = NodePath("sun:position:x")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"points": PoolRealArray( 960, -0.25, 0, 0.25, 0, 960, -0.25, 0, 0.25, 0, 960, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 1.4, 3 )
-}
-tracks/1/type = "bezier"
-tracks/1/path = NodePath("sun:position:y")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/keys = {
-"points": PoolRealArray( 544, -0.25, 0, 0.25, 0, 528, -0.25, 0, 0.25, 0, 544, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 1.4, 3 )
-}
-tracks/2/type = "bezier"
-tracks/2/path = NodePath("sun:rotation_degrees")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/keys = {
-"points": PoolRealArray( 0, -0.25, 0, 0.25, 0, 1, -0.25, 0, 0.25, 0, -0.5, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 1.4, 2.5, 3.6 )
-}
-tracks/3/type = "bezier"
-tracks/3/path = NodePath("Sprite3:position:x")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/keys = {
-"points": PoolRealArray( 1160, -0.25, 0, 0.25, 0, 1168, -0.25, 0, 0.25, 0, 1160, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 1.4, 3 )
-}
-tracks/4/type = "bezier"
-tracks/4/path = NodePath("Sprite3:position:y")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/keys = {
-"points": PoolRealArray( 488, -0.25, 0, 0.25, 0, 480, -0.25, 0, 0.25, 0, 488, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 1.4, 3 )
-}
-tracks/5/type = "bezier"
-tracks/5/path = NodePath("Sprite4:position:x")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/keys = {
-"points": PoolRealArray( 1168, -0.25, 0, 0.25, 0, 1168, -0.25, 0, 0.25, 0, 1168, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 1.4, 3 )
-}
-tracks/6/type = "bezier"
-tracks/6/path = NodePath("Sprite4:position:y")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/keys = {
-"points": PoolRealArray( 456, -0.25, 0, 0.25, 0, 440, -0.25, 0, 0.25, 0, 456, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 1.4, 3 )
-}
-tracks/7/type = "bezier"
-tracks/7/path = NodePath("Sprite5:position:x")
-tracks/7/interp = 1
-tracks/7/loop_wrap = true
-tracks/7/imported = false
-tracks/7/enabled = true
-tracks/7/keys = {
-"points": PoolRealArray( 1176, -0.25, 0, 0.25, 0, 1192, -0.25, 0, 0.25, 0, 1176, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 1.4, 3 )
-}
-tracks/8/type = "bezier"
-tracks/8/path = NodePath("Sprite5:position:y")
-tracks/8/interp = 1
-tracks/8/loop_wrap = true
-tracks/8/imported = false
-tracks/8/enabled = true
-tracks/8/keys = {
-"points": PoolRealArray( 448, -0.25, 0, 0.25, 0, 432, -0.25, 0, 0.25, 0, 448, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 1.4, 3 )
-}
-tracks/9/type = "bezier"
-tracks/9/path = NodePath("Sprite4:rotation_degrees")
-tracks/9/interp = 1
-tracks/9/loop_wrap = true
-tracks/9/imported = false
-tracks/9/enabled = true
-tracks/9/keys = {
-"points": PoolRealArray( 0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 1.4, 3 )
-}
-tracks/10/type = "bezier"
-tracks/10/path = NodePath("sun:scale:x")
-tracks/10/interp = 1
-tracks/10/loop_wrap = true
-tracks/10/imported = false
-tracks/10/enabled = true
-tracks/10/keys = {
-"points": PoolRealArray( 1, -0.25, 0, 0.25, 0, 1.02, -0.25, 0, 0.25, 0, 1, -0.25, 0, 0.25, 0, 1, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 0.9, 2.3, 3.6 )
-}
-tracks/11/type = "bezier"
-tracks/11/path = NodePath("sun:scale:y")
-tracks/11/interp = 1
-tracks/11/loop_wrap = true
-tracks/11/imported = false
-tracks/11/enabled = true
-tracks/11/keys = {
-"points": PoolRealArray( 1, -0.25, 0, 0.25, 0, 1, -0.25, 0, 0.25, 0, 1.01, -0.25, 0, 0.25, 0, 1, -0.25, 0, 0.25, 0 ),
-"times": PoolRealArray( 0, 0.9, 2.3, 3.6 )
-}
 
 [node name="level" type="Node2D"]
 script = ExtResource( 1 )
@@ -191,24 +206,43 @@ scale = Vector2( 1.62083, 0.733333 )
 texture = ExtResource( 9 )
 
 [node name="Sprite" type="Sprite" parent="background_imgs"]
-self_modulate = Color( 0.588235, 0.588235, 0.607843, 1 )
+self_modulate = Color( 0.392157, 0.392157, 0.490196, 1 )
 material = ExtResource( 21 )
 position = Vector2( 960, 542.75 )
-scale = Vector2( 3.12, 3.405 )
+scale = Vector2( 0.989, 0.98 )
 texture = ExtResource( 20 )
 
-[node name="Sprite8" type="Sprite" parent="background_imgs"]
-self_modulate = Color( 0, 0, 0, 0.784314 )
-material = ExtResource( 19 )
-position = Vector2( 972, 580 )
-scale = Vector2( 0.7125, 0.762963 )
-texture = ExtResource( 9 )
+[node name="fog" type="Sprite" parent="background_imgs"]
+self_modulate = Color( 0.941176, 0.941176, 0.941176, 1 )
+material = ExtResource( 22 )
+position = Vector2( 959.5, 596 )
+scale = Vector2( 1.08281, 1.22222 )
+z_index = 4096
+texture = ExtResource( 18 )
 
-[node name="Sprite2" type="Sprite" parent="background_imgs"]
-material = ExtResource( 19 )
-position = Vector2( 960, 544 )
-scale = Vector2( 0.7, 0.7 )
-texture = ExtResource( 9 )
+[node name="boats" type="Node2D" parent="background_imgs"]
+material = SubResource( 2 )
+position = Vector2( 88, 128 )
+scale = Vector2( 0.9, 0.9 )
+
+[node name="boat_1" type="Sprite" parent="background_imgs/boats"]
+material = SubResource( 3 )
+position = Vector2( 552, 520 )
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 23 )
+
+[node name="boat_2" type="Sprite" parent="background_imgs/boats"]
+material = SubResource( 5 )
+position = Vector2( 1377, 520 )
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 24 )
+
+[node name="boat" type="Sprite" parent="background_imgs/boats"]
+visible = false
+material = SubResource( 6 )
+position = Vector2( 984, 536 )
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 15 )
 
 [node name="tableau_container" type="Node2D" parent="."]
 position = Vector2( -968, -64 )
@@ -287,36 +321,6 @@ position = Vector2( 103, 105 )
 [node name="debug_sprite" type="Sprite" parent="starting_tile"]
 texture = ExtResource( 2 )
 
-[node name="Sprite3" type="Sprite" parent="."]
-modulate = Color( 1, 1, 1, 0.215686 )
-position = Vector2( 1160, 488 )
-scale = Vector2( 0.829339, 0.958834 )
-texture = ExtResource( 17 )
-
-[node name="Sprite4" type="Sprite" parent="."]
-modulate = Color( 1, 1, 1, 0.215686 )
-position = Vector2( 1168, 456 )
-scale = Vector2( 0.829339, 0.958834 )
-texture = ExtResource( 17 )
-
-[node name="Sprite5" type="Sprite" parent="."]
-modulate = Color( 1, 1, 1, 0.215686 )
-position = Vector2( 1176, 448 )
-scale = Vector2( 0.829339, 0.958834 )
-texture = ExtResource( 17 )
-
-[node name="sun" type="Sprite" parent="."]
-position = Vector2( 960, 544 )
-texture = ExtResource( 16 )
-
-[node name="hud" type="Sprite" parent="."]
-visible = false
-position = Vector2( 960, 557.435 )
-rotation = 1.5708
-scale = Vector2( 0.514501, 0.937289 )
-z_index = 100
-texture = ExtResource( 8 )
-
 [node name="line" type="Sprite" parent="."]
 self_modulate = Color( 0, 0, 0, 1 )
 position = Vector2( 1128, 1432 )
@@ -365,16 +369,16 @@ __meta__ = {
 }
 
 [node name="text_cont" type="Node2D" parent="."]
-position = Vector2( -16, 0 )
+position = Vector2( 72, -120 )
 z_index = 150
 
 [node name="enemy_health" type="Label" parent="text_cont"]
-margin_left = 1032.0
-margin_top = 120.0
-margin_right = 1171.0
-margin_bottom = 180.0
+margin_left = 1072.0
+margin_top = 136.0
+margin_right = 1211.0
+margin_bottom = 196.0
 rect_scale = Vector2( 1.5, 1.5 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "1000"
 valign = 1
@@ -383,12 +387,12 @@ __meta__ = {
 }
 
 [node name="enemy_hunger" type="Label" parent="text_cont"]
-margin_left = 1256.0
-margin_top = 120.0
-margin_right = 1384.0
-margin_bottom = 180.0
+margin_left = 1296.0
+margin_top = 136.0
+margin_right = 1424.0
+margin_bottom = 196.0
 rect_scale = Vector2( 1.5, 1.5 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "1000"
 valign = 1
@@ -397,12 +401,12 @@ __meta__ = {
 }
 
 [node name="enemy_water" type="Label" parent="text_cont"]
-margin_left = 1464.0
-margin_top = 120.0
-margin_right = 1592.0
-margin_bottom = 180.0
+margin_left = 1504.0
+margin_top = 136.0
+margin_right = 1632.0
+margin_bottom = 196.0
 rect_scale = Vector2( 1.5, 1.5 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "1000"
 valign = 1
@@ -411,12 +415,12 @@ __meta__ = {
 }
 
 [node name="enemy_health_label" type="Label" parent="text_cont"]
-margin_left = 952.0
-margin_top = 120.0
-margin_right = 1091.0
-margin_bottom = 180.0
+margin_left = 992.0
+margin_top = 136.0
+margin_right = 1131.0
+margin_bottom = 196.0
 rect_scale = Vector2( 1.5, 1.5 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "HP"
 valign = 1
@@ -425,12 +429,12 @@ __meta__ = {
 }
 
 [node name="enemy_hunger_label" type="Label" parent="text_cont"]
-margin_left = 1216.0
-margin_top = 120.0
-margin_right = 1366.0
-margin_bottom = 180.0
+margin_left = 1256.0
+margin_top = 136.0
+margin_right = 1406.0
+margin_bottom = 196.0
 rect_scale = Vector2( 1.5, 1.5 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "F"
 valign = 1
@@ -439,12 +443,12 @@ __meta__ = {
 }
 
 [node name="enemy_water_label" type="Label" parent="text_cont"]
-margin_left = 1424.0
-margin_top = 120.0
-margin_right = 1563.0
-margin_bottom = 180.0
+margin_left = 1464.0
+margin_top = 136.0
+margin_right = 1603.0
+margin_bottom = 196.0
 rect_scale = Vector2( 1.5, 1.5 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "W"
 valign = 1
@@ -453,36 +457,36 @@ __meta__ = {
 }
 
 [node name="enemy_health_max_pos" type="Position2D" parent="text_cont"]
-position = Vector2( 1064, 144 )
+position = Vector2( 1106, 202 )
 
 [node name="enemy_water_pos" type="Position2D" parent="text_cont"]
-position = Vector2( 1504, 144 )
+position = Vector2( 1546, 202 )
 
 [node name="enemy_hunger_pos" type="Position2D" parent="text_cont"]
-position = Vector2( 1296, 144 )
+position = Vector2( 1338, 202 )
 
 [node name="player_health_max_pos" type="Position2D" parent="text_cont"]
-position = Vector2( 312, 144 )
+position = Vector2( 152, 200 )
 
 [node name="player_water_pos" type="Position2D" parent="text_cont"]
-position = Vector2( 760, 144 )
+position = Vector2( 634, 210 )
 
 [node name="player_hunger_pos" type="Position2D" parent="text_cont"]
-position = Vector2( 552, 144 )
+position = Vector2( 426, 210 )
 
 [node name="player_defense_pos" type="Position2D" parent="text_cont"]
-position = Vector2( 232, 384 )
+position = Vector2( 104, 400 )
 
 [node name="player_toughness_pos" type="Position2D" parent="text_cont"]
-position = Vector2( 232, 472 )
+position = Vector2( 104, 488 )
 
 [node name="player_health" type="Label" parent="text_cont"]
-margin_left = 280.0
-margin_top = 120.0
-margin_right = 419.0
-margin_bottom = 180.0
+margin_left = 152.0
+margin_top = 136.0
+margin_right = 291.0
+margin_bottom = 196.0
 rect_scale = Vector2( 1.5, 1.5 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "1000"
 valign = 1
@@ -491,12 +495,12 @@ __meta__ = {
 }
 
 [node name="player_health_label" type="Label" parent="text_cont"]
-margin_left = 200.0
-margin_top = 120.0
-margin_right = 339.0
-margin_bottom = 180.0
+margin_left = 72.0
+margin_top = 136.0
+margin_right = 211.0
+margin_bottom = 196.0
 rect_scale = Vector2( 1.5, 1.5 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "HP"
 valign = 1
@@ -505,12 +509,12 @@ __meta__ = {
 }
 
 [node name="player_hunger" type="Label" parent="text_cont"]
-margin_left = 512.0
-margin_top = 120.0
-margin_right = 640.0
-margin_bottom = 180.0
+margin_left = 384.0
+margin_top = 136.0
+margin_right = 512.0
+margin_bottom = 196.0
 rect_scale = Vector2( 1.5, 1.5 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "1000"
 valign = 1
@@ -519,12 +523,12 @@ __meta__ = {
 }
 
 [node name="player_defense" type="Label" parent="text_cont"]
-margin_left = 80.0
-margin_top = 328.0
-margin_right = 208.0
-margin_bottom = 388.0
+margin_left = 64.0
+margin_top = 200.0
+margin_right = 192.0
+margin_bottom = 260.0
 rect_scale = Vector2( 1.5, 1.5 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "1000"
 valign = 1
@@ -533,12 +537,12 @@ __meta__ = {
 }
 
 [node name="player_toughness" type="Label" parent="text_cont"]
-margin_left = 80.0
-margin_top = 416.0
-margin_right = 208.0
-margin_bottom = 476.0
+margin_left = 64.0
+margin_top = 288.0
+margin_right = 192.0
+margin_bottom = 348.0
 rect_scale = Vector2( 1.5, 1.5 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "1000"
 valign = 1
@@ -547,12 +551,12 @@ __meta__ = {
 }
 
 [node name="player_hunger_label" type="Label" parent="text_cont"]
-margin_left = 472.0
-margin_top = 120.0
-margin_right = 622.0
-margin_bottom = 180.0
+margin_left = 344.0
+margin_top = 136.0
+margin_right = 494.0
+margin_bottom = 196.0
 rect_scale = Vector2( 1.5, 1.5 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "F"
 valign = 1
@@ -561,12 +565,12 @@ __meta__ = {
 }
 
 [node name="player_water" type="Label" parent="text_cont"]
-margin_left = 728.0
-margin_top = 120.0
-margin_right = 856.0
-margin_bottom = 180.0
+margin_left = 600.0
+margin_top = 136.0
+margin_right = 728.0
+margin_bottom = 196.0
 rect_scale = Vector2( 1.5, 1.5 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "1000"
 valign = 1
@@ -575,12 +579,12 @@ __meta__ = {
 }
 
 [node name="player_water_label" type="Label" parent="text_cont"]
-margin_left = 688.0
-margin_top = 120.0
-margin_right = 816.0
-margin_bottom = 180.0
+margin_left = 560.0
+margin_top = 136.0
+margin_right = 688.0
+margin_bottom = 196.0
 rect_scale = Vector2( 1.5, 1.5 )
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "W"
 valign = 1
@@ -589,12 +593,12 @@ __meta__ = {
 }
 
 [node name="player_defense_sprite" type="Sprite" parent="text_cont"]
-position = Vector2( 56, 368 )
+position = Vector2( 44.48, 244.5 )
 scale = Vector2( 0.04, 0.04 )
 texture = ExtResource( 4 )
 
 [node name="player_defense_toughness" type="Sprite" parent="text_cont"]
-position = Vector2( 56, 456 )
+position = Vector2( 44.48, 332.5 )
 scale = Vector2( 0.04, 0.04 )
 texture = ExtResource( 4 )
 
@@ -603,8 +607,10 @@ anchor_mode = 0
 current = true
 
 [node name="ui" type="Control" parent="."]
-margin_right = 40.0
-margin_bottom = 40.0
+margin_left = 80.0
+margin_top = -952.0
+margin_right = 120.0
+margin_bottom = -912.0
 script = ExtResource( 10 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -614,9 +620,9 @@ __meta__ = {
 position = Vector2( 24, 896 )
 
 [node name="player_health_bar" type="HBoxContainer" parent="ui/z"]
-margin_left = 40.0
+margin_left = 32.0
 margin_top = 88.0
-margin_right = 440.0
+margin_right = 496.0
 margin_bottom = 138.0
 rect_scale = Vector2( 0.5, 1 )
 __meta__ = {
@@ -636,9 +642,9 @@ __meta__ = {
 }
 
 [node name="player_food_bar" type="HBoxContainer" parent="ui/z"]
-margin_left = 256.0
+margin_left = 304.0
 margin_top = 88.0
-margin_right = 656.0
+margin_right = 704.0
 margin_bottom = 138.0
 rect_scale = Vector2( 0.5, 1 )
 __meta__ = {
@@ -659,9 +665,9 @@ __meta__ = {
 
 [node name="player_water_bar" type="HBoxContainer" parent="ui/z"]
 self_modulate = Color( 0.392157, 0.392157, 1, 1 )
-margin_left = 472.0
+margin_left = 520.0
 margin_top = 88.0
-margin_right = 872.0
+margin_right = 920.0
 margin_bottom = 138.0
 rect_scale = Vector2( 0.5, 1 )
 __meta__ = {
@@ -681,9 +687,9 @@ __meta__ = {
 }
 
 [node name="enemy_health_bar" type="HBoxContainer" parent="ui/z"]
-margin_left = 1200.0
+margin_left = 952.0
 margin_top = 88.0
-margin_right = 1600.0
+margin_right = 1432.0
 margin_bottom = 138.0
 rect_scale = Vector2( 0.5, 1 )
 __meta__ = {
@@ -703,9 +709,9 @@ __meta__ = {
 }
 
 [node name="enemy_food_bar" type="HBoxContainer" parent="ui/z"]
-margin_left = 1416.0
+margin_left = 1216.0
 margin_top = 88.0
-margin_right = 1816.0
+margin_right = 1616.0
 margin_bottom = 138.0
 rect_scale = Vector2( 0.5, 1 )
 __meta__ = {
@@ -726,9 +732,9 @@ __meta__ = {
 
 [node name="enemy_water_bar" type="HBoxContainer" parent="ui/z"]
 self_modulate = Color( 0.392157, 0.392157, 1, 1 )
-margin_left = 1632.0
+margin_left = 1424.0
 margin_top = 88.0
-margin_right = 2032.0
+margin_right = 1824.0
 margin_bottom = 138.0
 rect_scale = Vector2( 0.5, 1 )
 __meta__ = {
@@ -748,8 +754,6 @@ __meta__ = {
 }
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-autoplay = "sun_anim"
-anims/sun_anim = SubResource( 2 )
 [connection signal="mouse_entered" from="Button" to="." method="_on_end_turn_button_mouse_entered"]
 [connection signal="mouse_exited" from="Button" to="." method="_on_end_turn_button_mouse_exited"]
 [connection signal="pressed" from="Button" to="." method="_on_end_turn_button_pressed"]

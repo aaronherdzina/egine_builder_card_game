@@ -68,6 +68,14 @@ var current_char = {
 	"energy_max": 3
 }
 
+var player_burning = false
+var enemy_burning = false
+var enemy_current_burn_dmg = 0
+var player_current_burn_dmg = 0
+var player_bleeding = false
+var enemy_bleeding = false
+var enemy_current_bleed_dmg = 0
+var player_current_bleed_dmg = 0
 var current_enemy_deck = []
 var current_player_deck = []
 
