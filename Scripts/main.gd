@@ -278,7 +278,8 @@ func checkIfNodeDeleted(nodeToCheck, eraseNode=false):
 		&& nodeToCheck\
 		and not 'Deleted' in str(nodeToCheck)\
 		and not 'Object:0' in str(nodeToCheck)\
-		and not '[Deleted]' in str(nodeToCheck):
+		and not '[Deleted]' in str(nodeToCheck)\
+		and not '[Deleted Object]' in str(nodeToCheck):
 		return false
 	if eraseNode:
 		print('should erase? ' + str(nodeToCheck))

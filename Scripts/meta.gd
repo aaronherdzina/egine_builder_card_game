@@ -46,7 +46,7 @@ var enemy_water_bonus = 0
 var enemy_attacks_bonus = 0
 var enemy_damage_bonus = 0
 var enemy_defense = 0
-var enemy_toughnes = 0
+var enemy_toughness = 0
 var enemy_hand_limit = 2
 var enemy_hand_limit_default = 2
 var enemy_hand_limit_max = 6
@@ -67,6 +67,9 @@ var current_char = {
 	"health": 10,
 	"energy_max": 3
 }
+
+var skipping_enemy_display = false
+var skipping_player_display = false
 
 var player_burning = false
 var enemy_burning = false

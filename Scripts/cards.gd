@@ -18,13 +18,14 @@ const STANDARD_DISPLAY_CARD_SCALE = Vector2(.4, .4)
 # abilities have atk range and ability range, ability is the actual (how far this ability can be used) range..
 # atk range is to represent if the ability buffs, or debuffs someones attack range
 # all values are literal, if targeting an enmy to debuff
-var starting_food = 5
-var starting_water = 5
+var starting_food = 10
+var starting_water = 0
 const RIVERLANDS = "riverlands"
 const COASTAL = "coastal"
 const SAVANNAH = "savannah"
 const FOREST = "forest"
 
+const ABILITY_BONUS = "ability_bonus"
 const RARITY = "rarity"
 const CHAR_CARD = "char" # chars played onto field
 const FOOD_CARD = "food"
@@ -76,7 +77,7 @@ const SHIELD = "shield"
 const ENEMIES = "enemies"
 const ALLIES = "allies"
 const SELF = "self"
-const WATER_PRODUCTION = "water_production"
+const WATER_REDUCTION = "water_reduction"
 const HUNGER_PRODUCTION = "hunger_production"
 const FOOD_PRODUCTION = "food_production"
 const ABILITY_RANGE = "ability_range"
@@ -137,12 +138,12 @@ var card_light_cobra = {
 	LEADER: false,
 	RARITY: 1,
 	HEALTH: 80,
+	WATER: 0,
 	LEFT_ARM_HEALTH: 20,
 	RIGHT_ARM_HEALTH: 20,
 	CHASIS_ABL_1: LIGHT_COBRA_ABILITY_1, # process based on str elsewhere
 	CHASIS_ABL_2: LIGHT_COBRA_ABILITY_2,
 	HUNGER_PRODUCTION: 0,
-	WATER_PRODUCTION: 0,
 	LEFT_ARM_LIMIT: 2,
 	RIGHT_ARM_LIMIT: 1,
 	LEG_LIMIT: 5,
@@ -175,9 +176,10 @@ var card_adams_single_load = {
 	CARD_TYPE: WEAPON_CARD,
 	CARD_BIOME: FOREST,
 	WEAPON_TYPE: HEAVY,
-	WEAPON_DAMAGE_TYPE: FIRE + "_" + DAMAGE,
+	WEAPON_DAMAGE_TYPE: IMPACT + "_" + DAMAGE,
+	ABILITY_BONUS: 0,
 	HUNGER_PRODUCTION: 1,
-	WATER_PRODUCTION: 1,
+	WATER: 0,
 	IMG_PATH: main.HAND_GUN,
 	CARD_WAIT_TIME: 1.5,
 	CARD_ACTION: ADAMS_SINGLE_LOAD_ABILITY,
@@ -195,10 +197,11 @@ var card_infiltrator = {
 	CARD_BIOME: COASTAL,
 	WEAPON_TYPE: LIGHT,
 	WEAPON_DAMAGE_TYPE: WATER + "_" + DAMAGE,
+	ABILITY_BONUS: 0,
 	ATTACKS: 1,
+	WATER: 0,
 	DAMAGE: 10,
 	HUNGER_PRODUCTION: 2,
-	WATER_PRODUCTION: 5,
 	IMG_PATH: main.INFILTRATOR,
 	CARD_WAIT_TIME: 1.25,
 	CARD_ACTION: INFILTRATOR_ABILITY,
@@ -216,10 +219,11 @@ var card_towering_elephant = {
 	CARD_BIOME: SAVANNAH,
 	WEAPON_TYPE: RIFLE,
 	WEAPON_DAMAGE_TYPE: IMPACT + "_" + DAMAGE,
+	ABILITY_BONUS: 1,
 	ATTACKS: 1,
+	WATER: 0,
 	DAMAGE: 30,
 	HUNGER_PRODUCTION: 8,
-	WATER_PRODUCTION: 2,
 	IMG_PATH: main.ELEPHANT_OUTLINE,
 	CARD_WAIT_TIME: 3,
 	CARD_ACTION: TOWERING_ELEPHANT_ABILITY_1,
@@ -235,12 +239,13 @@ var card_flying_cutlass = {
 	RARITY: 1,
 	CARD_TYPE: WEAPON_CARD,
 	CARD_BIOME: RIVERLANDS,
+	WATER: 0,
 	WEAPON_TYPE: MEDIUM,
 	WEAPON_DAMAGE_TYPE: POISON + "_" + DAMAGE,
+	ABILITY_BONUS: 0,
 	ATTACKS: 2,
 	DAMAGE: 5,
 	HUNGER_PRODUCTION: 2,
-	WATER_PRODUCTION: 2,
 	IMG_PATH: main.FLYING_CUTLASS,
 	CARD_WAIT_TIME: 1,
 	CARD_ACTION: FLYING_CUTLASS_ABILITY,
@@ -257,8 +262,9 @@ var card_treads = {
 	CARD_BIOME: COASTAL,
 	HUNGER_LIMIT: 3,
 	HUNGER_PRODUCTION: 5,
-	WATER_PRODUCTION: 1,
+	ABILITY_BONUS: 0,
 	TABLEAU_LIMIT: 4, 
+	WATER: 0,
 	DEFENSE: 15, # blocks dmg until depleted, regain after fight
 	TOUGHNESS: 5, # blocks dmg until depleted, regain each round
 	CARD_WAIT_TIME: .15,
@@ -276,8 +282,9 @@ var card_ability_right_arm_salvo_1 = {
 	CARD_TYPE: ABILITY_CARD,
 	CARD_BIOME: " ",
 	HUNGER_PRODUCTION: 15,
-	WATER_PRODUCTION: 15,
+	ABILITY_BONUS: 0,
 	CARD_WAIT_TIME: .15,
+	WATER: 0,
 	CARD_ACTION: "activate_right_arm", # str name of func called elsewher
 	RECYCLE_ACTION: "",
 	IMG_PATH: false,
@@ -292,7 +299,8 @@ var card_ability_left_arm_salvo_1 = {
 	CARD_TYPE: ABILITY_CARD,
 	CARD_BIOME: " ",
 	HUNGER_PRODUCTION: 15,
-	WATER_PRODUCTION: 15,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	CARD_WAIT_TIME: .15,
 	CARD_ACTION: "activate_left_arm", # str name of func called elsewher
 	RECYCLE_ACTION: "",
@@ -308,7 +316,8 @@ var card_ability_emergency_transmission = {
 	CARD_TYPE: ABILITY_CARD,
 	CARD_BIOME: FOREST,
 	HUNGER_PRODUCTION: 5,
-	WATER_PRODUCTION: 1,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	CARD_WAIT_TIME: .75,
 	CARD_ACTION: "draw_2", # str name of func called elsewher
 	RECYCLE_ACTION: "",
@@ -322,8 +331,9 @@ var card_ability_light_cannon = {
 	TITLE: LIGHT_CANNON,
 	RARITY: 1,
 	CARD_TYPE: ABILITY_CARD,
-	HUNGER_PRODUCTION: 5,
-	WATER_PRODUCTION: 0,
+	HUNGER_PRODUCTION: 8,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	ATTACKS: 4,
 	DAMAGE: 5,
 	CARD_BIOME: SAVANNAH,
@@ -340,9 +350,10 @@ var card_sand_storm = {
 	TITLE: SAND_STORM,
 	RARITY: 1,
 	CARD_TYPE: CHASSIS_CARD,
-	HUNGER_PRODUCTION: 2,
-	WATER_PRODUCTION: 0,
+	HUNGER_PRODUCTION: 4,
+	ABILITY_BONUS: 0,
 	ATTACKS: 2,
+	WATER: 0,
 	DAMAGE: 2,
 	DEFENSE: 5,
 	CARD_BIOME: SAVANNAH,
@@ -359,8 +370,9 @@ var card_ability_sudden_rain = {
 	TITLE: SUDDEN_RAIN,
 	RARITY: 1,
 	CARD_TYPE: ABILITY_CARD,
-	HUNGER_PRODUCTION: 2,
-	WATER_PRODUCTION: 0,
+	HUNGER_PRODUCTION: 0,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	WATER: 10,
 	CARD_BIOME: RIVERLANDS,
 	CARD_WAIT_TIME: .25,
@@ -378,7 +390,8 @@ var card_ability_growth = {
 	RARITY: 1,
 	CARD_TYPE: ABILITY_CARD,
 	HUNGER_PRODUCTION: 3,
-	WATER_PRODUCTION: 3,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	HEALTH: 25,
 	CARD_BIOME: FOREST,
 	CARD_WAIT_TIME: .5,
@@ -395,16 +408,17 @@ var card_ability_quick_fix= {
 	TITLE: QUICK_FIX,
 	RARITY: 1,
 	CARD_TYPE: ABILITY_CARD,
-	HUNGER_PRODUCTION: 1,
-	WATER_PRODUCTION: 5,
+	HUNGER_PRODUCTION: 3,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	DEFENSE: 5,
 	CARD_BIOME: COASTAL,
 	CARD_WAIT_TIME: .5,
 	CARD_ACTION: DEFAUlT_ACTION, # str name of func called elsewher
 	RECYCLE_ACTION: "",
-	IMG_PATH: main.PIRANHA,
+	IMG_PATH: main.WINDOW_FIX,
 	DESCRIPTION: "",
-	TAGS: [DEFENSE, FOREST]
+	TAGS: [DEFENSE, COASTAL]
 }
 
 
@@ -414,7 +428,8 @@ var card_quick_sand = {
 	RARITY: 1,
 	CARD_TYPE: CHASSIS_CARD,
 	HUNGER_PRODUCTION: 2,
-	WATER_PRODUCTION: 2,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	CARD_BIOME: RIVERLANDS,
 	ATTACKS: 1,
 	DAMAGE: 5,
@@ -434,7 +449,8 @@ var card_ability_poisonous_amphibians = {
 	CARD_TYPE: ABILITY_CARD,
 	CARD_BIOME: RIVERLANDS,
 	HUNGER_PRODUCTION: 2,
-	WATER_PRODUCTION: 5,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	ATTACKS: 1,
 	DAMAGE: 10,
 	CARD_WAIT_TIME: 1,
@@ -452,7 +468,8 @@ var card_vultures = {
 	CARD_TYPE: CHASSIS_CARD,
 	CARD_BIOME: SAVANNAH,
 	HUNGER_PRODUCTION: 1,
-	WATER_PRODUCTION: 0,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	ATTACKS: 1,
 	DAMAGE: 3,
 	CARD_WAIT_TIME: 1,
@@ -464,24 +481,23 @@ var card_vultures = {
 }
 
 const DOUBLE_CANNON = "double cannon"
-var card_ability_grizzly_strike = {
+var card_double_cannon = {
 	TITLE: DOUBLE_CANNON,
 	RARITY: 1,
 	CARD_TYPE: WEAPON_CARD,
 	CARD_BIOME: FOREST,
-	HUNGER_PRODUCTION: 5,
-	WATER_PRODUCTION: 2,
+	HUNGER_PRODUCTION: 30,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	ATTACKS: 2,
-	DAMAGE: 20,
+	DAMAGE: 15,
 	CARD_WAIT_TIME: 1,
 	RECYCLE_ACTION: "",
 	CARD_ACTION: DEFAUlT_ACTION,
 	IMG_PATH: main.DOUBLE_CANNON,
 	DESCRIPTION: " ",
-	TAGS: [FOREST]
+	TAGS: [FOREST, IMPACT]
 }
-
-
 
 const SHORELINE_PIRANHA  = "shorline piranha"
 var card_ability_shoreline_piranha= {
@@ -490,9 +506,10 @@ var card_ability_shoreline_piranha= {
 	CARD_TYPE: ABILITY_CARD,
 	CARD_BIOME: COASTAL,
 	HUNGER_PRODUCTION: 2,
-	WATER_PRODUCTION: 5,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	ATTACKS: 1,
-	HEALTH: 15,
+	HEALTH: 5,
 	DAMAGE: 15,
 	CARD_WAIT_TIME: 1,
 	RECYCLE_ACTION: "",
@@ -510,7 +527,8 @@ var card_ability_autonomous_repairs = {
 	CARD_TYPE: CHASSIS_CARD,
 	CARD_BIOME: COASTAL,
 	HUNGER_PRODUCTION: 10,
-	WATER_PRODUCTION: 5,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	DEFENSE: 15,
 	HEALTH: 2,
 	CARD_WAIT_TIME: .15,
@@ -533,8 +551,9 @@ var card_chassis_call_reinforcments = {
 	RARITY: 1,
 	CARD_TYPE: CHASSIS_CARD,
 	CARD_BIOME: COASTAL,
-	HUNGER_PRODUCTION: 5,
-	WATER_PRODUCTION: 5,
+	HUNGER_PRODUCTION: 15,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	CARD_WAIT_TIME: .5,
 	CARD_ACTION: GAIN_START_DRAW_1, # str name of func called elsewher
 	RECYCLE_ACTION: "",
@@ -552,14 +571,15 @@ var card_foragers_1 = {
 	CARD_TYPE: CHASSIS_CARD,
 	FOOD_PRODUCTION: 5,
 	CARD_BIOME: FOREST,
-	WATER_PRODUCTION: 2,
 	HUNGER_PRODUCTION: 0,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	HEALTH: 5,
 	CARD_WAIT_TIME: .35,
 	CARD_ACTION: FORAGERS_1, # str name of func called elsewher
 	RECYCLE_ACTION: "",
 	IMG_PATH: main.SMALL_FOOD_STOCK,
-	DESCRIPTION: "+ 1 Health and + 5 Food",
+	DESCRIPTION: "+ 5 Health and + 5 Food",
 	TAGS: [HEALTH, FOOD, FOREST]
 }
 
@@ -571,7 +591,8 @@ var card_waste_reduction = {
 	CARD_TYPE: CHASSIS_CARD,
 	CARD_BIOME: SAVANNAH,
 	HUNGER_PRODUCTION: 0,
-	WATER_PRODUCTION: 4,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	CARD_WAIT_TIME: .5,
 	CARD_ACTION: WASTE_REDUCTION_1, # str name of func called elsewher
 	RECYCLE_ACTION: "",
@@ -579,6 +600,7 @@ var card_waste_reduction = {
 	DESCRIPTION: "+ 1 Food, for every [HUNGER] card you own in battle",
 	TAGS: [HUNGER, SAVANNAH]
 }
+
 const GROWING_HUNGER = "growing hunger"
 const GROWING_HUNGER_1 = "growing_hunger_1"
 var card_growing_hunger = {
@@ -586,17 +608,38 @@ var card_growing_hunger = {
 	TITLE: GROWING_HUNGER,
 	RARITY: 1,
 	CARD_TYPE: ABILITY_CARD,
-	FOOD_PRODUCTION: 10,
-	WATER_PRODUCTION: 1,
-	HUNGER_PRODUCTION: 0,
+	ABILITY_BONUS: 0,
+	HUNGER_PRODUCTION: 5,
+	WATER: 0,
 	CARD_BIOME: " ",
 	CARD_WAIT_TIME: .5,
 	CARD_ACTION: GROWING_HUNGER_1, # str name of func called elsewher
 	RECYCLE_ACTION: "",
 	IMG_PATH: false,
-	DESCRIPTION: "- 10 Food",
+	DESCRIPTION: "- 5 Food",
 	TAGS: [HUNGER]
 }
+
+const TAKE_ON_WATER = "take on water"
+const TAKE_ON_WATER_ABILITY = ""
+var card_take_on_water = {
+	######### negative card ################
+	TITLE: TAKE_ON_WATER,
+	RARITY: 1,
+	CARD_TYPE: ABILITY_CARD,
+	WATER: 5,
+	HUNGER_PRODUCTION: 0,
+	ABILITY_BONUS: 0,
+	WATER: 0,
+	CARD_BIOME: " ",
+	CARD_WAIT_TIME: .5,
+	CARD_ACTION: TAKE_ON_WATER_ABILITY, # str name of func called elsewher
+	RECYCLE_ACTION: "",
+	IMG_PATH: false,
+	DESCRIPTION: "+ 5 water",
+	TAGS: [WATER]
+}
+
 const RATIONS = "rations"
 const RATIONS_ABILITY_1 = "ration_ability_1"
 var card_rations = {
@@ -606,27 +649,28 @@ var card_rations = {
 	CARD_BIOME: " ",
 	FOOD_PRODUCTION: 8,
 	HUNGER_PRODUCTION: 0,
-	WATER_PRODUCTION: 0,
-	WATER: 8,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	CARD_WAIT_TIME: .5,
 	CARD_ACTION: RATIONS_ABILITY_1, # str name of func called elsewher
 	RECYCLE_ACTION: "",
 	IMG_PATH: main.RATIONS,
-	DESCRIPTION: "+ 8 Food and Water",
+	DESCRIPTION: "+ 8 Food",
 	TAGS: [FOOD, WATER]
 }
 
 const OVEREXTENDED_DMG = 5
 const OVEREXTENDED_CARD_TITLE = "overextended"
 const OVEREXTENDED_1 = "overextended_1"
-var card_overextended_stock = {
+var card_overextended = {
 	TITLE: OVEREXTENDED_CARD_TITLE,
 	RARITY: 1,
 	CARD_TYPE: FOOD_CARD,
 	CARD_BIOME: " ",
 	CARD_WAIT_TIME: .5,
 	HUNGER_PRODUCTION: 0,
-	WATER_PRODUCTION: 0,
+	ABILITY_BONUS: 0,
+	WATER: 0,
 	FOOD_PRODUCTION: 5,
 	WATER: 5,
 	CARD_ACTION: OVEREXTENDED_1, # str name of func called elsewher
@@ -644,14 +688,14 @@ var card_fresh_stream = {
 	CARD_TYPE: CHASSIS_CARD,
 	CARD_BIOME: RIVERLANDS,
 	CARD_WAIT_TIME: .5,
+	ABILITY_BONUS: 4,
 	HUNGER_PRODUCTION: 3,
-	WATER_PRODUCTION: 0,
-	WATER: 5,
-	WATER_PRODUCTION: 0,
+	WATER: 0,
+	WATER_REDUCTION: 2,
 	CARD_ACTION: PRESTINE_WATERS_ABILITY, # str name of func called elsewher
 	RECYCLE_ACTION: "",
 	IMG_PATH: main.FOOD_STOCK,
-	DESCRIPTION: "+ 2 Health and Food per Water card + 5 Water",
+	DESCRIPTION: "+ 4 Health and Food per Water card and + 2 Water per turn",
 	TAGS: [WATER, HEALTH, FOOD]
 }
 var riverlands_deck = [card_rations, card_rations, card_rations, card_rations,
@@ -672,21 +716,25 @@ var savannha_deck = [card_rations, card_rations, card_rations, card_rations,
 					card_ability_light_cannon, card_ability_light_cannon, card_ability_light_cannon
 					]
 
-var forest_deck = [card_rations, card_rations, card_rations, card_rations, card_ability_quick_fix,
-				  card_ability_quick_fix, card_ability_quick_fix, card_ability_quick_fix,
-				  card_ability_grizzly_strike, card_ability_grizzly_strike,
+var forest_deck = [card_rations, card_rations, card_rations, card_rations,
+				  card_double_cannon, card_double_cannon,
 				  card_foragers_1, card_foragers_1, card_foragers_1,
 				  card_ability_growth, card_ability_growth, card_ability_growth,
 				  card_adams_single_load, card_adams_single_load, card_adams_single_load,
-				  card_ability_grizzly_strike, card_ability_growth, card_foragers_1]
+				  card_double_cannon, card_ability_growth, card_foragers_1]
 			
 var coastal_deck = [card_rations, card_rations, card_rations, card_rations,
 				   card_infiltrator, card_infiltrator, card_infiltrator,
+					card_ability_quick_fix, card_ability_quick_fix, card_ability_quick_fix, card_ability_quick_fix,
 				   card_ability_shoreline_piranha,
 				   card_ability_autonomous_repairs, card_ability_autonomous_repairs, card_ability_autonomous_repairs,
 				   card_ability_shoreline_piranha, card_ability_shoreline_piranha, card_ability_shoreline_piranha,
 				   card_chassis_call_reinforcments, card_chassis_call_reinforcments, card_chassis_call_reinforcments]
 
+var negative_cards = [card_take_on_water, card_growing_hunger, card_overextended]
+var negative_cards_weighted = [card_take_on_water, card_take_on_water,
+							 card_growing_hunger, card_growing_hunger,
+							 card_overextended]
 var all_decks = [riverlands_deck, forest_deck, coastal_deck, savannha_deck]
 
 var hand_idx = 0
@@ -708,12 +756,13 @@ var card_costs = {
 	ATTACKS: 1,
 	DEFENSE: 1,
 	TOUGHNESS: 1.2,
-	HEALTH: 1,
+	HEALTH: 1.5,
 	FOOD_PRODUCTION: 2,
-	WATER: 2,
-	"ability_mod": .6,
-	"combat_mod": .55,
-	"standard_mod": .5,
+	WASTE_REDUCTION: 2,
+	ABILITY_BONUS: 2,
+	"ability_mod": 1.1,
+	"combat_mod": .9,
+	"standard_mod": 1,
 	"bracket_1": 10, # up to this amount
 	"bracket_2": 20, # up to this amount, more than previous
 	"bracket_3": 30, # up to this amount, more than previous
@@ -721,16 +770,19 @@ var card_costs = {
 }
 
 var performing_actions = false
-
+var enemy_damage_taken_turn = 0
+var player_damage_taken_turn = 0
+var player_damage_dealt_turn = 0
+var enemy_damage_dealt_turn = 0
 
 func create_card_cost(card):
 	# example: [WATER, 10] cost is 10 water
 	# example: [HUNGER, WATER, 10] cost is 10 hunger and 10 water
 	var rarity = card.rarity # 1 normal, .9 uncommon, .7 rare, ect
 	var cost = []
-	var cost_value = 0
+	var cost_value = 1
 	var food_cost = card.hunger_production
-	var water_cost = card.water_production
+	var water_cost = card.water
 	var min_val = 1
 	if card.damage > 0:
 		cost_value += int((card.damage+min_val) * card_costs[DAMAGE])
@@ -744,9 +796,11 @@ func create_card_cost(card):
 		cost_value += int((card.health+min_val) * card_costs[HEALTH])
 	if card.food_production > 0:
 		cost_value += int((card.food_production+min_val) * card_costs[FOOD_PRODUCTION])
-	if card.water > 0:
-		cost_value += int((card.water+min_val) * card_costs[WATER])
-
+	if card.water_reduction > 0:
+		cost_value += int((card.water_reduction+min_val) * card_costs[WASTE_REDUCTION])
+	if card.ability_bonus > 0:
+		cost_value += int((card.ability_bonus+min_val) * card_costs[ABILITY_BONUS])
+		
 	#print("card " + str(card.title) + " cost before type mod: " + str(cost_value))
 	if card.card_type == Cards.ABILITY_CARD:
 		cost_value = floor(cost_value * card_costs["ability_mod"])
@@ -800,7 +854,7 @@ func create_card_cost(card):
 	#		+ " water: " + str(water_cost))
 	return {
 			"food_cost": floor(cost_value * .7),
-			"water_cost": 0,
+			"water_cost": water_cost,
 			"cost_value": floor(cost_value *.7),
 		}
 
@@ -939,22 +993,22 @@ func set_area_bonuses():
 			meta.area_biome = Cards.RIVERLANDS
 			meta.area_food_per_turn = meta.riverlands_area.food
 			meta.area_water_per_turn = meta.riverlands_area.water
-			level.get_node("background_imgs/Sprite").set_texture(main.RIVERLANDS_BACKDROP)
+			#level.get_node("background_imgs/Sprite").set_texture(main.RIVERLANDS_BACKDROP)
 		elif choice == Cards.FOREST:
 			meta.area_biome = Cards.FOREST
 			meta.area_food_per_turn = meta.forest_area.food
 			meta.area_water_per_turn = meta.forest_area.water
-			level.get_node("background_imgs/Sprite").set_texture(main.FOREST_BACKDROP)
+			#level.get_node("background_imgs/Sprite").set_texture(main.FOREST_BACKDROP)
 		elif choice == Cards.SAVANNAH:
 			meta.area_biome = Cards.SAVANNAH
 			meta.area_food_per_turn = meta.savannah_area.food
 			meta.area_water_per_turn = meta.savannah_area.water
-			level.get_node("background_imgs/Sprite").set_texture(main.SAVANNAH_BACKDROP)
+			#level.get_node("background_imgs/Sprite").set_texture(main.SAVANNAH_BACKDROP)
 		else:
 			meta.area_biome = Cards.COASTAL
 			meta.area_food_per_turn = meta.coastal_area.food
 			meta.area_water_per_turn = meta.coastal_area.water
-			level.get_node("background_imgs/Sprite").set_texture(main.COASTAL_BACKDROP)
+			#level.get_node("background_imgs/Sprite").set_texture(main.COASTAL_BACKDROP)
 
 
 func give_area_biome_bonus(is_player=true):
@@ -977,9 +1031,12 @@ func process_status_effects(is_player):
 		elif meta.enemy_burning:
 			process_damage(is_player, 1, meta.enemy_current_burn_dmg, null)
 
+
 func process_damage(is_player, atks, dmg, card=null, action_str=""):
+	var dmg_dealt = dmg
 	if is_player:
 		### Process Defense
+		enemy_damage_taken_turn += dmg
 		var remaining_defense = (meta.enemy_defense - dmg)
 		if remaining_defense > 0:
 			meta.enemy_defense = remaining_defense
@@ -1001,6 +1058,7 @@ func process_damage(is_player, atks, dmg, card=null, action_str=""):
 			apply_text_effect("hurt", "- " + str(dmg), (is_player == false)) #TEXT_EFECT
 	else:
 		### Process Defense
+		player_damage_taken_turn += dmg
 		var remaining_defense = (meta.player_defense - dmg)
 		if remaining_defense > 0:
 			meta.player_defense = remaining_defense
@@ -1020,19 +1078,25 @@ func process_damage(is_player, atks, dmg, card=null, action_str=""):
 		if dmg > 0:
 			meta.player_health -= dmg
 			apply_text_effect("hurt", "- " + str(dmg), (is_player == false)) #TEXT_EFECT
-
+	return dmg_dealt
 
 func take_turn(is_player=true):
 	# Essentially main controller method, invoked with player input or after enmy turn (wait)
 	if get_node("/root").has_node("level"):
+		player_damage_dealt_turn = 0
+		enemy_damage_dealt_turn = 0
+		player_damage_taken_turn = 0
+		enemy_damage_taken_turn = 0
 		var level = get_node("/root/level")
 		level.reset_display_cards()
 		if not waiting:
-			if meta.player_health <= 0 or meta.enemy_health <= 0:
+			if meta.player_health <= 0 or meta.enemy_health <= 0\
+			or meta.player_water >= meta.player_health_max and meta.player_water >= meta.player_health\
+			or meta.enemy_water >= meta.enemy_health_max and meta.enemy_water >= meta.enemy_health:
 				waiting = true
 				level.start_level()
 				yield(get_tree().create_timer(3.0), "timeout")
-				print("new game started, player deck is now: " + str(level.hand))
+				print("new game started, player hand is now: " + str(level.hand))
 				waiting = false
 				call_deferred("take_turn", meta.player_turn)
 				return
@@ -1042,8 +1106,8 @@ func take_turn(is_player=true):
 		
 		if is_player and not waiting:
 			waiting = true
+			process_status_effects(is_player)
 			current_card_menu = "hand"
-			level.get_node("background_imgs/alert").modulate = Color(.2, .2, 1, 1)
 			if meta.player_hand_limit > meta.player_hand_limit_max:
 				meta.player_hand_limit = meta.player_hand_limit_max
 				
@@ -1054,9 +1118,9 @@ func take_turn(is_player=true):
 			hand_idx = 0
 			if len(level.hand) > 0:
 				level.expand_card_details(level.hand[hand_idx])
-			level.get_node("background_imgs/alert").modulate = Color(1, 1, 1, 1)
 			level.update_text_overlays()
 			waiting = false
+			level.get_node("background_imgs/alert").modulate = Color(.5, .5, .7, 1)
 		elif not waiting:
 			if not waiting:
 				if meta.player_health <= 0 or meta.enemy_health <= 0:
@@ -1067,7 +1131,7 @@ func take_turn(is_player=true):
 					call_deferred("take_turn", meta.player_turn)
 					return
 			waiting = true
-			level.get_node("background_imgs/alert").modulate = Color(1, .2, .2, 1)
+			process_status_effects(is_player)
 			print("\nstart play_all_display_card_actions\n")
 			play_all_display_card_actions(true)
 			var break_time = 15
@@ -1079,11 +1143,12 @@ func take_turn(is_player=true):
 				break_time-= 1
 			level.remove_all_cards_in_hand(true)
 			var time = round(int(len(level.player_chassis_list) + len(level.player_right_arm_list)\
-					 + len(level.player_left_arm_list)) * .25) + 1
+					 + len(level.player_left_arm_list)) * .45) + 1
 			yield(get_tree().create_timer(time), "timeout")
+			level.get_node("background_imgs/alert").modulate = Color(.5, .4, .4, 1)
 			pay_card_upkeep(level, true)
 			var time2 = round(int(len(level.player_chassis_list) + len(level.player_right_arm_list)\
-					 + len(level.player_left_arm_list)) * .25) + 1
+					 + len(level.player_left_arm_list)) * .45) + 1
 			yield(get_tree().create_timer(time2), "timeout")
 			# spawn and play for enm
 			call_deferred("spawn_cards", 4, is_player, meta.current_enemy_deck)
@@ -1099,11 +1164,11 @@ func take_turn(is_player=true):
 					break
 				yield(get_tree().create_timer(1.0), "timeout")
 				break_time-= 1
+			level.get_node("background_imgs/alert").modulate = Color(.5, .4, .4, 1)
 			pay_card_upkeep(level, false)
 
 			var time3 = floor(len(level.enemy_chassis_list) + len(level.enemy_right_arm_list)\
-					 + len(level.enemy_left_arm_list) * 2) + 1.25
-			level.get_node("background_imgs/alert").modulate = Color(1, 1, 1, 1)
+					 + len(level.enemy_left_arm_list) * 1.5) + 1.25
 			yield(get_tree().create_timer(time3), "timeout")
 			level.remove_all_cards_in_hand(false)
 			meta.player_turn = true
@@ -1125,8 +1190,8 @@ func discard_hands_resource(is_player=true):
 				card.get_node("AnimationPlayer").play("remove")
 				if HUNGER_PRODUCTION in card and card[HUNGER_PRODUCTION] > 0:
 					meta.player_food += int(card[HUNGER_PRODUCTION] * .25)
-				if WATER_PRODUCTION in card and card[WATER_PRODUCTION] > 0:
-					meta.player_water += int(card[WATER_PRODUCTION] * .25)
+				if WATER_REDUCTION in card and card[WATER_REDUCTION] > 0:
+					meta.player_water -= int(card[WATER_REDUCTION] * .25)
 		else:
 			for card in level.enm_hand:
 				var card_for_discard = card.copy()
@@ -1135,8 +1200,8 @@ func discard_hands_resource(is_player=true):
 				card.get_node("AnimationPlayer").play("remove")
 				if HUNGER_PRODUCTION in card and card[HUNGER_PRODUCTION] > 0:
 					meta.enemy_food += int(card[HUNGER_PRODUCTION] * .25)
-				if WATER_PRODUCTION in card and card[WATER_PRODUCTION] > 0:
-					meta.enemy_water += int(card[WATER_PRODUCTION] * .25)
+				if WATER_REDUCTION in card and card[WATER_REDUCTION] > 0:
+					meta.enemy_water -= int(card[WATER_REDUCTION] * .25)
 		level.update_text_overlays()
 
 
@@ -1144,9 +1209,9 @@ func discard_hands_resource(is_player=true):
 func play_all_display_card_actions(is_player=true):
 	if get_node("/root").has_node("level"):
 		var level = get_node("/root/level")
-		if is_player and player_display_turn:
+		level.get_node("background_imgs/alert").modulate = Color(.25, .1, .1, 1)
+		if is_player and player_display_turn and not meta.skipping_player_display:
 			level.update_text_overlays()
-			level.get_node("background_imgs/alert").modulate = Color(.1, .1, .7, 1)
 			for card in level.player_chassis_list:
 				if card.selected_for_action_phase:
 					var should_stop = card_action(card.card_action, is_player, "", card)
@@ -1177,8 +1242,7 @@ func play_all_display_card_actions(is_player=true):
 				
 			player_display_turn = false
 		# end of player logic
-		else:
-			level.get_node("background_imgs/alert").modulate = Color(.7, .1, .1, 1)
+		elif not meta.skipping_enemy_display:
 			# Enemy:
 			for card in level.enemy_chassis_list:
 				if card.selected_for_action_phase:
@@ -1261,7 +1325,7 @@ func shuffle_card_into_deck(card, is_player):
 		meta.current_enemy_deck.append(card)
 
 
-func pay_for_card(level, card, hunger, thirst, food, water, is_player=true):
+func pay_for_card(level, card, hunger, thirst=0, food=0, water=0, is_player=true):
 	#print("start card cost: " + str(hunger) + " food: " + str(food) + " water: " + str(water))
 	var stop_response = "cant afford"
 	if is_player:
@@ -1274,7 +1338,7 @@ func pay_for_card(level, card, hunger, thirst, food, water, is_player=true):
 		if hunger >= 0:
 			if leftover_food < 0:
 				 # CAN'T PLAY CARD
-				shuffle_card_into_deck(card_overextended_stock, true)
+				shuffle_card_into_deck(card_overextended, true)
 				#print("leftoverfood: " + str(leftover_food) + " is less than food cost: " + str(hunger))
 				if meta.player_food < 0:
 					meta.player_food = 0
@@ -1282,15 +1346,16 @@ func pay_for_card(level, card, hunger, thirst, food, water, is_player=true):
 				return stop_response
 			else:
 				meta.player_food = leftover_food
-				apply_text_effect("hunger", "-"+str(hunger), is_player) #TEXT_EFECT
-				card.get_node("anim_text").set_text("-"+ str(hunger))
-				card.get_node("AnimationPlayer").play("spend")
+				if hunger > 0:
+					apply_text_effect("hunger", "-"+str(hunger), is_player) #TEXT_EFECT
+					card.get_node("anim_text").set_text("-"+ str(hunger))
+					card.get_node("AnimationPlayer").play("spend")
 				level.update_text_overlays()
 
 		if thirst >= 0:
 			if leftover_water < 0:
 				 # CAN'T PLAY CARD
-				shuffle_card_into_deck(card_overextended_stock, true)
+				shuffle_card_into_deck(card_overextended, true)
 				#print("leftoverwater: " + str(leftover_water) + " is less than water cost: " + str(thirst))
 				
 				if meta.player_water < 0:
@@ -1299,9 +1364,10 @@ func pay_for_card(level, card, hunger, thirst, food, water, is_player=true):
 				return stop_response
 			else:
 				meta.player_water = leftover_water
-				apply_text_effect("water", "-"+str(thirst), is_player) #TEXT_EFECT
-				card.get_node("anim_text").set_text("-" + str(thirst))
-				card.get_node("AnimationPlayer").play("spend")
+				if thirst > 0:
+					apply_text_effect("water", "-"+str(thirst), is_player) #TEXT_EFECT
+					card.get_node("anim_text").set_text("-" + str(thirst))
+					card.get_node("AnimationPlayer").play("spend")
 				level.update_text_overlays()
 		
 		#print("player food after: " + str(meta.player_food))
@@ -1320,29 +1386,33 @@ func pay_for_card(level, card, hunger, thirst, food, water, is_player=true):
 	
 		if leftover_food < 0 and hunger > 0:
 			 # CAN'T PLAY CARD
-			shuffle_card_into_deck(card_overextended_stock, false)
+			shuffle_card_into_deck(card_overextended, false)
 			if meta.enemy_food < 0:
 				meta.enemy_food = 0
 			level.update_text_overlays()
 			return stop_response
 		elif leftover_food >= 0:
 			meta.enemy_food = leftover_food
-			apply_text_effect("hunger", "-"+str(hunger), is_player) #TEXT_EFECT
-			card.get_node("anim_text").set_text("-" + str(food))
-			card.get_node("AnimationPlayer").play("spend")
+			if hunger > 0:
+				apply_text_effect("hunger", "-"+str(hunger), is_player) #TEXT_EFECT
+				card.get_node("anim_text").set_text("-" + str(hunger))
+				card.get_node("AnimationPlayer").play("spend")
+			level.update_text_overlays()
 	
 		if leftover_water < 0 and thirst > 0:
 			 # CAN'T PLAY CARD
 			if meta.enemy_water < 0:
 				meta.enemy_water = 0
-			shuffle_card_into_deck(card_overextended_stock, false)
+			shuffle_card_into_deck(card_overextended, false)
 			level.update_text_overlays()
 			return stop_response
 		elif leftover_water >= 0:
 			meta.enemy_water = leftover_water
-			apply_text_effect("water", "-"+str(thirst), is_player) #TEXT_EFECT
-			card.get_node("anim_text").set_text("-W" + str(thirst))
-			card.get_node("AnimationPlayer").play("spend")
+			if thirst > 0:
+				apply_text_effect("water", "-"+str(thirst), is_player) #TEXT_EFECT
+				card.get_node("anim_text").set_text("-W" + str(thirst))
+				card.get_node("AnimationPlayer").play("spend")
+			level.update_text_overlays()
 		
 		if meta.enemy_water < 0:
 			meta.enemy_water = 0
@@ -1361,43 +1431,43 @@ func pay_card_upkeep(level, is_player=true):
 		for card in level.player_chassis_list:
 			if card and main.checkIfNodeDeleted(card) == false:
 				pay_for_card(level, card, card.hunger_production,
-							card.water_production, card.food, card.water, is_player)
+							card.water_reduction, card.food, card.water, is_player)
 				yield(get_tree().create_timer(pay_time), "timeout")
 		for card in level.player_right_arm_list:
 			if card and main.checkIfNodeDeleted(card) == false:
 				pay_for_card(level, card, card.hunger_production,
-							card.water_production, card.food, card.water, is_player)
+							card.water_reduction, card.food, card.water, is_player)
 				yield(get_tree().create_timer(pay_time), "timeout")
 		for card in level.player_left_arm_list:
 			if card and main.checkIfNodeDeleted(card) == false:
 				pay_for_card(level, card, card.hunger_production,
-							card.water_production, card.food, card.water, is_player)
+							card.water_reduction, card.food, card.water, is_player)
 				yield(get_tree().create_timer(pay_time), "timeout")
 		for card in level.player_leg_list:
 			if card and main.checkIfNodeDeleted(card) == false:
 				pay_for_card(level, card, card.hunger_production,
-							card.water_production, card.food, card.water, is_player)
+							card.water_reduction, card.food, card.water, is_player)
 				yield(get_tree().create_timer(pay_time), "timeout")
 	else:
 		for card in level.enemy_chassis_list:
 			if card and main.checkIfNodeDeleted(card) == false:
 				pay_for_card(level, card, card.hunger_production,
-							card.water_production, card.food, card.water, is_player)
+							card.water_reduction, card.food, card.water, is_player)
 				yield(get_tree().create_timer(pay_time), "timeout")
 		for card in level.enemy_right_arm_list:
 			if card and main.checkIfNodeDeleted(card) == false:
 				pay_for_card(level, card, card.hunger_production,
-							card.water_production, card.food, card.water, is_player)
+							card.water_reduction, card.food, card.water, is_player)
 				yield(get_tree().create_timer(pay_time), "timeout")
 		for card in level.enemy_left_arm_list:
 			if card and main.checkIfNodeDeleted(card) == false:
 				pay_for_card(level, card, card.hunger_production,
-							card.water_production, card.food, card.water, is_player)
+							card.water_reduction, card.food, card.water, is_player)
 				yield(get_tree().create_timer(pay_time), "timeout")
 		for card in level.enemy_leg_list:
 			if card and main.checkIfNodeDeleted(card) == false:
 				pay_for_card(level, card, card.hunger_production,
-							card.water_production, card.food, card.water, is_player)
+							card.water_reduction, card.food, card.water, is_player)
 				yield(get_tree().create_timer(pay_time), "timeout")
 
 
@@ -1448,42 +1518,44 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 		
 		# hunger is ALWAYS cost of food (total_food - hunger)
 		# food is food GAINED (total_food + food)
+		var ability_bonus = card.ability_bonus
 		var food = card.food_production + food_bonus
 		var hunger = card.hunger_production + hunger_bonus
-		var thirst = card.water_production + water_bonus
+		var thirst = card.water_reduction + water_bonus
 		var water = card.water + water_bonus
 
 		var atks = card.attacks + bonus_atks
 		var dmg = (card.damage + bonus_dmg) * atks
 
 		var health = card.health + bonus_health
-		var toughnes = card.toughness + bonus_toughness
+		var toughness = card.toughness + bonus_toughness
 		var defense = card.defense + bonus_def
 
 		var total_dmg = round(atks * dmg)
 
-		var action_sub_time = (action_time*.15)
+		var action_sub_time = (action_time*2)
 		var action_sub_shake_vel = 2
-
+		var cam_shake_time = floor(action_sub_time*.25)
 		# 2 ###################################################################
 		# make sure there is enough food and water to play card
-		level.update_text_overlays()
+		
 		
 		card.get_node("AnimationPlayer").play("activate general")
 		### 3 #############################################################
 		### PROCESS ATKS/DAMAGE
+		#yield(get_tree().create_timer(action_sub_time), "timeout")
 		if dmg > 0 and atks == 0:
 			atks = 1
 		if atks > 0:
 			if dmg > 0:
 				var dmg_dealt = process_damage(is_player, atks, dmg, card, act_str)
 				if dmg_dealt > 0:
-					main.cameraShake(action_sub_shake_vel, action_sub_time)
+					main.cameraShake(action_sub_shake_vel, cam_shake_time)
 				
 				yield(get_tree().create_timer(action_sub_time), "timeout")
 		
 		yield(get_tree().create_timer(action_sub_time), "timeout")
-		level.update_text_overlays()
+		#level.update_text_overlays()
 		# 4 ###############################################################
 		### Process Actions, each action's logic should be WHOLEY contained
 		### in condition including seperate enm logic for readablility &..
@@ -1505,146 +1577,101 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 							break
 		elif act_str == OVEREXTENDED_1 and not "stop_" in avoid_recursion_str:
 			dmg = OVEREXTENDED_DMG
-			if is_player:
-				var remaining_defense = (meta.player_defense - dmg)
-				if remaining_defense > 0:
-					meta.player_defense = remaining_defense
-				else:
-					meta.player_defense = 0
-				dmg -= meta.player_defense
-				if dmg > 0:
-					meta.player_health -= dmg
-				apply_text_effect("hurt", "- " + str(dmg), is_player) #TEXT_EFECT
-			else:
-				var remaining_defense = (meta.enemy_defense - dmg)
-				if remaining_defense > 0:
-					meta.enemy_defense = remaining_defense
-				else:
-					meta.enemy_defense = 0
-				dmg -= meta.enemy_defense
-				if dmg > 0:
-					meta.enemy_health -= dmg
-				apply_text_effect("hurt", "- " + str(dmg), false) #TEXT_EFECT
+			process_damage(!is_player, atks, dmg, card, act_str)
 		elif act_str ==  ADAMS_SINGLE_LOAD_ABILITY and not "stop_" in avoid_recursion_str:
 			var skill_impact_count = collect_tag_values_in_play(null, is_player, ["main", "front", "back", "backup"], IMPACT, false)
-			if is_player:
-				var final_impact_dmg = int(skill_impact_count * 2)
-				if final_impact_dmg > 0:
-					var remaining_defense = (meta.enemy_defense - final_impact_dmg)
-					if remaining_defense > 0:
-						meta.enemy_defense = remaining_defense
-					else:
-						meta.enemy_defense = 0
-					final_impact_dmg -= meta.enemy_defense
-					if final_impact_dmg > 0:
-						meta.enemy_health -= final_impact_dmg
-						main.cameraShake(skill_impact_count*.5, (action_time*.4))
-						apply_text_effect("hurt", "- " + str(final_impact_dmg), is_player) #TEXT_EFECT
-			else:
-				var final_impact_dmg = int(skill_impact_count * 2)
-				if final_impact_dmg > 0:
-					var remaining_defense = (meta.player_defense - final_impact_dmg)
-					if remaining_defense > 0:
-						meta.player_defense = remaining_defense
-					else:
-						meta.player_defense = 0
-					final_impact_dmg -= defense
-					if final_impact_dmg > 0:
-						meta.player_health -= final_impact_dmg
-						# Enemy IMPACT_LAUNCHER_ABILITY_1
-						main.cameraShake(skill_impact_count*.5, (action_time*.4))
-						apply_text_effect("hurt", "- " + str(final_impact_dmg), is_player) #TEXT_EFECT
-
+			process_damage(is_player, atks, skill_impact_count, card, act_str)
+			
 		elif act_str == PRESTINE_WATERS_ABILITY and not "stop_" in avoid_recursion_str:
 			if is_player: # WASTE_REDUCTION_1
 				for chassis_card in level.player_right_arm_list:
 					for tag in chassis_card.tags:
 						if tag == WATER:
-							main.cameraShake(action_sub_shake_vel, action_sub_time)
+							main.cameraShake(action_sub_shake_vel, cam_shake_time)
 							level.expand_card_details(chassis_card)
 							chassis_card.get_node("AnimationPlayer").stop()
 							chassis_card.get_node("AnimationPlayer").play("flicker")
-							meta.player_food += 2
-							meta.player_health += 2
-							apply_text_effect("hunger up", "+ 2", is_player) #TEXT_EFECT
+							meta.player_food += ability_bonus
+							meta.player_health += ability_bonus
+							apply_text_effect("hunger up", "+ " + str(ability_bonus), is_player) #TEXT_EFECT
 							yield(get_tree().create_timer(action_sub_time), "timeout")
 				for chassis_card in level.player_left_arm_list:
 					for tag in chassis_card.tags:
 						if tag == WATER:
-							main.cameraShake(action_sub_shake_vel, action_sub_time)
+							main.cameraShake(action_sub_shake_vel, cam_shake_time)
 							level.expand_card_details(chassis_card)
 							chassis_card.get_node("AnimationPlayer").stop()
 							chassis_card.get_node("AnimationPlayer").play("flicker")
-							meta.player_food += 2
-							meta.player_health += 2
-							apply_text_effect("hunger up", "+ 2", is_player) #TEXT_EFECT
+							meta.player_food += ability_bonus
+							meta.player_health += ability_bonus
+							apply_text_effect("hunger up", "+ " + str(ability_bonus), is_player) #TEXT_EFECT
 							yield(get_tree().create_timer(action_sub_time), "timeout")
 				for chassis_card in level.player_chassis_list:
 					for tag in chassis_card.tags:
 						if tag == WATER:
-							main.cameraShake(action_sub_shake_vel, action_sub_time)
+							main.cameraShake(action_sub_shake_vel, cam_shake_time)
 							level.expand_card_details(chassis_card)
 							chassis_card.get_node("AnimationPlayer").stop()
 							chassis_card.get_node("AnimationPlayer").play("flicker")
-							meta.player_food += 2
-							meta.player_health += 2
-							apply_text_effect("hunger up", "+ 2", is_player) #TEXT_EFECT
+							meta.player_food += ability_bonus
+							meta.player_health += ability_bonus
+							apply_text_effect("hunger up", "+ " + str(ability_bonus), is_player) #TEXT_EFECT
 							yield(get_tree().create_timer(action_sub_time), "timeout")
 				for chassis_card in level.player_leg_list:
 					for tag in chassis_card.tags:
 						if tag == WATER:
-							main.cameraShake(action_sub_shake_vel, action_sub_time)
+							main.cameraShake(action_sub_shake_vel, cam_shake_time)
 							level.expand_card_details(chassis_card)
 							chassis_card.get_node("AnimationPlayer").stop()
 							chassis_card.get_node("AnimationPlayer").play("flicker")
-							meta.player_food += 2
-							meta.player_health += 2
-							apply_text_effect("hunger up", "+ 2", is_player) #TEXT_EFECT
+							meta.player_food += ability_bonus
+							meta.player_health += ability_bonus
+							apply_text_effect("hunger up", "+ " + str(ability_bonus), is_player) #TEXT_EFECT
 							yield(get_tree().create_timer(action_sub_time), "timeout")
 			else:
 				for chassis_card in level.enemy_right_arm_list:
 					for tag in chassis_card.tags:
 						if tag == WATER:
-							main.cameraShake(action_sub_shake_vel, action_sub_time)
+							main.cameraShake(action_sub_shake_vel, cam_shake_time)
 							level.expand_card_details(chassis_card)
 							chassis_card.get_node("AnimationPlayer").stop()
 							chassis_card.get_node("AnimationPlayer").play("flicker")
-							meta.enemy_food += 2
-							meta.enemy_health += 2
-							apply_text_effect("hunger up", "+ 2", is_player) #TEXT_EFECT
+							meta.enemy_food += ability_bonus
+							meta.enemy_health += ability_bonus
+							apply_text_effect("hunger up", "+ " + str(ability_bonus), is_player) #TEXT_EFECT
 							yield(get_tree().create_timer(action_sub_time), "timeout")
 				for chassis_card in level.enemy_left_arm_list:
 					for tag in chassis_card.tags:
 						if tag == WATER:
-							main.cameraShake(action_sub_shake_vel, action_sub_time)
+							main.cameraShake(action_sub_shake_vel, cam_shake_time)
 							level.expand_card_details(chassis_card)
 							chassis_card.get_node("AnimationPlayer").stop()
 							chassis_card.get_node("AnimationPlayer").play("flicker")
-							meta.enemy_food += 2
-							meta.enemy_health += 2
-							apply_text_effect("hunger up", "+ 2", is_player) #TEXT_EFECT
+							meta.enemy_food += ability_bonus
+							meta.enemy_health += ability_bonus
+							apply_text_effect("hunger up", "+ " + str(ability_bonus), is_player) #TEXT_EFECT
 							yield(get_tree().create_timer(action_sub_time), "timeout")
 				for chassis_card in level.enemy_chassis_list:
 					for tag in chassis_card.tags:
 						if tag == WATER:
-							main.cameraShake(action_sub_shake_vel, action_sub_time)
+							main.cameraShake(action_sub_shake_vel, cam_shake_time)
 							level.expand_card_details(chassis_card)
 							chassis_card.get_node("AnimationPlayer").stop()
 							chassis_card.get_node("AnimationPlayer").play("flicker")
-							meta.enemy_food += 2
-							meta.enemy_health += 2
-							apply_text_effect("hunger up", "+ 2", is_player) #TEXT_EFECT
+							meta.enemy_food += ability_bonus
+							meta.enemy_health += ability_bonus
+							apply_text_effect("hunger up", "+ " + str(ability_bonus), is_player) #TEXT_EFECT
 							yield(get_tree().create_timer(action_sub_time), "timeout")
 				for chassis_card in level.enemy_leg_list:
 					for tag in chassis_card.tags:
 						if tag == WATER:
-							main.cameraShake(action_sub_shake_vel, action_sub_time)
+							main.cameraShake(action_sub_shake_vel, cam_shake_time)
 							level.expand_card_details(chassis_card)
 							chassis_card.get_node("AnimationPlayer").stop()
 							chassis_card.get_node("AnimationPlayer").play("flicker")
-							meta.enemy_food += 2
-							meta.enemy_health += 2
-							apply_text_effect("hunger up", "+ 2", is_player) #TEXT_EFECT
+							meta.enemy_food += ability_bonus
+							meta.enemy_health += ability_bonus
+							apply_text_effect("hunger up", "+ " + str(ability_bonus), is_player) #TEXT_EFECT
 							yield(get_tree().create_timer(action_sub_time), "timeout")
 		elif act_str == RATIONS_ABILITY_1 and not "stop_" in avoid_recursion_str:
 			if is_player:
@@ -1659,7 +1686,7 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 				meta.player_food -= hunger
 			else:
 				meta.enemy_food -= hunger
-			apply_text_effect("hunger up", "+ " + str(hunger), is_player) #TEXT_EFECT
+			apply_text_effect("hunger up", "_ " + str(hunger), is_player) #TEXT_EFECT
 		elif act_str == GAIN_START_DRAW_1 and not "stop_" in avoid_recursion_str:
 			if is_player:
 				meta.player_hand_limit += 1
@@ -1677,46 +1704,19 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 				print(act_str + ": total_hunger_count: " + str(total_hunger_count))
 				apply_text_effect("hunger up", "+" + str(total_hunger_count), is_player) #TEXT_EFECT
 				meta.enemy_food += total_hunger_count
-			level.update_text_overlays()
 		elif act_str == TOWERING_ELEPHANT_ABILITY_1 and not "stop_" in avoid_recursion_str:
 			# Activate first x weapon of cards from right to left arm equal to your [IMPACT]"
 			var skill_impact_count = collect_tag_values_in_play(null, is_player, ["main", "front", "back", "backup"], IMPACT, false)
-			if is_player:
-				var final_impact_dmg = skill_impact_count
-				if final_impact_dmg > 0:
-					var remaining_defense = (meta.enemy_defense - final_impact_dmg)
-					if remaining_defense > 0:
-						meta.enemy_defense = remaining_defense
-					else:
-						meta.enemy_defense = 0
-					final_impact_dmg -= meta.enemy_defense
-					if final_impact_dmg > 0:
-						meta.enemy_health -= final_impact_dmg
-						main.cameraShake(skill_impact_count*.5, (action_time*.4))
-						apply_text_effect("hurt", "- " + str(final_impact_dmg), is_player) #TEXT_EFECT
-			else:
-				var final_impact_dmg = skill_impact_count
-				if final_impact_dmg > 0:
-					var remaining_defense = (meta.player_defense - final_impact_dmg)
-					if remaining_defense > 0:
-						meta.player_defense = remaining_defense
-					else:
-						meta.player_defense = 0
-					final_impact_dmg -= defense
-					if final_impact_dmg > 0:
-						meta.player_health -= final_impact_dmg
-						# Enemy IMPACT_LAUNCHER_ABILITY_1
-						main.cameraShake(skill_impact_count*.5, (action_time*.4))
-						apply_text_effect("hurt", "- " + str(final_impact_dmg), is_player) #TEXT_EFECT
-
+			process_damage(is_player, atks, skill_impact_count, card, act_str)
+			
 		if is_player:
 			meta.player_health += health
 			meta.player_defense += defense
-			meta.player_toughness += toughnes
+			meta.player_toughness += toughness
 		else:
 			meta.enemy_health += health
 			meta.enemy_defense += defense
-			meta.enemy_toughnes += toughnes
+			meta.enemy_toughness += toughness
 		#if card and main.checkIfNodeDeleted(card) == false:
 		#	pass
 			#card.get_node("AnimationPlayer").stop()
@@ -1734,8 +1734,9 @@ func place_card_in_display(card_list, card_idx, is_player=false):
 		var level = get_node("/root/level")
 		if is_player:
 			if card_idx >= 0 and card_idx <= len(card_list) - 1 and len(card_list) > 0:
-				level.player_discard.append(card_list[card_idx])
+				print("adding " + str(card_list[card_idx]) + " to discard")
 				if card_list[card_idx].card_type == ABILITY_CARD:
+					level.player_discard.append(card_list[card_idx])
 					card_list[card_idx].visible = false
 				else:
 					var new_card = main.CARD.instance()
@@ -1779,9 +1780,10 @@ func place_card_in_display(card_list, card_idx, is_player=false):
 		else:
 			# Is Enemy
 			if card_idx >= 0 and card_idx <= len(card_list) - 1 and len(card_list) > 0:
-				level.enemy_discard.append(card_list[card_idx])
+				print("adding " + str(card_list[card_idx]) + " to enm discard")
 				if card_list[card_idx].card_type == ABILITY_CARD:
 					card_list[card_idx].visible = false
+					level.enemy_discard.append(card_list[card_idx])
 				else:
 					var new_card = main.CARD.instance()
 					new_card.set_scale(STANDARD_DISPLAY_CARD_SCALE)
@@ -1832,11 +1834,9 @@ func place_card_in_display(card_list, card_idx, is_player=false):
 
 
 func can_afford_card(chosen_card, is_player=true):
-	var can_afford_water = ((meta.player_water+chosen_card.water)-chosen_card.water_production >= 0) if is_player\
-							else ((meta.enemy_water+chosen_card.water)-chosen_card.water_production >= 0)
 	var can_afford_food = ((meta.player_food+chosen_card.food)-chosen_card.hunger_production >= 0) if is_player\
 							else ((meta.enemy_food+chosen_card.food)-chosen_card.hunger_production >= 0)
-	return (can_afford_food and can_afford_food)
+	return can_afford_food
 
 
 func set_card_img(new_card, card_payload):

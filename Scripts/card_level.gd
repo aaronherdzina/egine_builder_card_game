@@ -60,8 +60,8 @@ func play_card(card_list, card_idx, is_player=true):
 			print("is_player: " +str(is_player)+" can't afford " + card_list[card_idx].title)
 			return "stop"
 	if is_player:
-		if Cards.waiting:
-			return "stop"
+		#if Cards.waiting:
+		#	return "stop"
 		if card_idx >= 0 and card_idx <= len(card_list) - 1 and len(card_list) > 0:
 			if len(card_list) == 1 and card_idx > 0:
 				card_idx = 0
@@ -72,6 +72,7 @@ func play_card(card_list, card_idx, is_player=true):
 				var should_stop_play = Cards.card_action(card_list[card_idx].card_action, is_player, "", card_list[card_idx])
 				print("should_stop_play " + str(should_stop_play))
 				card_list[card_idx].get_node("AnimationPlayer").play("remove")
+	
 			if card_idx >= 0 and card_idx < len(card_list):
 				card_list.remove(card_idx)
 			Cards.hand_idx = 0
@@ -92,8 +93,8 @@ func play_card(card_list, card_idx, is_player=true):
 				print("enm should_stop_play " + str(should_stop_play))
 				card_list[card_idx].get_node("AnimationPlayer").play("remove")
 				#card_list[card_idx].visible = false
-			#if card_idx >= 0 and card_idx < len(card_list):
-			#	card_list.remove(card_idx)
+			if card_idx >= 0 and card_idx < len(card_list):
+				card_list.remove(card_idx)
 			update_text_overlays()
 		else:
 			print("whoops enm, didn't play a card successfully")
@@ -121,6 +122,7 @@ func remove_all_cards_in_hand(is_player):
 
 func get_random_card(deck, is_player):
 	randomize()
+	print("get_random_card with deck size of " + str(len(deck)))
 	if len(deck) <= 0:
 		if is_player:
 			print("deck swap " + str(len(player_discard)))
@@ -130,8 +132,10 @@ func get_random_card(deck, is_player):
 			deck = enemy_discard
 	var idx = 0
 	for card in deck:
-		if not card or main.checkIfNodeDeleted(card) == true:
-			 deck.remove(idx)
+		if not card and idx >= 0 and idx < len(deck) - 1\
+		or main.checkIfNodeDeleted(card) == true and idx >= 0 and idx < len(deck) - 1:
+			print("removing bad card: " + str(deck[idx]) + " at pos: " + str(idx))
+			deck.remove(idx)
 		idx += 1
 	var rand_idx = round(rand_range(0, len(deck) - 1))
 	if rand_idx < 0 or rand_idx >= len(deck):
@@ -139,11 +143,17 @@ func get_random_card(deck, is_player):
 			rand_idx = len(deck)-1
 		else:
 			rand_idx = 0
-	var choice = deck[rand_idx] if deck[rand_idx] and main.checkIfNodeDeleted(deck[rand_idx]) == false else deck[0]
-	print("deck before: " +str(len(deck)))
-	deck.remove(rand_idx)
-	print("deck after: " +str(len(deck)) + " choice: " + str(choice))
-	return choice
+	if len(deck) > 0:
+		var choice_idx = rand_idx if deck[rand_idx] and main.checkIfNodeDeleted(deck[rand_idx]) == false else 0
+		var final_choice = deck[choice_idx]
+		print("deck before: " +str(len(deck)) + " choice_idx: " + str(choice_idx))
+		deck.remove(choice_idx)
+		print("deck after: " +str(len(deck)) + " choice: " + str(final_choice))
+		return final_choice
+	else:
+		print("deck 0. negative choice")
+		var choice = Cards.negative_cards_weighted[rand_range(0, len(Cards.negative_cards_weighted) - 1)]
+		return choice
 
 
 
@@ -230,7 +240,7 @@ func remove_all_cards():
 
 func start_level():
 	randomize()
-	meta.current_player_deck = Cards.coastal_deck #Cards.all_decks[rand_range(0, len(Cards.all_decks))]
+	meta.current_player_deck = Cards.all_decks[rand_range(0, len(Cards.all_decks))]
 	meta.current_enemy_deck = Cards.all_decks[rand_range(0, len(Cards.all_decks))]
 	meta.enemy_health = meta.enemy_health_max
 	meta.player_health = meta.player_health_max
@@ -474,7 +484,7 @@ func reset_display_card_sizes():
 
 
 func update_text_overlays():
-	var min_val = 5
+	var min_val = 0
 	$ui.animate_value(meta.player_health-min_val, meta.player_health)
 	$ui.animate_value(meta.player_food-min_val, meta.player_food, 'food')
 	$ui.animate_value(meta.player_water-min_val, meta.player_water, 'water')
@@ -491,6 +501,8 @@ func update_text_overlays():
 	get_node("/root/level").get_node("text_cont/player_defense").set_text(str(meta.player_defense))
 	get_node("/root/level").get_node("text_cont/player_toughness").set_text(str(meta.player_toughness))
 	get_node("/root/level").get_node("text_cont/player_water").set_text(str(meta.player_water))
+	get_node("/root/level").get_node("text_cont/player_dmg_turn").set_text(str(Cards.player_damage_taken_turn))
+	get_node("/root/level").get_node("text_cont/enemy_dmg_turn").set_text(str(Cards.enemy_damage_taken_turn))
 
 
 func reset_card_z_indexes():

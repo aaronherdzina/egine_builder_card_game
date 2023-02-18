@@ -823,7 +823,6 @@ scale = Vector2( 0.4, 0.4 )
 script = ExtResource( 8 )
 
 [node name="outer_art_container" type="Node2D" parent="."]
-scale = Vector2( 1.05, 1.05 )
 z_index = -2
 
 [node name="shadow" type="Sprite" parent="outer_art_container"]
@@ -839,7 +838,7 @@ scale = Vector2( 0.17, 0.17 )
 
 [node name="background" type="Sprite" parent="outer_art_container"]
 visible = false
-self_modulate = Color( 0, 0, 0, 0.392157 )
+self_modulate = Color( 0, 0, 0, 1 )
 position = Vector2( 102.857, -7.62939e-06 )
 scale = Vector2( 0.256696, 0.290179 )
 
@@ -1121,6 +1120,7 @@ __meta__ = {
 }
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+playback_speed = 1.5
 "anims/activate general" = SubResource( 8 )
 "anims/activate impact" = SubResource( 9 )
 anims/flicker = SubResource( 10 )

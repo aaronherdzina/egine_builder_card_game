@@ -2,7 +2,7 @@ extends Node2D
 
 var tags = []
 var hunger_production = 0
-var water_production = 0
+var water_reduction = 0
 var food_production = 0
 var attacks = 0
 var hunger = 0
@@ -24,10 +24,13 @@ var description = ''
 var selected_for_action_phase = true
 var removing = false
 var ready_to_remove = false
+var ability_bonus = 0
 
 func get_card_payload(card):
 	var card_payload = {Cards.CARD_TYPE: card[Cards.CARD_TYPE]}
 	#### Upper card section details
+	if Cards.ABILITY_BONUS in card:
+		card_payload[Cards.ABILITY_BONUS] = card[Cards.ABILITY_BONUS]
 	if Cards.RARITY in card:
 		card_payload[Cards.RARITY] = card[Cards.RARITY]
 	if Cards.FOOD in card:
@@ -106,8 +109,8 @@ func get_card_payload(card):
 		card_payload[Cards.SHIELD] = card[Cards.SHIELD]
 	if Cards.HUNGER_PRODUCTION in card:
 		card_payload[Cards.HUNGER_PRODUCTION] = card[Cards.HUNGER_PRODUCTION]
-	if Cards.WATER_PRODUCTION in card:
-		card_payload[Cards.WATER_PRODUCTION] = card[Cards.WATER_PRODUCTION]
+	if Cards.WATER_REDUCTION in card:
+		card_payload[Cards.WATER_REDUCTION] = card[Cards.WATER_REDUCTION]
 	if Cards.WATER in card:
 		card_payload[Cards.WATER] = card[Cards.WATER]
 	if Cards.ABILITY_RANGE in card:
@@ -142,6 +145,8 @@ func get_card_payload(card):
 func map_card(card_payload, recalc_costs=true):
 	if removing:
 		return
+	if Cards.ABILITY_BONUS in card_payload:
+		ability_bonus = card_payload[Cards.ABILITY_BONUS]
 	if Cards.RARITY in card_payload:
 		rarity = card_payload[Cards.RARITY]
 	if Cards.TITLE in card_payload:
@@ -158,8 +163,8 @@ func map_card(card_payload, recalc_costs=true):
 		img_path = card_payload[Cards.IMG_PATH ]
 	if Cards.HUNGER_PRODUCTION in card_payload:
 		hunger_production = card_payload[Cards.HUNGER_PRODUCTION]
-	if Cards.WATER_PRODUCTION in card_payload:
-		water_production = card_payload[Cards.WATER_PRODUCTION]
+	if Cards.WATER_REDUCTION in card_payload:
+		water_reduction = card_payload[Cards.WATER_REDUCTION]
 	if Cards.FOOD_PRODUCTION in card_payload:
 		food_production = card_payload[Cards.FOOD_PRODUCTION]
 	if Cards.HUNGER in card_payload:
@@ -186,12 +191,10 @@ func map_card(card_payload, recalc_costs=true):
 	if recalc_costs:
 		var costs = Cards.create_card_cost(self)
 		if costs:
-			if hunger_production > 0 or\
-			   water_production > 0 in card_payload:
+			if hunger_production > 0:
 				#print("setting cost?? costs " + str(costs))
 				hunger_production = costs["food_cost"]
-				water_production = costs["water_cost"]
-	#print("cost? hunger_production: " + str(hunger_production)+ " water_production: " + str(water_production))
+	#print("cost? hunger_production: " + str(hunger_production)+ " water_reduction: " + str(water_reduction))
 	update_card_display_info(self, card_payload)
 
 
@@ -219,7 +222,7 @@ func update_card_display_info(card_node, card_payload):
 	   or card_node.card_type == Cards.HUNGER_CARD\
 	   or card_node.card_type == Cards.FOOD_CARD\
 	   or card_node.card_type == Cards.WATER_CARD:
-		#print("setting display values for " + str(card_node.title) + " hunger " + str(card_node.hunger_production) + " water " + str(card_node.water_production))
+		#print("setting display values for " + str(card_node.title) + " hunger " + str(card_node.hunger_production) + " water " + str(card_node.water_reduction))
 		#### Upper card section details
 		var tag_text = "tags: "
 		for tag in card_node.tags:
@@ -257,8 +260,8 @@ func update_card_display_info(card_node, card_payload):
 		else:
 			card_node.get_node("food_cost").set_text("")
 
-		if card_node.water_production > 0:
-			card_node.get_node("water_cost").set_text("W "+str(card_node.water_production))
+		if card_node.water_reduction > 0:
+			card_node.get_node("water_cost").set_text("W "+str(card_node.water_reduction))
 		else:
 			card_node.get_node("water_cost").set_text("")
 
