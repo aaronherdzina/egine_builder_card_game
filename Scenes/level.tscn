@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=2]
+[gd_scene load_steps=47 format=2]
 
 [ext_resource path="res://Scripts/card_level.gd" type="Script" id=1]
 [ext_resource path="res://Sprites/General/blueDot.png" type="Texture" id=2]
@@ -7,7 +7,7 @@
 [ext_resource path="res://Sprites/General/basic tile.png" type="Texture" id=5]
 [ext_resource path="res://Sprites/UI/Untitled_Artwork 2.png" type="Texture" id=6]
 [ext_resource path="res://Sprites/tiles/basic/gridrpgWall.png" type="Texture" id=7]
-[ext_resource path="res://Sprites/General/water_bg_3.png" type="Texture" id=8]
+[ext_resource path="res://Sprites/General/wbg1.png" type="Texture" id=8]
 [ext_resource path="res://Sprites/UI/forest backdrop.png" type="Texture" id=9]
 [ext_resource path="res://Scripts/uibar.gd" type="Script" id=10]
 [ext_resource path="res://Sprites/General/health behind.png" type="Texture" id=11]
@@ -15,24 +15,40 @@
 [ext_resource path="res://Sprites/General/stamina bar.png" type="Texture" id=13]
 [ext_resource path="res://Sprites/General/stamina behind.png" type="Texture" id=14]
 [ext_resource path="res://Sprites/General/pirate_ship.png" type="Texture" id=15]
-[ext_resource path="res://Sprites/General/water_bg_6.png" type="Texture" id=16]
-[ext_resource path="res://Sprites/General/water_bg_1.png" type="Texture" id=17]
+[ext_resource path="res://Sprites/General/wbg5.png" type="Texture" id=16]
+[ext_resource path="res://Sprites/General/wbg8.png" type="Texture" id=17]
 [ext_resource path="res://Sprites/UI/white backdrop.png" type="Texture" id=18]
 [ext_resource path="res://shaders/wind.shader" type="Shader" id=19]
-[ext_resource path="res://Sprites/General/water_bg_7.png" type="Texture" id=20]
-[ext_resource path="res://Sprites/General/water_bg_2.png" type="Texture" id=21]
+[ext_resource path="res://Sprites/General/wbg14.png" type="Texture" id=20]
+[ext_resource path="res://Sprites/General/wbg16.png" type="Texture" id=21]
 [ext_resource path="res://shaders/screen_brighten_shader.tres" type="Material" id=22]
-[ext_resource path="res://Sprites/General/water_bg_4.png" type="Texture" id=23]
+[ext_resource path="res://Sprites/General/wbg15.png" type="Texture" id=23]
 [ext_resource path="res://Sprites/General/new_boat_1.png" type="Texture" id=24]
+[ext_resource path="res://Sprites/General/wbg3.png" type="Texture" id=25]
+[ext_resource path="res://Sprites/General/wbg17.png" type="Texture" id=26]
+[ext_resource path="res://Sprites/General/wbg4.png" type="Texture" id=27]
+[ext_resource path="res://Sprites/General/wbg6.png" type="Texture" id=28]
+[ext_resource path="res://Sprites/General/wbg13.png" type="Texture" id=29]
+[ext_resource path="res://Sprites/General/wbg11.png" type="Texture" id=30]
+[ext_resource path="res://Sprites/General/wbg7.png" type="Texture" id=31]
+[ext_resource path="res://Sprites/General/wbg10.png" type="Texture" id=32]
+[ext_resource path="res://Sprites/General/wbg2.png" type="Texture" id=33]
+[ext_resource path="res://Sprites/General/wbg9.png" type="Texture" id=34]
+[ext_resource path="res://Sprites/General/wbg12.png" type="Texture" id=35]
+[ext_resource path="res://shaders/perspective_mat.tres" type="Material" id=36]
+[ext_resource path="res://Sprites/General/background hills.png" type="Texture" id=37]
+[ext_resource path="res://Sprites/General/left side land bg.png" type="Texture" id=38]
+[ext_resource path="res://Sprites/General/right side land bg.png" type="Texture" id=39]
+[ext_resource path="res://Sprites/General/3 clouds bw.png" type="Texture" id=40]
 
 [sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 19 )
-shader_param/speed = 3.0
+shader_param/speed = 5.0
 shader_param/minStrength = 0.02
 shader_param/maxStrength = 0.09
 shader_param/strengthScale = 140.0
-shader_param/interval = 3.5
-shader_param/detail = 1.6
+shader_param/interval = 4.0
+shader_param/detail = 2.0
 shader_param/distortion = 0.2
 shader_param/heightOffset = null
 shader_param/offset = 0.0
@@ -84,11 +100,11 @@ void vertex() {
 
 [sub_resource type="ShaderMaterial" id=3]
 shader = SubResource( 2 )
-shader_param/speed = 2.0
+shader_param/speed = 5.0
 shader_param/minStrength = 0.02
 shader_param/maxStrength = 0.08
 shader_param/strengthScale = 140.0
-shader_param/interval = 3.3
+shader_param/interval = 4.0
 shader_param/detail = 1.8
 shader_param/distortion = null
 shader_param/heightOffset = null
@@ -100,7 +116,7 @@ font_data = ExtResource( 3 )
 
 [sub_resource type="Animation" id=5]
 resource_name = "waves"
-length = 1.1
+length = 1.7
 loop = true
 tracks/0/type = "value"
 tracks/0/path = NodePath("background_imgs/Sprite:position")
@@ -119,7 +135,7 @@ tracks/1/path = NodePath("background_imgs/Sprite:rotation_degrees")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
-tracks/1/enabled = true
+tracks/1/enabled = false
 tracks/1/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
@@ -145,10 +161,75 @@ tracks/3/loop_wrap = true
 tracks/3/imported = false
 tracks/3/enabled = true
 tracks/3/keys = {
-"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.8, 1 ),
-"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
 "update": 1,
-"values": [ ExtResource( 21 ), ExtResource( 17 ), ExtResource( 23 ), ExtResource( 8 ), ExtResource( 20 ), ExtResource( 16 ) ]
+"values": [ ExtResource( 8 ), ExtResource( 33 ), ExtResource( 25 ), ExtResource( 27 ), ExtResource( 16 ), ExtResource( 28 ), ExtResource( 31 ), ExtResource( 17 ), ExtResource( 34 ), ExtResource( 32 ), ExtResource( 30 ), ExtResource( 35 ), ExtResource( 29 ), ExtResource( 20 ), ExtResource( 23 ), ExtResource( 21 ), ExtResource( 26 ) ]
+}
+
+[sub_resource type="Animation" id=6]
+resource_name = "move clouds"
+length = 8.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("background_imgs/clouds:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ ExtResource( 40 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("background_imgs/clouds:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 7.9 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 2600, -104 ), Vector2( -336, 1584 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("background_imgs/clouds:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 0.7, 0.7 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("background_imgs/clouds:rotation_degrees")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 7.9 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 60.0 ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("background_imgs/clouds:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0, 7.9 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
 }
 
 [node name="level" type="Node2D"]
@@ -182,6 +263,7 @@ scale = Vector2( 1.68542, 0.733333 )
 texture = ExtResource( 9 )
 
 [node name="overlay" type="Sprite" parent="background_imgs"]
+modulate = Color( 0.313726, 0.196078, 0.607843, 1 )
 position = Vector2( 1064, 514 )
 scale = Vector2( 1.29167, 1.32222 )
 texture = ExtResource( 18 )
@@ -192,16 +274,73 @@ position = Vector2( 3472, 344 )
 scale = Vector2( 1.62083, 0.733333 )
 texture = ExtResource( 9 )
 
-[node name="Sprite7" type="Sprite" parent="background_imgs"]
-modulate = Color( 0, 0, 0, 1 )
-position = Vector2( -1552, 168 )
-scale = Vector2( 1.62083, 0.733333 )
-texture = ExtResource( 9 )
+[node name="water_fill" type="Sprite" parent="background_imgs"]
+visible = false
+position = Vector2( 984, 792 )
+scale = Vector2( 1.15, 0.951852 )
+texture = ExtResource( 8 )
+
+[node name="water_behind" type="Sprite" parent="background_imgs"]
+visible = false
+self_modulate = Color( 0.156863, 0.254902, 0.392157, 1 )
+material = ExtResource( 36 )
+position = Vector2( 967.855, 448.854 )
+rotation = -1.5708
+scale = Vector2( 0.685956, 1.7169 )
+texture = ExtResource( 18 )
+
+[node name="sky" type="Sprite" parent="background_imgs"]
+self_modulate = Color( 1, 0.784314, 0.901961, 1 )
+position = Vector2( 976, -216 )
+scale = Vector2( 1.15, 0.951852 )
+texture = ExtResource( 18 )
+
+[node name="Sprite8" type="Sprite" parent="background_imgs"]
+visible = false
+self_modulate = Color( 0.0392157, 0.0392157, 0.137255, 1 )
+position = Vector2( 2488, 256 )
+rotation = -2.26893
+texture = ExtResource( 32 )
+
+[node name="hills2" type="Sprite" parent="background_imgs"]
+self_modulate = Color( 1, 1, 1, 0.0980392 )
+position = Vector2( 956.8, 668.8 )
+scale = Vector2( 0.95, 0.7 )
+texture = ExtResource( 37 )
+flip_h = true
+
+[node name="hills" type="Sprite" parent="background_imgs"]
+self_modulate = Color( 1, 1, 1, 0.196078 )
+position = Vector2( 956.8, 564.8 )
+scale = Vector2( 0.95, 0.5 )
+texture = ExtResource( 37 )
 
 [node name="Sprite" type="Sprite" parent="background_imgs"]
-position = Vector2( 952, 592 )
-scale = Vector2( 1, 0.8 )
-texture = ExtResource( 16 )
+self_modulate = Color( 1, 1, 1, 0.784314 )
+material = ExtResource( 36 )
+position = Vector2( 713.732, 561.184 )
+rotation = -1.5708
+scale = Vector2( 0.517708, 1.70689 )
+texture = ExtResource( 8 )
+
+[node name="island_left" type="Sprite" parent="background_imgs"]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 304, 368 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 38 )
+
+[node name="island_right" type="Sprite" parent="background_imgs"]
+modulate = Color( 0, 0, 0, 1 )
+position = Vector2( 1608, 368 )
+scale = Vector2( 0.3, 0.3 )
+texture = ExtResource( 39 )
+
+[node name="clouds" type="Sprite" parent="background_imgs"]
+self_modulate = Color( 1, 1, 1, 0.156863 )
+position = Vector2( 2600, -104 )
+scale = Vector2( 0.7, 0.7 )
+z_index = 1
+texture = ExtResource( 40 )
 
 [node name="fog" type="Sprite" parent="background_imgs"]
 visible = false
@@ -213,8 +352,8 @@ z_index = 4096
 texture = ExtResource( 18 )
 
 [node name="boats" type="Node2D" parent="background_imgs"]
-position = Vector2( 88, 128 )
-scale = Vector2( 0.9, 0.9 )
+position = Vector2( 208, 304 )
+scale = Vector2( 0.8, 0.8 )
 
 [node name="boat_1" type="Sprite" parent="background_imgs/boats"]
 material = SubResource( 1 )
@@ -246,19 +385,19 @@ z_index = -1
 texture = ExtResource( 6 )
 
 [node name="chassis" type="Node2D" parent="tableau_container"]
-position = Vector2( 1440, 512 )
+position = Vector2( 1440, 576 )
 
 [node name="right_arm" type="Node2D" parent="tableau_container"]
-position = Vector2( 1672, 448 )
+position = Vector2( 1584, 448 )
 
 [node name="left_arm" type="Node2D" parent="tableau_container"]
-position = Vector2( 1352, 448 )
+position = Vector2( 1680, 448 )
 
 [node name="legs" type="Node2D" parent="tableau_container"]
 position = Vector2( 1288, 896 )
 
 [node name="enemy_tableau_container" type="Node2D" parent="."]
-position = Vector2( -200, -64 )
+position = Vector2( -160, -64 )
 
 [node name="enemy_tableau" type="Sprite" parent="enemy_tableau_container"]
 visible = false
@@ -269,16 +408,16 @@ z_index = -1
 texture = ExtResource( 6 )
 
 [node name="chassis" type="Node2D" parent="enemy_tableau_container"]
-position = Vector2( 1568, 512 )
+position = Vector2( 1544, 576 )
 
 [node name="right_arm" type="Node2D" parent="enemy_tableau_container"]
-position = Vector2( 1224, 448 )
+position = Vector2( 1456, 448 )
 
 [node name="left_arm" type="Node2D" parent="enemy_tableau_container"]
-position = Vector2( 1672, 448 )
+position = Vector2( 1352, 448 )
 
 [node name="legs" type="Node2D" parent="enemy_tableau_container"]
-position = Vector2( 1736, 896 )
+position = Vector2( 1720, 896 )
 
 [node name="text_overlay" type="Node2D" parent="."]
 position = Vector2( 962.372, 995.23 )
@@ -771,8 +910,16 @@ __meta__ = {
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "waves"
-playback_speed = 0.7
+playback_speed = 0.4
 anims/waves = SubResource( 5 )
+
+[node name="AnimationPlayer2" type="AnimationPlayer" parent="."]
+autoplay = "move clouds"
+playback_speed = 0.5
+"anims/move clouds" = SubResource( 6 )
+
+[node name="activating_pos" type="Position2D" parent="."]
+position = Vector2( 856, 448 )
 [connection signal="mouse_entered" from="Button" to="." method="_on_end_turn_button_mouse_entered"]
 [connection signal="mouse_exited" from="Button" to="." method="_on_end_turn_button_mouse_exited"]
 [connection signal="pressed" from="Button" to="." method="_on_end_turn_button_pressed"]

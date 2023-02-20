@@ -402,7 +402,6 @@ var card_ability_growth = {
 	TAGS: [HEALTH, FOREST]
 }
 
-
 const QUICK_FIX = "quick fix"
 var card_ability_quick_fix= {
 	TITLE: QUICK_FIX,
@@ -441,6 +440,7 @@ var card_quick_sand = {
 	DESCRIPTION: "",
 	TAGS: [RIVERLANDS, IMPACT]
 }
+
 const DEFAUlT_ACTION = "default_action"
 const POISONOUS_AMPIBIANS = "poisonous amphibians"
 var card_ability_poisonous_amphibians = {
@@ -562,7 +562,6 @@ var card_chassis_call_reinforcments = {
 	TAGS: [COASTAL]
 }
 
-
 const FORAGERS = "foragers"
 const FORAGERS_1 = "foragers_1"
 var card_foragers_1 = {
@@ -571,9 +570,10 @@ var card_foragers_1 = {
 	CARD_TYPE: CHASSIS_CARD,
 	FOOD_PRODUCTION: 5,
 	CARD_BIOME: FOREST,
-	HUNGER_PRODUCTION: 0,
+	HUNGER_PRODUCTION: 1,
 	ABILITY_BONUS: 0,
 	WATER: 0,
+	DAMAGE: 1,
 	HEALTH: 5,
 	CARD_WAIT_TIME: .35,
 	CARD_ACTION: FORAGERS_1, # str name of func called elsewher
@@ -689,7 +689,7 @@ var card_fresh_stream = {
 	CARD_BIOME: RIVERLANDS,
 	CARD_WAIT_TIME: .5,
 	ABILITY_BONUS: 4,
-	HUNGER_PRODUCTION: 3,
+	HUNGER_PRODUCTION: 1,
 	WATER: 0,
 	WATER_REDUCTION: 2,
 	CARD_ACTION: PRESTINE_WATERS_ABILITY, # str name of func called elsewher
@@ -759,7 +759,7 @@ var card_costs = {
 	HEALTH: 1.5,
 	FOOD_PRODUCTION: 2,
 	WASTE_REDUCTION: 2,
-	ABILITY_BONUS: 2,
+	ABILITY_BONUS: 1,
 	"ability_mod": 1.1,
 	"combat_mod": .9,
 	"standard_mod": 1,
@@ -783,7 +783,7 @@ func create_card_cost(card):
 	var cost_value = 1
 	var food_cost = card.hunger_production
 	var water_cost = card.water
-	var min_val = 1
+	var min_val = 0
 	if card.damage > 0:
 		cost_value += int((card.damage+min_val) * card_costs[DAMAGE])
 	if card.attacks > 0:
@@ -1133,18 +1133,19 @@ func take_turn(is_player=true):
 			waiting = true
 			process_status_effects(is_player)
 			print("\nstart play_all_display_card_actions\n")
-			play_all_display_card_actions(true)
-			var break_time = 15
+			play_all_display_card_actions(true, 2)
+			level.remove_all_cards_in_hand(true)
+			level.reset_display()
+			var break_time = 120
 			while performing_actions:
 				print("waiting for actions player\n\n")
 				if break_time <= 0:
 					break
-				yield(get_tree().create_timer(1.0), "timeout")
+				yield(get_tree().create_timer(.5), "timeout")
 				break_time-= 1
-			level.remove_all_cards_in_hand(true)
 			var time = round(int(len(level.player_chassis_list) + len(level.player_right_arm_list)\
 					 + len(level.player_left_arm_list)) * .45) + 1
-			yield(get_tree().create_timer(time), "timeout")
+			#yield(get_tree().create_timer(time), "timeout")
 			level.get_node("background_imgs/alert").modulate = Color(.5, .4, .4, 1)
 			pay_card_upkeep(level, true)
 			var time2 = round(int(len(level.player_chassis_list) + len(level.player_right_arm_list)\
@@ -1152,25 +1153,27 @@ func take_turn(is_player=true):
 			yield(get_tree().create_timer(time2), "timeout")
 			# spawn and play for enm
 			call_deferred("spawn_cards", 4, is_player, meta.current_enemy_deck)
-			
-			yield(get_tree().create_timer(1.0), "timeout")
+
 			level.update_text_overlays()
-			play_all_display_card_actions(false)
+			yield(get_tree().create_timer(2.5), "timeout")
+			level.remove_all_cards_in_hand(false)
+			yield(get_tree().create_timer(.75), "timeout")
+			play_all_display_card_actions(false, 2)
+			level.reset_display()
 			
-			break_time = 15
+			break_time = 120
 			while performing_actions:
 				print("waiting for actions enm\n\n")
 				if break_time <= 0:
 					break
-				yield(get_tree().create_timer(1.0), "timeout")
+				yield(get_tree().create_timer(.5), "timeout")
 				break_time-= 1
 			level.get_node("background_imgs/alert").modulate = Color(.5, .4, .4, 1)
 			pay_card_upkeep(level, false)
 
 			var time3 = floor(len(level.enemy_chassis_list) + len(level.enemy_right_arm_list)\
-					 + len(level.enemy_left_arm_list) * 1.5) + 1.25
+					 + len(level.enemy_left_arm_list) * 1.45) + 1
 			yield(get_tree().create_timer(time3), "timeout")
-			level.remove_all_cards_in_hand(false)
 			meta.player_turn = true
 			level.update_text_overlays()
 			waiting = false
@@ -1206,39 +1209,48 @@ func discard_hands_resource(is_player=true):
 
 
 
-func play_all_display_card_actions(is_player=true):
+func play_all_display_card_actions(is_player=true, parent_wait=0):
 	if get_node("/root").has_node("level"):
 		var level = get_node("/root/level")
+		if performing_actions:
+			print("already performing actions??")
+			return
+		performing_actions = true
 		level.get_node("background_imgs/alert").modulate = Color(.25, .1, .1, 1)
+		var wait_mod = floor(parent_wait*.50) + 1.10
 		if is_player and player_display_turn and not meta.skipping_player_display:
 			level.update_text_overlays()
 			for card in level.player_chassis_list:
 				if card.selected_for_action_phase:
 					var should_stop = card_action(card.card_action, is_player, "", card)
-					var time = card.card_wait_time * 1.35
+					var time = card.card_wait_time * wait_mod
 					yield(get_tree().create_timer(time), "timeout")
 					level.update_text_overlays()
+					level.handle_cards_in_display()
 
 			for card in level.player_right_arm_list:
 				if card.selected_for_action_phase:
 					var should_stop = card_action(card.card_action, is_player, "", card)
-					var time = card.card_wait_time * 1.35
+					var time = card.card_wait_time * wait_mod
 					yield(get_tree().create_timer(time), "timeout")
 					level.update_text_overlays()
+					level.handle_cards_in_display()
 
 			for card in level.player_left_arm_list:
 				if card.selected_for_action_phase:
 					var should_stop = card_action(card.card_action, is_player, "", card)
-					var time = card.card_wait_time * 1.35
+					var time = card.card_wait_time * wait_mod
 					yield(get_tree().create_timer(time), "timeout")
 					level.update_text_overlays()
+					level.handle_cards_in_display()
 
 			for card in level.player_leg_list:
 				if card.selected_for_action_phase:
 					var should_stop = card_action(card.card_action, is_player, "", card)
-					var time = card.card_wait_time * 1.35
+					var time = card.card_wait_time * wait_mod
 					yield(get_tree().create_timer(time), "timeout")
 					level.update_text_overlays()
+					level.handle_cards_in_display()
 				
 			player_display_turn = false
 		# end of player logic
@@ -1247,33 +1259,38 @@ func play_all_display_card_actions(is_player=true):
 			for card in level.enemy_chassis_list:
 				if card.selected_for_action_phase:
 					var should_stop = card_action(card.card_action, is_player, "", card)
-					var time = card.card_wait_time * 1.35
+					var time = card.card_wait_time * wait_mod
 					yield(get_tree().create_timer(time), "timeout")
 					level.update_text_overlays()
+					level.handle_cards_in_display()
 
 			for card in level.enemy_right_arm_list:
 				if card.selected_for_action_phase:
 					var should_stop = card_action(card.card_action, is_player, "", card)
-					var time = card.card_wait_time * 1.35
+					var time = card.card_wait_time * wait_mod
 					yield(get_tree().create_timer(time), "timeout")
 					level.update_text_overlays()
+					level.handle_cards_in_display()
 
 			for card in level.enemy_left_arm_list:
 				if card.selected_for_action_phase:
 					var should_stop = card_action(card.card_action, is_player, "", card)
-					var time = card.card_wait_time * 1.35
+					var time = card.card_wait_time * wait_mod
 					yield(get_tree().create_timer(time), "timeout")
 					level.update_text_overlays()
+					level.handle_cards_in_display()
 
 			for card in level.enemy_leg_list:
 				if card.selected_for_action_phase:
 					var should_stop = card_action(card.card_action, is_player, "", card)
-					var time = card.card_wait_time * 1.35
+					var time = card.card_wait_time * wait_mod
 					yield(get_tree().create_timer(time), "timeout")
 					level.update_text_overlays()
+					level.handle_cards_in_display()
 			player_display_turn = true
 		level.update_text_overlays()
 		yield(get_tree().create_timer(1), "timeout")
+		performing_actions = false
 
 
 func apply_text_effect(text_type, text, is_player=true, card=null):
@@ -1486,14 +1503,15 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 	avoid_recursion_str = avoid_recursion_str.to_lower()
 	if avoid_recursion_str == act_str:
 		print("in card_action RECURSION: " + act_str + " " + avoid_recursion_str)
-		if performing_actions:
-			performing_actions = false
 		return stop_response
-	performing_actions = true
 	if get_node("/root").has_node("level"):
 		var level = get_node("/root/level")
 		var action_time = .5
-		level.expand_card_details(card)
+		#level.expand_card_details(card)
+		card.position = level.get_node("activating_pos").global_position
+		card.get_node("text").visible = true
+		card.get_node("title").visible = true
+		card.get_node("action").visible = true
 		card.get_node("AnimationPlayer").stop()
 		## 1 #############################################################
 		## Get info from played cards (may be changed)
@@ -1536,6 +1554,12 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 		var action_sub_time = (action_time*2)
 		var action_sub_shake_vel = 2
 		var cam_shake_time = floor(action_sub_time*.25)
+		if is_player:
+			meta.player_food += food
+			meta.player_water += water
+		else:
+			meta.enemy_food += food
+			meta.enemy_water += water
 		# 2 ###################################################################
 		# make sure there is enough food and water to play card
 		
@@ -1554,8 +1578,8 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 				
 				yield(get_tree().create_timer(action_sub_time), "timeout")
 		
+		level.update_text_overlays()
 		yield(get_tree().create_timer(action_sub_time), "timeout")
-		#level.update_text_overlays()
 		# 4 ###############################################################
 		### Process Actions, each action's logic should be WHOLEY contained
 		### in condition including seperate enm logic for readablility &..
@@ -1723,8 +1747,8 @@ func card_action(act_str, is_player=true, avoid_recursion_str="", card=null):
 
 		level.reset_display_card_sizes()
 		level.update_text_overlays()
-	yield(get_tree().create_timer(1.0), "timeout")
-	performing_actions = false
+		yield(get_tree().create_timer(1.0), "timeout")
+		#level.handle_cards_in_display()
 	return "finished"
 
 
@@ -1901,10 +1925,12 @@ func spawn_cards(hand_limit, is_player=true, deck=riverlands_deck):
 			# card_detail_list = []
 			var og_card_pos = Vector2(0, 0)
 			for card in range(meta.player_hand_limit):
+				var rand_card = level.get_random_card(deck, is_player)
+				if not rand_card:
+					continue
 				var new_card = main.CARD.instance()
 				new_card.z_index = 120
 				get_node("/root").call_deferred("add_child", new_card)
-				var rand_card = level.get_random_card(deck, is_player)
 				var card_payload = new_card.get_card_payload(rand_card)
 				card_payload[ID] = get_card_id()
 				new_card.map_card(card_payload)
@@ -1930,10 +1956,12 @@ func spawn_cards(hand_limit, is_player=true, deck=riverlands_deck):
 			yield(get_tree().create_timer(.5), "timeout")
 			var og_card_pos = Vector2(0, 0)
 			for card_num in range(hand_limit):
+				var rand_card = level.get_random_card(deck, is_player)
+				if not rand_card:
+					continue
 				var new_card = main.CARD.instance()
 				new_card.z_index = 120
 				get_node("/root").call_deferred("add_child", new_card)
-				var rand_card = level.get_random_card(deck, is_player)
 				var card_payload = new_card.get_card_payload(rand_card)
 				card_payload[ID] = get_card_id()
 				new_card.map_card(card_payload)

@@ -100,9 +100,7 @@ func play_card(card_list, card_idx, is_player=true):
 			print("whoops enm, didn't play a card successfully")
 	if is_player:
 		Cards.hand_idx = 0
-	reset_display_card_sizes()
-	reset_hand_card_sizes()
-	handle_cards_in_display()
+	reset_display()
 
 
 func remove_all_cards_in_hand(is_player):
@@ -151,19 +149,22 @@ func get_random_card(deck, is_player):
 		print("deck after: " +str(len(deck)) + " choice: " + str(final_choice))
 		return final_choice
 	else:
-		print("deck 0. negative choice")
-		var choice = Cards.negative_cards_weighted[rand_range(0, len(Cards.negative_cards_weighted) - 1)]
-		return choice
+		print("deck 0")
+		#var choice = Cards.negative_cards_weighted[rand_range(0, len(Cards.negative_cards_weighted) - 1)]
+		return false
 
+
+func reset_display():
+	reset_display_card_sizes()
+	reset_hand_card_sizes()
+	handle_cards_in_display()
 
 
 func card_container_navigation_controller(val, location="change"):
 	if location == "current":
 			location = Cards.current_card_menu
 
-	reset_display_card_sizes()
-	reset_hand_card_sizes()
-	handle_cards_in_display()
+	reset_display()
 	if location == "change":
 		if Cards.current_card_menu == "hand" :
 			# If hand check all lists otherwise come back
@@ -282,7 +283,7 @@ func handle_cards_in_display():
 	var x = 0
 	var y = 0
 	var idx = 0
-	var x_buffer = 100
+	var x_buffer = 150
 	var y_buffer = 200
 	for card in player_chassis_list:
 		var node_ref = get_node("tableau_container/chassis").global_position
@@ -295,11 +296,9 @@ func handle_cards_in_display():
 		if x % 3 == 0:
 			x = 0
 			y += 1
-
 	y = 0
 	x = 0
 	idx = 0
-
 	for card in player_leg_list:
 		var node_ref = get_node("tableau_container/legs").global_position
 		player_leg_list[idx].position = Vector2(node_ref.x + (x_buffer * x), node_ref.y + (y_buffer * y))
@@ -315,9 +314,9 @@ func handle_cards_in_display():
 		player_right_arm_list[idx].position = Vector2(node_ref.x + (x_buffer * x), node_ref.y + (y_buffer * y))
 		card.set_scale(Cards.STANDARD_DISPLAY_CARD_SCALE)
 		idx += 1
-		x += 1
+		y += 1
 		if idx % 4 == 0:
-			y += 1
+			x += 1
 			
 	y = 0
 	x = 0
@@ -328,9 +327,9 @@ func handle_cards_in_display():
 		player_left_arm_list[idx].position = Vector2(node_ref.x + (x_buffer * x), node_ref.y + (y_buffer * y))
 		card.set_scale(Cards.STANDARD_DISPLAY_CARD_SCALE)
 		idx += 1
-		x += 1
+		y += 1
 		if idx % 4 == 0:
-			y += 1
+			x += 1
 
 	#####
 	#
@@ -371,9 +370,9 @@ func handle_cards_in_display():
 		enemy_right_arm_list[idx].position = Vector2(node_ref.x + (x_buffer * x), node_ref.y + (y_buffer * y))
 		card.set_scale(Cards.STANDARD_DISPLAY_CARD_SCALE)
 		idx += 1
-		x +=1
+		y += 1
 		if idx % 4 == 0:
-			y += 1
+			x +=1
 	y = 0
 	x = 0
 	idx = 0
@@ -383,9 +382,9 @@ func handle_cards_in_display():
 		enemy_left_arm_list[idx].position = Vector2(node_ref.x + (x_buffer * x), node_ref.y + (y_buffer * y))
 		card.set_scale(Cards.STANDARD_DISPLAY_CARD_SCALE)
 		idx += 1
-		x += 1
+		y += 1
 		if idx % 4 == 0:
-			y += 1
+			x += 1
 	reset_display_card_sizes()
 
 
